@@ -1,0 +1,190 @@
+/* div {
+    border: 1px solid black;
+} */
+
+.screen {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    font-size: 100%;
+}
+
+/* left side start */
+.addon {
+    width: 180px;
+    height: 180px;
+    position: absolute;
+    top: 50px;
+    left: 300px;
+    background-color: #8fdbc9;
+    z-index: -1;
+    filter: blur(70px);
+}
+
+.addon2 {
+    width: 180px;
+    height: 180px;
+    position: absolute;
+    top: 50px;
+    left: 400px;
+    background-color: #C3DCD6;
+    z-index: -1;
+    filter: blur(70px);
+}
+
+.maintext {
+    font-weight: 700; 
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+
+.auth-title-box {
+    /* width: 400px; */
+    margin: 10%;
+    padding-top: 50px;
+    padding-left: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.authimg {
+    position: absolute;
+    width: 400px;
+    height: 150px;
+    top: 350px;
+    left: 190px;
+}
+/* left side end */
+
+/* right side start */
+.log-left-side, .log-right-side {
+    width: 50vw;
+    height: 100vh;
+    transition: .5s;
+}
+
+.login-form {
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+input[type=text] {
+    padding: 12px 20px;
+    margin: 8px 0;
+    width: 300px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 10px;
+    background-color: #F7F3F2;
+    outline: none;
+}
+
+input[type=password] {
+    padding: 12px 20px;
+    margin: 8px 0;
+    width: 300px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 10px;
+    background-color: #F7F3F2;
+    outline: none;
+}
+
+::placeholder {
+    color: gray;
+}
+
+.signin-button {
+    width: 300px;
+    height: 40px;
+    color: gray;
+    border: none;
+    background-color: #daf3ed;
+    border-radius: 10px;
+    transition: .5s;
+}
+
+.signin-button:hover {
+    background-color: #C3DCD6;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+}
+
+.seepassbut {
+    position: relative;
+    right: -130px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+}
+
+/* right side end */
+
+@media screen and (max-width: 768px) {
+    .screen {
+        display: flex;
+        height: auto;
+        flex-direction: column;
+        font-size: 70%;
+    }
+
+    .log-left-side, .log-right-side {
+        width: 50vw;
+        height: 100vh;
+        transition: .5s;
+    }
+
+    .addon {
+        width: 180px;
+        height: 180px;
+        position: absolute;
+        top: 50px;
+        left: 100px;
+        background-color: #8fdbc9;
+        z-index: -1;
+        filter: blur(70px);
+    }
+    
+    .addon2 {
+        width: 180px;
+        height: 180px;
+        position: absolute;
+        top: 50px;
+        left: 200px;
+        background-color: #C3DCD6;
+        z-index: -1;
+        filter: blur(70px);
+    }
+
+    .maintext {
+        font-weight: 700; 
+        font-size: 20px;
+    }
+
+    .auth-title-box {
+        /* width: 400px; */
+        margin: 10%;
+        padding-top: 50px;
+        padding-left: 20%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .authimg {
+        display: none;
+    }
+
+    .login-form {
+        margin-top: -100%;
+        margin-left: 70%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
