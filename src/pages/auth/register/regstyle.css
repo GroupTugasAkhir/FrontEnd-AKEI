@@ -1,0 +1,201 @@
+/* div {
+    border: 1px solid black;
+} */
+
+.screen {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    font-size: 100%;
+}
+
+/* left side start */
+.addon {
+    width: 180px;
+    height: 180px;
+    position: absolute;
+    top: 50px;
+    left: 800px;
+    background-color: #8fdbc9;
+    z-index: -1;
+    filter: blur(70px);
+}
+
+.addon2 {
+    width: 180px;
+    height: 180px;
+    position: absolute;
+    top: 50px;
+    left: 1000px;
+    background-color: #C3DCD6;
+    z-index: -1;
+    filter: blur(70px);
+}
+
+.maintext {
+    font-weight: 700; 
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+
+.auth-title-box {
+    /* width: 400px; */
+    margin: 10%;
+    padding-top: 50px;
+    padding-left: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.mainregimg {
+    position: absolute;
+    width: 190px;
+    height: 300px;
+    top: 250px;
+    left: 950px;
+    z-index: -1;
+}
+
+.secregimg {
+    position: absolute;
+    width: 190px;
+    height: 300px;
+    top: 150px;
+    left: 600px;
+    z-index: -1;
+}
+
+/* left side end */
+
+/* right side start */
+.reg-left-side, .reg-right-side {
+    width: 50vw;
+    height: 100vh;
+    transition: .5s;
+}
+
+.register-form {
+    margin-top: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+input[type=text] {
+    padding: 12px 20px;
+    margin: 8px 0;
+    width: 300px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 10px;
+    background-color: #F7F3F2;
+    outline: none;
+}
+
+input[type=password] {
+    padding: 12px 20px;
+    margin: 8px 0;
+    width: 300px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 10px;
+    background-color: #F7F3F2;
+    outline: none;
+}
+
+::placeholder {
+    color: gray;
+}
+
+.signup-button {
+    width: 300px;
+    height: 40px;
+    color: gray;
+    border: none;
+    background-color: #daf3ed;
+    border-radius: 10px;
+    transition: .5s;
+}
+
+.signup-button:hover {
+    background-color: #C3DCD6;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+}
+
+.seepassbut {
+    position: relative;
+    right: -130px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+}
+
+/* right side end */
+
+@media screen and (max-width: 768px) {
+    .screen {
+        display: flex;
+        height: auto;
+        flex-direction: column-reverse;
+        font-size: 70%;
+    }
+
+    .reg-left-side, .reg-right-side {
+        width: 50vw;
+        height: 100vh;
+        transition: .5s;
+    }
+
+    .addon {
+        width: 180px;
+        height: 180px;
+        position: absolute;
+        top: 50px;
+        left: 100px;
+        background-color: #8fdbc9;
+        z-index: -1;
+        filter: blur(70px);
+    }
+    
+    .addon2 {
+        width: 180px;
+        height: 180px;
+        position: absolute;
+        top: 50px;
+        left: 200px;
+        background-color: #C3DCD6;
+        z-index: -1;
+        filter: blur(70px);
+    }
+
+    .maintext {
+        font-weight: 700; 
+        font-size: 30px;
+    }
+
+    .auth-title-box {
+        /* width: 400px; */
+        margin: 10%;
+        padding-top: 50px;
+        padding-left: 20%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .mainregimg, .secregimg {
+        display: none;
+    }
+
+    .register-form {
+        margin-top: -100%;
+        margin-left: 70%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
