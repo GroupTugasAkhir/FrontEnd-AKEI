@@ -47,8 +47,8 @@ li {
 }
 
 .nav-item:hover, .toggle-nav:hover {
-    color: #F7AEF8;
-    border-bottom: 1px solid #F7AEF8;
+    color: white;
+    border-bottom: 1px solid #F7F3F2;
     transition: 0.2s;
 }
 
@@ -60,7 +60,7 @@ li {
         height: 100%;
         width: 80%;
         padding: 2rem;
-        background-color: #72ddf7;
+        background-color: #DAF3ED;
         transition: .5s;
         backdrop-filter: blur(10px);
     }
@@ -97,7 +97,7 @@ li {
     }
 
     .header.actived {
-        background-color: #5E4AE3;
+        background-color: #72CEB8;
         color: white;
     }
 
@@ -107,7 +107,7 @@ li {
     }
 
     .nav-active {
-        border-bottom: 1px solid #F7AEF8;
+        border-bottom: 1px solid white;
     }
 
     .show {

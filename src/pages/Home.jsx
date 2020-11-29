@@ -15,11 +15,14 @@ const Home=()=>{
                     </div>
                 </div>
                 <div className="home-right-side">
+                    <div className="white-line l-1"/>
+                    <div className="white-line l-2"/>
+                    <div className="white-line l-3"/>
                     <div className="home-img">
                         <img src={Intro} alt=""/>
                     </div>
                     <div className="home-img-text">
-                        <span style={{fontSize:'14px'}}>FRIHETEN <br/> Corner sofa-bed with storage</span>
+                        <span>FRIHETEN <br/> Corner sofa-bed with storage</span>
                     </div>
                 </div>
             </section>
