@@ -2,7 +2,7 @@
     border: 1px solid black;
 } */
 
-.screen {
+.screenlog {
     display: flex;
     height: 100vh;
     width: 100%;
@@ -39,7 +39,7 @@
     margin-bottom: 50px;
 }
 
-.auth-title-box {
+.log-title-box {
     /* width: 400px; */
     margin: 10%;
     padding-top: 50px;
@@ -49,7 +49,7 @@
     justify-content: center;
 }
 
-.authimg {
+.logimg {
     position: absolute;
     width: 400px;
     height: 150px;
@@ -122,10 +122,16 @@ input[type=password] {
     outline: none;
 }
 
+.logerrorstyle {
+    font-weight: bolder;
+    cursor: pointer;
+    float: right;
+}
+
 /* right side end */
 
 @media screen and (max-width: 768px) {
-    .screen {
+    .screenlog {
         display: flex;
         height: auto;
         flex-direction: column;
@@ -165,7 +171,7 @@ input[type=password] {
         font-size: 20px;
     }
 
-    .auth-title-box {
+    .log-title-box {
         /* width: 400px; */
         margin: 10%;
         padding-top: 50px;
@@ -175,7 +181,7 @@ input[type=password] {
         justify-content: center;
     }
     
-    .authimg {
+    .logimg {
         display: none;
     }
 

@@ -10,8 +10,8 @@
     font-size: 100%;
 }
 
-/* left side start */
-.addon {
+/* right side start */
+.addon3 {
     width: 180px;
     height: 180px;
     position: absolute;
@@ -22,7 +22,7 @@
     filter: blur(70px);
 }
 
-.addon2 {
+.addon4 {
     width: 180px;
     height: 180px;
     position: absolute;
@@ -67,9 +67,9 @@
     z-index: -1;
 }
 
-/* left side end */
+/* right side end */
 
-/* right side start */
+/* left side start */
 .reg-left-side, .reg-right-side {
     width: 50vw;
     height: 100vh;
@@ -82,6 +82,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
 }
 
 input[type=text] {
@@ -133,7 +134,13 @@ input[type=password] {
     outline: none;
 }
 
-/* right side end */
+.errorstyle {
+    font-weight: bolder;
+    cursor: pointer;
+    float: right;
+}
+
+/* left side end */
 
 @media screen and (max-width: 768px) {
     .screen {
@@ -149,7 +156,7 @@ input[type=password] {
         transition: .5s;
     }
 
-    .addon {
+    .addon3 {
         width: 180px;
         height: 180px;
         position: absolute;
@@ -160,7 +167,7 @@ input[type=password] {
         filter: blur(70px);
     }
     
-    .addon2 {
+    .addon4 {
         width: 180px;
         height: 180px;
         position: absolute;
@@ -192,7 +199,7 @@ input[type=password] {
 
     .register-form {
         margin-top: -100%;
-        margin-left: 70%;
+        margin-left: 40%;
         display: flex;
         flex-direction: column;
         justify-content: center;
