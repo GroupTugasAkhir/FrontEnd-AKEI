@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Login from './pages/auth/login/Login'
 import Register from './pages/auth/register/Register'
 import Testing from './pages/Testing'
+// import NotFounf from './pages/NotFound/NotFound'
 import 'bootstrap/dist/css/bootstrap.css';
 
 function App() {
