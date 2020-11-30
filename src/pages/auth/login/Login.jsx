@@ -4,7 +4,10 @@ import Authimg from '../../../assets/authimg.jpg'
 import Fade from 'react-reveal/Fade';
 import Zoom from 'react-reveal/Zoom';
 import Bounce from 'react-reveal/Bounce';
+import {LoginThunk, FirebaseAuth} from './../../../redux/actions'
 
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
 import firebase from 'firebase'
 // import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
@@ -14,9 +17,9 @@ const config = {
 };
 firebase.initializeApp(config);
 
-const Login = () => {
+const Login = (props) => {
     const [seePass, setseePass] = useState(false)
-    const [username, setusername] = useState('')
+    const [email, setemail] = useState('')
     const [pass, setpass] = useState('')
     const [errorinfo, seterrorinfo] = useState('')
     // const [isSignedIn, setisSignedIn] = useState(false)
@@ -34,9 +37,9 @@ const Login = () => {
           });
     },[])
 
-    const onUsernameChange = (e) => {
+    const onEmailChange = (e) => {
         if(e.target.value) {
-            setusername(e.target.value)
+            setemail(e.target.value)
             seterrorinfo('')
         } else {
             seterrorinfo('')
@@ -53,10 +56,14 @@ const Login = () => {
     }
 
     const onSignIn = () => {
-        if(username & pass) {
-            console.log('user and pass');
+        if(email && pass) {
+            let dataLogin = {
+                email: email,
+                password: pass
+            }
+            props.LoginThunk(dataLogin)
         } else {
-            seterrorinfo('need password & username')
+            seterrorinfo('need password & email')
         }
     }
 
@@ -68,6 +75,13 @@ const Login = () => {
             // The signed-in user info.
             var user = result.user;
             console.log(user);
+            let dataUserGoogle = {
+                username: user.displayName,
+                email: user.email,
+                password: user.uid,
+                photo: user.photoURL
+            }
+            props.FirebaseAuth(dataUserGoogle)
             // ...
           }).catch(function(error) {
             console.log(error);
@@ -82,19 +96,30 @@ const Login = () => {
             // The signed-in user info.
             var user = result.user;
             console.log(user);
+            let dataUserFacebook = {
+                username: user.displayName,
+                email: user.email,
+                password: user.uid,
+                photo: user.photoURL
+            }
+            props.FirebaseAuth(dataUserFacebook)
             // ...
           }).catch(function(error) {
             console.log(error);
           });
     }
 
-    // const onLogoutGoogle = () => {
-    //     firebase.auth().signOut().then(function() {
-    //         // Sign-out successful.
-    //       }).catch(function(error) {
-    //         // An error happened.
-    //       });
-    // }
+    const onLogoutGoogle = () => {
+        firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+          }).catch(function(error) {
+            // An error happened.
+          });
+    }
+
+    if(props.Auth.isLogin) {
+        return <Redirect to='/' />
+    }
 
     return (
         <>
@@ -121,7 +146,7 @@ const Login = () => {
                 <div className='log-right-side'>
                     <Fade right>
                         <div className='login-form'>
-                            <input className='mt-3' type="text" placeholder='Enter username' onChange={onUsernameChange} />
+                            <input className='mt-3' type="text" placeholder='Enter email' onChange={onEmailChange} />
                             <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />
                             {
                                 seePass?
@@ -145,6 +170,16 @@ const Login = () => {
                                     :
                                     null
                                 }
+                                {
+                                    props.Auth.error?
+                                    <Fade top>
+                                        <div className='alert alert-danger'>
+                                            {props.Auth.error}
+                                        </div>
+                                    </Fade>
+                                    :
+                                    null
+                                }
                             </div>
                             <button className='signin-button' onClick={onSignIn} >
                                 Sign In
@@ -159,6 +194,9 @@ const Login = () => {
                                 <div className='authicon ml-3' onClick={onSubmitFacebook} >
                                     <i class="fab fa-facebook" style={{color: 'blue'}} ></i>
                                 </div>
+                                <div onClick={onLogoutGoogle}>
+                                    Logout
+                                </div>
                             </div>
                         </div>
                     </Fade>
@@ -168,4 +206,11 @@ const Login = () => {
     )
 }
 
-export default Login
+const Mapstatetoprops = (state) => {
+    return {
+        Auth: state.Auth
+    }
+}
+
+
+export default connect(Mapstatetoprops,{LoginThunk, FirebaseAuth})(Login)
