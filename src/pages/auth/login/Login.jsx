@@ -5,19 +5,38 @@ import Fade from 'react-reveal/Fade';
 import Zoom from 'react-reveal/Zoom';
 import Bounce from 'react-reveal/Bounce';
 
+import firebase from 'firebase'
+// import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+
+const config = {
+    apiKey: 'AIzaSyAZSk2P-Ir4U_lvshtLuc3vXE3y4Imv-Pw',
+    authDomain: 'akei-firebase-auth.firebaseapp.com',
+};
+firebase.initializeApp(config);
+
 const Login = () => {
     const [seePass, setseePass] = useState(false)
-    const [user, setuser] = useState('')
+    const [username, setusername] = useState('')
     const [pass, setpass] = useState('')
     const [errorinfo, seterrorinfo] = useState('')
+    // const [isSignedIn, setisSignedIn] = useState(false)
 
     useEffect(()=> {
-
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              // User is signed in.
+              console.log('user sign in');
+              console.log(user);
+            } else {
+              // No user is signed in.
+              console.log('not sign in');
+            }
+          });
     },[])
 
     const onUsernameChange = (e) => {
         if(e.target.value) {
-            setuser(e.target.value)
+            setusername(e.target.value)
             seterrorinfo('')
         } else {
             seterrorinfo('')
@@ -34,12 +53,48 @@ const Login = () => {
     }
 
     const onSignIn = () => {
-        if(user & pass) {
+        if(username & pass) {
             console.log('user and pass');
         } else {
             seterrorinfo('need password & username')
         }
     }
+
+    const onSubmitGoogle = () => {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            // var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            console.log(user);
+            // ...
+          }).catch(function(error) {
+            console.log(error);
+          });
+    }
+
+    const onSubmitFacebook = () => {
+        var provider = new firebase.auth.FacebookAuthProvider();
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+            // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            console.log(user);
+            // ...
+          }).catch(function(error) {
+            console.log(error);
+          });
+    }
+
+    // const onLogoutGoogle = () => {
+    //     firebase.auth().signOut().then(function() {
+    //         // Sign-out successful.
+    //       }).catch(function(error) {
+    //         // An error happened.
+    //       });
+    // }
 
     return (
         <>
@@ -94,6 +149,17 @@ const Login = () => {
                             <button className='signin-button' onClick={onSignIn} >
                                 Sign In
                             </button>
+                            <div className='mt-3' >
+                                or continue with
+                            </div>
+                            <div className='d-flex flex-row my-4'>
+                                <div className='authicon' onClick={onSubmitGoogle} >
+                                    <i className="fab fa-google" style={{color: 'red'}} ></i>
+                                </div>
+                                <div className='authicon ml-3' onClick={onSubmitFacebook} >
+                                    <i class="fab fa-facebook" style={{color: 'blue'}} ></i>
+                                </div>
+                            </div>
                         </div>
                     </Fade>
                 </div>
