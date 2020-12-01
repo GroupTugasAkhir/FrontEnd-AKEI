@@ -5,7 +5,7 @@ import Login from './pages/auth/login/Login'
 import Register from './pages/auth/register/Register'
 import Verified from './pages/verified/Verified'
 import Testing from './pages/Testing'
-// import NotFounf from './pages/NotFound/NotFound'
+import Admin from './pages/admin/admin'
 import 'bootstrap/dist/css/bootstrap.css';
 
 import {connect} from 'react-redux'
@@ -35,6 +35,7 @@ function App(props) {
         <Route exact path='/register' component={Register}/>
         <Route exact path='/verified' component={Verified} />
         <Route exact path='/test' component={Testing}/>
+        <Route exact path='/admin' component={Admin}/>
       </Switch>      
     </div>
   );
