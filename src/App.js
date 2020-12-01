@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Login from './pages/auth/login/Login'
 import Register from './pages/auth/register/Register'
 import Verified from './pages/verified/Verified'
+import Cart from './pages/cart/Cart'
 import Testing from './pages/Testing'
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -33,6 +34,7 @@ function App(props) {
         <Route exact path='/login' component={Login}/>
         <Route exact path='/register' component={Register}/>
         <Route exact path='/verified' component={Verified} />
+        <Route exact path='/cart' component={Cart} />
         <Route exact path='/test' component={Testing}/>
       </Switch>      
     </div>

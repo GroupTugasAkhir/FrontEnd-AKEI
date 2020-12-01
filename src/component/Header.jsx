@@ -3,7 +3,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import './style.css'
 
-const Header=()=>{
+const Header=(props)=>{
 
     const [isOpen,setIsOpen]=useState(false)
     const [navbar,setNavbar]=useState(false)
@@ -23,7 +23,7 @@ const Header=()=>{
     window.addEventListener('scroll',changeBackground)
 
     return(
-        <section className={navbar?'header actived':'header'}>
+        <section className={navbar?'header actived':'header'} style={{...props.style}} >
             <div className='header-logo'>
                 <a>Akei</a>
             </div>
