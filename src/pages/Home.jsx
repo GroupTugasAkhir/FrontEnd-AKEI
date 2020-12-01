@@ -2,6 +2,7 @@ import React from 'react';
 import Header from '../component/Header';
 import './style.css'
 import Intro from './../assets/intro.png'
+import NewArrival from './NewArrival'
 
 const Home=()=>{
     return (
@@ -26,6 +27,7 @@ const Home=()=>{
                     </div>
                 </div>
             </section>
+            <NewArrival/>
         </div>
     )
 }

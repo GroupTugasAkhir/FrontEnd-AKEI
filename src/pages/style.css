@@ -2,6 +2,11 @@ section {
     height: 100vh;
     width: 100%;
     overflow: hidden;
+    margin-bottom: 86px;
+}
+
+.center-text {
+    text-align: center;
 }
 
 .home-section {
@@ -92,6 +97,61 @@ section {
     left: 40px;
 }
 
+.container-custom {
+    margin: 68px 12vw ;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.left-side-box, .right-side-box {
+    width: 50%;
+    height: 40vh;
+}
+
+.center-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.left-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.col-flex {
+    flex-direction: column;
+}
+
+.left-side-box {
+    /* background-color: tomato; */
+}
+
+.left-side-box img, .right-side-box img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.right-side-box {
+    /* background-color: teal; */
+}
+
+.description-box {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.details-price {
+    font-weight: 600;
+    font-size: 28px;
+    color: #8e9aaf;
+}
+
 @media screen and (max-width: 768px) {
     section {
         height: auto;
@@ -120,10 +180,16 @@ section {
         padding-right: 10px;
     }
 
+    .home-img {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .home-img img {
         margin-left: 10vw;
         margin-right: 10vw;
-        left: -100px;
+        left: 0px;
         top: -30px;
         height: 100vw;
     }
@@ -131,7 +197,6 @@ section {
     .home-img-text {
         transform: rotate(0deg);
         position: absolute;
-        bottom: 150px;
         text-align: center;
     }
 
