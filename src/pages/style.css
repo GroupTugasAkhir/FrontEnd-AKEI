@@ -288,7 +288,8 @@ section {
     }
 
     .title-text {
-        margin-bottom: 48px;
+        padding-top: 36px;
+        padding-bottom: 36px;
     }
 }
 

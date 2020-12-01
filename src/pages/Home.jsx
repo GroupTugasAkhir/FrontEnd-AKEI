@@ -4,6 +4,7 @@ import './style.css'
 import Intro from './../assets/intro.png'
 import NewArrival from './new_arrival/NewArrival'
 import BestProduct from './best_product/BestProduct';
+import Product from './product/Product';
 
 const Home=()=>{
     return (
@@ -30,6 +31,7 @@ const Home=()=>{
             </section>
             <NewArrival/>
             <BestProduct/>
+            <Product/>
         </div>
     )
 }

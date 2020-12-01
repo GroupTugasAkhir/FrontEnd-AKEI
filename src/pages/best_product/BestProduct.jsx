@@ -7,7 +7,7 @@ const BestProduct=()=>{
     return (
         <div className='section-best-product'>
             <div className="title-text center-text">
-                <h3>Best Product</h3>
+                <h3>Favourite Product</h3>
             </div> 
             <div className="container-best-product">
                 <div className="left-side-best">
