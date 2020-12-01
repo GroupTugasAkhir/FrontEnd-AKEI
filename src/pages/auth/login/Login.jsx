@@ -85,6 +85,10 @@ const Login = (props) => {
             // ...
           }).catch(function(error) {
             console.log(error);
+            let dataUserGoogle = {
+                email: error.email,
+            }
+            props.FirebaseAuth(dataUserGoogle)
           });
     }
 
@@ -105,7 +109,11 @@ const Login = (props) => {
             props.FirebaseAuth(dataUserFacebook)
             // ...
           }).catch(function(error) {
-            console.log(error);
+            console.log(error.email);
+            let dataUserFacebook = {
+                email: error.email,
+            }
+            props.FirebaseAuth(dataUserFacebook)
           });
     }
 
