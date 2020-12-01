@@ -97,6 +97,31 @@ section {
     left: 40px;
 }
 
+.new-arrival-section {
+    position: relative;
+}
+
+.box-design-1, .box-design-2 {
+    position: absolute;
+    height: 80%;
+    width: 30vw;
+    z-index: -1;
+}
+
+.box-design-1 {
+    background-color: #F7F3F2;
+    top: 5%;
+    left: 51%;
+    opacity: .5;
+}
+
+.box-design-2 {
+    background-color: #DAF3ED;
+    bottom: 5%;
+    right: 51%;
+    opacity: .5;
+}
+
 .container-custom {
     margin: 68px 12vw ;
     display: flex;
@@ -150,6 +175,12 @@ section {
     font-weight: 600;
     font-size: 28px;
     color: #8e9aaf;
+}
+
+.img-name {
+    transform: rotate(-90deg);
+    margin-left: -30px;
+    
 }
 
 @media screen and (max-width: 768px) {
@@ -225,6 +256,10 @@ section {
     
     .left-side-box, .right-side-box {
         width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .left-side-box:nth-child(even) {
@@ -241,6 +276,19 @@ section {
 
     .left-side-box:nth-child(odd) {
         height: 20vh;
+    }
+
+    .img-name {
+        transform: rotate(0deg);
+        margin-left: 0;
+    }
+
+    .description-box {
+        text-align: center;
+    }
+
+    .title-text {
+        margin-bottom: 48px;
     }
 }
 

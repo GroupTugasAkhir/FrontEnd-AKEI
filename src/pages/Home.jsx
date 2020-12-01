@@ -2,7 +2,8 @@ import React from 'react';
 import Header from '../component/Header';
 import './style.css'
 import Intro from './../assets/intro.png'
-import NewArrival from './NewArrival'
+import NewArrival from './new_arrival/NewArrival'
+import BestProduct from './best_product/BestProduct';
 
 const Home=()=>{
     return (
@@ -28,6 +29,7 @@ const Home=()=>{
                 </div>
             </section>
             <NewArrival/>
+            <BestProduct/>
         </div>
     )
 }
