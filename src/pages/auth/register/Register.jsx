@@ -6,7 +6,11 @@ import Fade from 'react-reveal/Fade';
 import Zoom from 'react-reveal/Zoom';
 import Bounce from 'react-reveal/Bounce';
 
-const Register = () => {
+import {connect} from 'react-redux'
+import {RegisThunk} from './../../../redux/actions'
+import {Redirect} from 'react-router-dom'
+
+const Register = (props) => {
     const [seePass, setseePass] = useState(false)
     const [user, setuser] = useState('')
     const [email, setemail] = useState('')
@@ -72,6 +76,18 @@ const Register = () => {
         console.log(user);
         console.log(email);
         console.log(passconfirm);
+
+        let dataRegis = {
+            username: user,
+            email: email,
+            password: passconfirm
+        }
+
+        props.RegisThunk(dataRegis)
+    }
+
+    if(props.Auth.isLogin) {
+        return <Redirect to='/' />
     }
 
     return (
@@ -151,4 +167,10 @@ const Register = () => {
     )
 }
 
-export default Register
+const Mapstatetoprops = (state) => {
+    return {
+        Auth: state.Auth
+    }
+}
+
+export default connect(Mapstatetoprops,{RegisThunk})(Register)

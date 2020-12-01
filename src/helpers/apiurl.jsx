@@ -1,0 +1,1 @@
+export const API_URL_SQL = 'http://localhost:5001'

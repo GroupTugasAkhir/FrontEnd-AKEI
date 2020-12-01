@@ -4,20 +4,42 @@ import Authimg from '../../../assets/authimg.jpg'
 import Fade from 'react-reveal/Fade';
 import Zoom from 'react-reveal/Zoom';
 import Bounce from 'react-reveal/Bounce';
+import {LoginThunk, FirebaseAuth} from './../../../redux/actions'
 
-const Login = () => {
+import {connect} from 'react-redux'
+import {Redirect} from 'react-router-dom'
+import firebase from 'firebase'
+// import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+
+const config = {
+    apiKey: 'AIzaSyAZSk2P-Ir4U_lvshtLuc3vXE3y4Imv-Pw',
+    authDomain: 'akei-firebase-auth.firebaseapp.com',
+};
+firebase.initializeApp(config);
+
+const Login = (props) => {
     const [seePass, setseePass] = useState(false)
-    const [user, setuser] = useState('')
+    const [email, setemail] = useState('')
     const [pass, setpass] = useState('')
     const [errorinfo, seterrorinfo] = useState('')
+    // const [isSignedIn, setisSignedIn] = useState(false)
 
     useEffect(()=> {
-
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              // User is signed in.
+              console.log('user sign in');
+              console.log(user);
+            } else {
+              // No user is signed in.
+              console.log('not sign in');
+            }
+          });
     },[])
 
-    const onUsernameChange = (e) => {
+    const onEmailChange = (e) => {
         if(e.target.value) {
-            setuser(e.target.value)
+            setemail(e.target.value)
             seterrorinfo('')
         } else {
             seterrorinfo('')
@@ -34,11 +56,77 @@ const Login = () => {
     }
 
     const onSignIn = () => {
-        if(user & pass) {
-            console.log('user and pass');
+        if(email && pass) {
+            let dataLogin = {
+                email: email,
+                password: pass
+            }
+            props.LoginThunk(dataLogin)
         } else {
-            seterrorinfo('need password & username')
+            seterrorinfo('need password & email')
         }
+    }
+
+    const onSubmitGoogle = () => {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            // var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            console.log(user);
+            let dataUserGoogle = {
+                username: user.displayName,
+                email: user.email,
+                password: user.uid,
+                photo: user.photoURL
+            }
+            props.FirebaseAuth(dataUserGoogle)
+            // ...
+          }).catch(function(error) {
+            console.log(error);
+            let dataUserGoogle = {
+                email: error.email,
+            }
+            props.FirebaseAuth(dataUserGoogle)
+          });
+    }
+
+    const onSubmitFacebook = () => {
+        var provider = new firebase.auth.FacebookAuthProvider();
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+            // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            console.log(user);
+            let dataUserFacebook = {
+                username: user.displayName,
+                email: user.email,
+                password: user.uid,
+                photo: user.photoURL
+            }
+            props.FirebaseAuth(dataUserFacebook)
+            // ...
+          }).catch(function(error) {
+            console.log(error.email);
+            let dataUserFacebook = {
+                email: error.email,
+            }
+            props.FirebaseAuth(dataUserFacebook)
+          });
+    }
+
+    const onLogoutGoogle = () => {
+        firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+          }).catch(function(error) {
+            // An error happened.
+          });
+    }
+
+    if(props.Auth.isLogin) {
+        return <Redirect to='/' />
     }
 
     return (
@@ -66,7 +154,7 @@ const Login = () => {
                 <div className='log-right-side'>
                     <Fade right>
                         <div className='login-form'>
-                            <input className='mt-3' type="text" placeholder='Enter username' onChange={onUsernameChange} />
+                            <input className='mt-3' type="text" placeholder='Enter email' onChange={onEmailChange} />
                             <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />
                             {
                                 seePass?
@@ -90,10 +178,34 @@ const Login = () => {
                                     :
                                     null
                                 }
+                                {
+                                    props.Auth.error?
+                                    <Fade top>
+                                        <div className='alert alert-danger'>
+                                            {props.Auth.error}
+                                        </div>
+                                    </Fade>
+                                    :
+                                    null
+                                }
                             </div>
                             <button className='signin-button' onClick={onSignIn} >
                                 Sign In
                             </button>
+                            <div className='mt-3' >
+                                or continue with
+                            </div>
+                            <div className='d-flex flex-row my-4'>
+                                <div className='authicon' onClick={onSubmitGoogle} >
+                                    <i className="fab fa-google" style={{color: 'red'}} ></i>
+                                </div>
+                                <div className='authicon ml-3' onClick={onSubmitFacebook} >
+                                    <i class="fab fa-facebook" style={{color: 'blue'}} ></i>
+                                </div>
+                                <div onClick={onLogoutGoogle}>
+                                    Logout
+                                </div>
+                            </div>
                         </div>
                     </Fade>
                 </div>
@@ -102,4 +214,11 @@ const Login = () => {
     )
 }
 
-export default Login
+const Mapstatetoprops = (state) => {
+    return {
+        Auth: state.Auth
+    }
+}
+
+
+export default connect(Mapstatetoprops,{LoginThunk, FirebaseAuth})(Login)
