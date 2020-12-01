@@ -6,3 +6,27 @@
     font-weight: 500;
     font-size: larger;
 }
+
+/* .tabs {
+    display: flex;
+    flex-direction: row;
+    padding-top: 20px;
+    align-items: center;
+}
+
+.tab {
+    padding-right: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab:hover{
+    background-color: #b4d8ff34;
+    cursor: pointer;
+    font-weight: 500;
+} */
+
+.menu-tabs{
+    margin-left: -11px;
+}
