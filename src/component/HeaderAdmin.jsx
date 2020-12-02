@@ -24,11 +24,11 @@ const HeaderAdmin = (props) => {
   return (
     <div>
       <Navbar color="light" light expand="md" className='px-5'>
-        <NavbarBrand href="/">AKEI</NavbarBrand>
+        <NavbarBrand href="/" style={{color:'salmon'}}>AKEI</NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
-            <NavItem>
+            {/* <NavItem>
               <NavLink style={{color:'red'}}>Product</NavLink>
             </NavItem>
             <NavItem>
@@ -39,7 +39,7 @@ const HeaderAdmin = (props) => {
             </NavItem>
             <NavItem>
               <NavLink >Inventory</NavLink>
-            </NavItem>
+            </NavItem> */}
           </Nav>
           <Badge color="secondary" badgeContent={3} showZero>
             <Notifications/>
