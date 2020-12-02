@@ -1,6 +1,7 @@
 import React from 'react';
 import './style.css'
 import Prod1 from './../../assets/prod1.png'
+import Prod2 from './../../assets/prod2.png'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
 const CardCustom=()=>{
@@ -18,7 +19,7 @@ const CardCustom=()=>{
                 </div>
             </div>
             <div className="card-img">
-                <img src={Prod1} alt=""/>
+                <img src={Prod2} alt=""/>
             </div>
         </div>
 

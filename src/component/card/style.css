@@ -11,7 +11,7 @@
 }
 
 .card-box:hover {
-    box-shadow: 1px 1px 6px black;
+    box-shadow: 1px 1px 6px gray;
 }
 
 .cart-icon {
@@ -32,7 +32,7 @@
 }
 
 .cart-icon:hover {
-    box-shadow: 1px 1px 8px black;
+    box-shadow: 1px 1px 8px gray;
 }
 
 .card-text {
