@@ -35,3 +35,13 @@
     justify-content: center;
     flex-wrap: wrap;
 }
+
+@media screen and (max-width: 768px) {
+    .nav-category {
+        text-align: center;
+    }
+
+    .section-product .title-text {
+        padding-bottom: 0;
+    }
+}

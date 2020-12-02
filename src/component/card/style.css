@@ -58,8 +58,30 @@
     width: 200px;
     height: 250px;
     object-fit: cover;
+    transition: .5s;
+}
+
+.card-img img:hover {
+    top: -10px;
+    object-fit: cover;
 }
 
 div {
     /* border: 1px solid black; */
+}
+
+@media screen and (max-width:768px) {
+    .card-box {
+        height: 175px;
+        width: 120px;
+        margin: 10px 8px 48px 8px;
+    }
+
+    .card-img img {
+        position: absolute;
+        top: -10px;
+        height: 125px;
+        width: 120px;
+        object-fit: cover;
+    }
 }
