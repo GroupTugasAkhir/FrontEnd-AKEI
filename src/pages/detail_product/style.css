@@ -1,0 +1,18 @@
+.detailsection {
+    display: flex;
+    flex-direction: row;
+    margin-top: 100px;
+}
+
+/* detail left side start */
+.det-left-side {
+    width: 50%;
+}
+/* detail left side end */
+
+
+/* detail right side start */
+.det-right-side {
+    width: 50%;
+}
+/* detail right side end */
