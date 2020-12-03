@@ -3,6 +3,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import './style.css'
 import Logo from './../assets/AkeiLogo.png'
+import {Link} from 'react-router-dom'
 
 const Header=(props)=>{
 
@@ -26,9 +27,9 @@ const Header=(props)=>{
     return(
         <section className={navbar?'header actived':'header'} style={{...props.style}} >
             <div className='header-logo'>
-                <a>
+                <Link to='/'>
                     <img src={Logo} alt=""/>
-                </a>
+                </Link>
             </div>
             <div className={isOpen?"navigation show":"navigation"}>
                 <ul className='nav-list'>
@@ -38,9 +39,11 @@ const Header=(props)=>{
                     <li className='nav-item'>
                         <a className={'nav-link'}>Product</a>
                     </li>
-                    <li className='nav-item'>
-                        <a className={'nav-link'}>Login</a>
-                    </li>
+                    <Link to='/login'>
+                        <li className='nav-item'>
+                            <a className={'nav-link'}>Login</a>
+                        </li>
+                    </Link>
                 </ul>
             </div>
             <div className='toggle-nav'>

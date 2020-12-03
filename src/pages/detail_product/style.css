@@ -23,6 +23,11 @@
     padding-right: 20px;
     width: auto;
     height: 350px;
+    transition: .5s;
+}
+
+.det-img:hover {
+    transform: scale(1.07);
 }
 /* detail left side end */
 
@@ -158,7 +163,7 @@
         width: auto;
         height: 200px;
     }
-    
+
     .product-title {
         margin: 0px;
     }
