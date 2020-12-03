@@ -20,7 +20,7 @@ const UserProfile=(props)=>{
     return (
         <div>
             <Header style={{backgroundColor:'#72ceb8'}}/>
-            <section className="section-profile mt-3" style={{marginBottom:'-86px'}}>
+            <section className="section-profile" style={{marginBottom:'-86px'}}>
                 <div className="container-profile">
                     <Breadcrumb>
                         <BreadcrumbItem active tag="span">Username</BreadcrumbItem>
