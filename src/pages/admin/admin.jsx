@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import './admin.css'
 import Header from './../../component/HeaderAdmin'
+import AdminBranch from './branch_admin'
 import InventoryLog from './inventoryLog'
 import TransactionLog from './transactionLog'
 import UserManagement from './userManagement'
@@ -88,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Admin = () => {
+const Admin = (props) => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const [page, setPages] = useState(1)
@@ -219,32 +221,45 @@ const Admin = () => {
         <div>
             <Header/>
             <div className='outest-div'>
-                <div className='title'>Hello Super Admin!</div>
-                <div className='menu-tabs'>
-                    <div className={classes.root} >
-                        <div className={classes.demo1}>
-                            <AntTabs value={value} onChange={handleChange} aria-label="ant example">
-                                <AntTab label="Main Products" onClick={()=>setShowProd(1)}/>
-                                <AntTab label="Inventory Log" onClick={()=>setShowProd(2)}/>
-                                <AntTab label="Transaction Log" onClick={()=>setShowProd(3)}/>
-                                <AntTab label="User Management" onClick={()=>setShowProd(4)}/>
-                            </AntTabs>
-                            <Typography className={classes.padding} />
-                        </div>
-                    </div>
-                </div>
-                {
-                  showProd == 1 ? 
-                  renderMainProducts() 
-                  : showProd == 2 ?
-                  <InventoryLog/>
-                  : showProd == 3 ?
-                  <TransactionLog/>
-                  : <UserManagement/>
-                }
+              {
+                props.superadmin ?
+                <>
+                  <div className='title'>Hello Super Admin!</div>
+                  <div className='menu-tabs'>
+                      <div className={classes.root} >
+                          <div className={classes.demo1}>
+                              <AntTabs value={value} onChange={handleChange} aria-label="ant example">
+                                  <AntTab label="Main Products" onClick={()=>setShowProd(1)}/>
+                                  <AntTab label="Inventory Log" onClick={()=>setShowProd(2)}/>
+                                  <AntTab label="Transaction Log" onClick={()=>setShowProd(3)}/>
+                                  <AntTab label="User Management" onClick={()=>setShowProd(4)}/>
+                              </AntTabs>
+                              <Typography className={classes.padding} />
+                          </div>
+                      </div>
+                  </div>
+                  {
+                    showProd == 1 ? 
+                    renderMainProducts() 
+                    : showProd == 2 ?
+                    <InventoryLog/>
+                    : showProd == 3 ?
+                    <TransactionLog/>
+                    : <UserManagement/>
+                  }
+                </>
+                : <AdminBranch/>
+
+              }
             </div>
         </div>
      );
 }
- 
-export default Admin;
+
+const MapstatetoProps=({Auth})=>{
+  return {
+    ...Auth, role: Auth.role
+  }
+}
+
+export default connect(MapstatetoProps, {}) (Admin);

@@ -75,7 +75,7 @@ const TransactionLog = () => {
     const [page, setPages] = useState(1)
     const [showProd, setShowProd] = useState(1)
     const [modal, setModal] = useState(false)
-    const [modalPayment, setModalPayment] = useState(false)
+    const [modalRequest, setModalRequest] = useState(false)
     const [modalTracking, setModalTracking] = useState(false)
 
     const MySwal = withReactContent(Swal)
@@ -89,78 +89,9 @@ const TransactionLog = () => {
     })
 
     const toggle = () => setModal(!modal);
-    const togglePayment = () => setModalPayment(!modalPayment);
+    const toggleRequest = () => setModalRequest(!modalRequest);
     const toggleTracking = () => setModalTracking(!modalTracking);
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
-    const [anchorEl, setAnchorEl] = useState(null);
-
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
-
-    const open = Boolean(anchorEl);
-
-    const id = open ? 'simple-popover' : undefined;
-
-    const onAcceptPaymentClick = () => {
-        MySwal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Accept!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                togglePayment()
-                Swal.fire(
-                    'Accepted!',
-                    'Payment has been accepted.'
-                )
-            }
-        })
-    }
-
-    const onRejectPaymentClick = () => {
-        MySwal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, reject it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                togglePayment()
-                swalWithBootstrapButtons.fire(
-                  'Rejected!',
-                  'Payment has been rejected.',
-                  'success'
-                )
-            } else if (
-                /* Read more about handling dismissals below */
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                togglePayment()
-                swalWithBootstrapButtons.fire(
-                  'Cancelled',
-                  'Please check the payment proof again!'
-                )
-            }
-        })
-    }
 
     const renderTable=()=>{
         return data.map((val, index)=>(
@@ -168,62 +99,12 @@ const TransactionLog = () => {
                 <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
                 <td>Username</td>
                 <td>17 Oktober 2020  10:34:55 AM</td>
-                <td>{val.price}</td>
-                <td>
-                    {index % 2 == 0 ? 'CC' :'Bank Transfer'}
-                </td>
-                <td onClick={toggle} className='modal_stock'>click to see detail..</td>
-                <td>
-                    {index % 2 == 0 ? 'on packaging' :'payment checking'}
-                </td>
-                <td className='to-hover' onClick={index % 2 != 0 ? togglePayment : toggleTracking }><Settings/></td>
+                <td>on packaging</td>
+                <td className='to-hover' onClick={toggleTracking}><Settings/></td>
             </tr>
       ))
     }
 
-    const renderProductDetail=()=>(
-        <Paper >
-            <TableContainer >
-                <TableUI stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>No.</TableCell>
-                            <TableCell>Image</TableCell>
-                            <TableCell>Product</TableCell>
-                            <TableCell>Qty</TableCell>
-                            <TableCell>Price</TableCell>
-                            <TableCell>Sub Total</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {renderProductDetailTableBody()}
-                    </TableBody>
-                    <TableFooter>
-                        <TableCell colSpan={4}></TableCell>
-                        <TableCell style={{fontWeight:'700', color:'black', fontSize:20}}>Subtotal Harga</TableCell>
-                        <TableCell style={{fontWeight:'700', color:'black', fontSize:20}}>20.000.000</TableCell>
-                    </TableFooter>
-                </TableUI>
-            </TableContainer>
-        </Paper>
-    )
-
-    const renderProductDetailTableBody=()=>{
-        return data.map((val, index)=>(
-            <TableRow key={index}>
-                <TableCell>{index+1}</TableCell>
-                <TableCell >
-                    <div style={{maxWidth:'100px'}}>
-                        <img width='100%' height='100%'  src={val.image}/>
-                    </div>
-                </TableCell>
-                <TableCell>{val.name}</TableCell>
-                <TableCell>5 pcs</TableCell>
-                <TableCell>1.000.000</TableCell>
-                <TableCell>5.000.000</TableCell>
-            </TableRow>
-        ))
-    }
 
     const renderTrackingDetail=()=>(
         <Paper >
@@ -235,9 +116,9 @@ const TransactionLog = () => {
                             <TableCell>Image</TableCell>
                             <TableCell>Product</TableCell>
                             <TableCell>Order Qty</TableCell>
-                            <TableCell>Closest WH</TableCell>
-                            <TableCell>Stock Qty</TableCell>
+                            <TableCell>Stock</TableCell>
                             <TableCell>Status</TableCell>
+                            <TableCell>Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -259,44 +140,15 @@ const TransactionLog = () => {
                 </TableCell>
                 <TableCell>{val.name}</TableCell>
                 <TableCell>4 pcs</TableCell>
-                <TableCell>{index % 2 == 0 ? 'Bekasi' : 'Pluit'}</TableCell>
                 <TableCell>{index % 2 == 0 ? '5 pcs' : '0 pcs'}</TableCell>
-                <TableCell>{index % 2 == 0 ? 'ready' : 'requesting to BSD'}</TableCell>
+                <TableCell>{index % 2 == 0 ? 'ready' : 'insufficient'}</TableCell>
+                <TableCell className='to-hover' onClick={index % 2 == 0 ? null : toggleRequest}><Settings/></TableCell>
             </TableRow>
         ))
     }
     
     return ( 
         <div style={{paddingTop:10}}>
-
-            {/* Modal untuk lihat detail pembelanjaan user */}
-            <Modal isOpen={modal} toggle={toggle} size='lg'>
-                <ModalHeader toggle={toggle}>Product Detail</ModalHeader>
-                <ModalBody>
-                    {renderProductDetail()}
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="primary" onClick={toggle}>OK</Button>
-                </ModalFooter>
-            </Modal>
-
-            {/* Modal untuk cek bukti transfer user */}
-            <Modal isOpen={modalPayment} toggle={togglePayment} size='sm'>
-                <ModalHeader toggle={togglePayment}>Payment Checking</ModalHeader>
-                <ModalBody>
-                    <div className='modal_payment_title'>
-                        <div style={{fontWeight:'bold'}}>username</div>
-                        <div>1.000.000</div>
-                    </div>
-                    <div className='modal_payment_div'>
-                        <img width='100%' height='100%' src={bukti_trans}/>
-                    </div>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="primary" onClick={onAcceptPaymentClick}>Accept</Button>{'  '}
-                    <Button color="danger" onClick={onRejectPaymentClick}>Reject</Button>
-                </ModalFooter>
-            </Modal>
 
             {/* Modal untuk tracking transaksi dari user */}
             <Modal isOpen={modalTracking} toggle={toggleTracking} size='xl'>
@@ -312,6 +164,22 @@ const TransactionLog = () => {
                 </ModalFooter>
             </Modal>
 
+            {/* Modal untuk request barang ke gudang lain */}
+            <Modal isOpen={modalRequest} toggle={toggleRequest} size='sm'>
+                <ModalHeader toggle={toggleRequest}>Request order</ModalHeader>
+                <ModalBody>
+                    <div style={{fontWeight:'bolder', fontSize:20, color:'red'}}>Insufficient stock!</div>
+                    <div>Request 4 Chair from BSD</div>
+                    <div>Request 2 Chair from Pluit</div>
+                </ModalBody>
+                <ModalFooter>
+                    <div className='modal_footer_tracking'>
+                        <button className='btn btn-outline-info mr-3'>Proceed</button>
+                        <button className="btn btn-outline-primary" onClick={toggleRequest}>back</button>
+                    </div>
+                </ModalFooter>
+            </Modal>
+
             {/* Render component */}
             <Table>
                 <thead>
@@ -319,9 +187,6 @@ const TransactionLog = () => {
                         <th></th>
                         <th>Username</th>
                         <th>Date</th>
-                        <th>Total Price</th>
-                        <th>Payment Method</th>
-                        <th>Product</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>

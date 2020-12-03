@@ -5,7 +5,7 @@
 .title {
     font-weight: 500;
     font-size: x-large;
-    color:#296658;
+    color:#0a043c;
 }
 
 /* .tabs {
@@ -77,4 +77,46 @@
     padding-bottom: 10px;
 }
 
+.modal_footer_tracking{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* Transaction Log End */
+
+/* User Management Start */
+.user_management_table{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.prof-pict{
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.create_admin_button{
+    border: 2px solid black;
+    background-color: #16b895;
+    width: fit-content;
+    border-radius: 5%;
+    padding: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+/* .create_admin_button:hover{
+    border: 2px solid black;
+    background-color: #16b895;
+    width: fit-content;
+    border-radius: 5%;
+    padding: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+} */
+/* User Management End */
