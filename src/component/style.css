@@ -43,7 +43,13 @@ li {
 .header-logo {
     display: block;
     margin-top: 16px;
-    /* text-shadow: 1px 1px 1px black; */
+    cursor: pointer;
+}
+
+.header-logo img {
+    width: 100px;
+    height: 300px;
+    object-fit: contain;
 }
 
 .nav-item:hover, .toggle-nav:hover {

@@ -96,10 +96,18 @@ const Register = (props) => {
                 <div className='reg-left-side'>
                     <Fade left cascade>
                         <div className='register-form'>
-                            <input className='mt-3' type="text" placeholder='Enter username' onChange={onUsernameChange} />
-                            <input className='mt-2' type="text" placeholder='Enter email' onChange={onEmailChange} />
-                            <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />
-                            <input type={seePass?"text":"password"} placeholder='Confirm Password' onChange={onPasswordConfirm} />
+                            <div className='reg-input-button'>
+                                <input className='mt-3' type="text" placeholder='Enter username' onChange={onUsernameChange} />
+                            </div>
+                            <div className='reg-input-button'>
+                                <input className='mt-2' type="text" placeholder='Enter email' onChange={onEmailChange} />
+                            </div>
+                            <div className='reg-input-button'>
+                                <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />
+                            </div>
+                            <div className='reg-input-button'>
+                                <input type={seePass?"text":"password"} placeholder='Confirm Password' onChange={onPasswordConfirm} />
+                            </div>
                             {
                                 seePass?
                                 <button className='seepassbut mb-4' onClick={()=>setseePass(false)} >

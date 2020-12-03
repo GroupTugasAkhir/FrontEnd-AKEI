@@ -7,7 +7,7 @@ import Bounce from 'react-reveal/Bounce';
 import {LoginThunk, FirebaseAuth} from './../../../redux/actions'
 
 import {connect} from 'react-redux'
-import {Redirect} from 'react-router-dom'
+import {Redirect, Link} from 'react-router-dom'
 import firebase from 'firebase'
 // import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
@@ -133,16 +133,12 @@ const Login = (props) => {
         <>
             <div className='screenlog'>
                 <div className='log-left-side'>
-                    <div className='addon' >
-                        
-                    </div>
-                    <div className='addon2' >
-                        
-                    </div>
+                    <div className='addon' />
+                    <div className='addon2' />
                     <Bounce>
                         <div className="log-title-box">
                             <h2 className='maintext'>Sign In to <br/>Recharge Direct</h2>
-                            <p>If you don't have an account <br/> You can &nbsp; &nbsp; <span style={{color:'#C3DCD6', fontWeight: 'bolder', cursor: 'pointer'}}>Register here!</span> </p>
+                            <p>If you don't have an account <br/> You can &nbsp; &nbsp; <Link to='/register'><span style={{color:'green', fontWeight: 'bolder', cursor: 'pointer'}}>Register here!</span></Link> </p>
                         </div>
                     </Bounce>
                     <Zoom cascade>
@@ -154,8 +150,12 @@ const Login = (props) => {
                 <div className='log-right-side'>
                     <Fade right>
                         <div className='login-form'>
-                            <input className='mt-3' type="text" placeholder='Enter email' onChange={onEmailChange} />
-                            <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />
+                            <div className='input-button'>
+                                <input className='mt-3' type="text" placeholder='Enter email' onChange={onEmailChange} />
+                            </div>
+                            <div className='input-button'>
+                                <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />
+                            </div>
                             {
                                 seePass?
                                 <button className='seepassbut mb-4' onClick={()=>setseePass(false)} >
