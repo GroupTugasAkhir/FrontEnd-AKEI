@@ -7,7 +7,7 @@ import Bounce from 'react-reveal/Bounce';
 import {LoginThunk, FirebaseAuth} from './../../../redux/actions'
 
 import {connect} from 'react-redux'
-import {Redirect} from 'react-router-dom'
+import {Redirect,Link} from 'react-router-dom'
 import firebase from 'firebase'
 // import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
@@ -142,7 +142,7 @@ const Login = (props) => {
                     <Bounce>
                         <div className="log-title-box">
                             <h2 className='maintext'>Sign In to <br/>Recharge Direct</h2>
-                            <p>If you don't have an account <br/> You can &nbsp; &nbsp; <span style={{color:'#C3DCD6', fontWeight: 'bolder', cursor: 'pointer'}}>Register here!</span> </p>
+                            <p>If you don't have an account <br/> You can &nbsp; &nbsp; <span style={{color:'#C3DCD6', fontWeight: 'bolder', cursor: 'pointer'}}><Link to='/register'>Register here!</Link></span> </p>
                         </div>
                     </Bounce>
                     <Zoom cascade>

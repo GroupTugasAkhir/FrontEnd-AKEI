@@ -4,7 +4,7 @@ import './style.css'
 
 const Product=()=> {
     return (
-        <div className="section-product">
+        <div className="section-product" id="product">
             <div className="title-text center-text">
                 <h3>Product</h3>
             </div>
