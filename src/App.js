@@ -7,6 +7,7 @@ import Verified from './pages/verified/Verified'
 import Cart from './pages/cart/Cart'
 import DetailProduct from './pages/detail_product/DetailProduct'
 import Testing from './pages/Testing'
+import UserProfile from './pages/user_profile/UserProfile'
 import 'bootstrap/dist/css/bootstrap.css';
 
 import {connect} from 'react-redux'
@@ -38,6 +39,7 @@ function App(props) {
         <Route exact path='/detailproduct' component={DetailProduct} />
         <Route exact path='/cart' component={Cart} />
         <Route exact path='/test' component={Testing}/>
+        <Route exact path='/userprofile' component={UserProfile}/>
       </Switch>      
     </div>
   );

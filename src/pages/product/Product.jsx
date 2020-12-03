@@ -19,7 +19,7 @@ const Product=()=> {
                     </ul>
                 </div>
             </div>
-            <div className="list-product">
+            <div className="list-product mb-5">
                 <CardCustom/>
                 <CardCustom/>
                 <CardCustom/>
