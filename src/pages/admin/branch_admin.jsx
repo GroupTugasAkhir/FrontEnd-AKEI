@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import BranchOrder from './branch_order'
 import BranchInventory from './branch_inventory'
+import BranchRequest from './branch_Request'
 import { Table, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
@@ -78,22 +79,25 @@ const AdminBranch = () => {
     };
     return ( 
         <div>
-            <div className='title'>Hello BSD001!</div>
-            <div className='menu-tabs'>
-                <div className={classes.root} >
-                    <div className={classes.demo1}>
-                        <AntTabs value={value} onChange={handleChange} aria-label="ant example">
-                            <AntTab label="Order" onClick={()=>setShowTab(1)}/>
-                            <AntTab label="Inventory" onClick={()=>setShowTab(2)}/>
-                        </AntTabs>
-                        <Typography className={classes.padding} />
-                    </div>
-                </div>
-            </div>
+          <div className='title'>Hello BSD001!</div>
+          <div className='menu-tabs'>
+              <div className={classes.root} >
+                  <div className={classes.demo1}>
+                      <AntTabs value={value} onChange={handleChange} aria-label="ant example">
+                          <AntTab label="Order" onClick={()=>setShowTab(1)}/>
+                          <AntTab label="Inventory" onClick={()=>setShowTab(2)}/>
+                          <AntTab label="Request" onClick={()=>setShowTab(3)}/>
+                      </AntTabs>
+                      <Typography className={classes.padding} />
+                  </div>
+              </div>
+          </div>
             {
                 showTab == 1 ?
                 <BranchOrder/>
-                : <BranchInventory/>
+                : showTab == 2 ?
+                <BranchInventory/>
+                : <BranchRequest/>
             }
         </div>
     );

@@ -72,10 +72,10 @@ const UserManagement = () => {
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Create Admin</ModalHeader>
                 <ModalBody>
-                    <input type='number' placeholder='Enter username' className='form-control mb-2'/>
+                    <input type='text' placeholder='Enter username' className='form-control mb-2'/>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <label class="input-group-text" for="inputGroupSelect01">Product</label>
+                            <label class="input-group-text" for="inputGroupSelect01">Ware House</label>
                         </div>
                         <select class="custom-select" id="inputGroupSelect01">
                             <option selected>Choose...</option>

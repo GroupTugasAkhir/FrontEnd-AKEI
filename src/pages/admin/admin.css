@@ -51,6 +51,13 @@
     cursor: pointer;
 }
 
+.main_prod_action_down_div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* Transaction Log Start */
 
 .box-confirm-modal{

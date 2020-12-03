@@ -6,7 +6,16 @@ import AdminBranch from './branch_admin'
 import InventoryLog from './inventoryLog'
 import TransactionLog from './transactionLog'
 import UserManagement from './userManagement'
-import { Table, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import { Table, 
+  Pagination, 
+  PaginationItem, 
+  PaginationLink,
+  Modal, 
+  ModalHeader, 
+  ModalBody, 
+  ModalFooter, 
+  CustomInput
+} from 'reactstrap';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -14,6 +23,8 @@ import Typography from '@material-ui/core/Typography';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 import { Settings } from '@material-ui/icons';
+import {BsChevronDoubleDown} from 'react-icons/bs'
+import {FaChevronCircleDown} from 'react-icons/fa'
 
 const uriPic = {
   chair: 'https://images.unsplash.com/photo-1561677978-583a8c7a4b43?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80',
@@ -27,6 +38,16 @@ const data = [
   {image:uriPic.table, name:'table', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
   {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
   {image:uriPic.sofa, name:'sofa', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
+  // {image:uriPic.table, name:'table', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
+  // {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
+]
+
+const dataGudang = [
+  {image:uriPic.chair, name:'Gedung Bekasi', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
+  {image:uriPic.sofa, name:'Gedung BSD', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
+  {image:uriPic.table, name:'Gedung Pluit', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
+  // {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
+  // {image:uriPic.sofa, name:'sofa', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
   // {image:uriPic.table, name:'table', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
   // {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
 ]
@@ -95,6 +116,9 @@ const Admin = (props) => {
     const [value, setValue] = useState(0);
     const [page, setPages] = useState(1)
     const [showProd, setShowProd] = useState(1)
+    const [modal, setModal] = useState(false)
+
+    const toggle = () => setModal(!modal);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -117,6 +141,7 @@ const Admin = (props) => {
 
     const renderMainProducts=()=>(
       <div style={{paddingTop:10}}>
+        
         <Table>
             <thead>
                 <tr>
@@ -211,15 +236,49 @@ const Admin = (props) => {
           </td>
           <td>{val.category}</td>
           <td>{val.description}</td>
-          <td><Settings/></td>
+          <td>
+            <Settings className='mr-4 to-hover'/>
+            <FaChevronCircleDown className='to-hover' onClick={toggle}/>
+          </td>
         </tr>
       ))
     }
 
+    const renderModalBody=()=>{
+      return dataGudang.map((val, index)=>(
+        <div className='mb-3' key={index}>
+          <div style={{fontWeight:'bolder', fontSize:17}}>{val.name}</div>
+          <div className='main_prod_action_down_div'>
+            <div>Available Stock:</div>
+            <div>5 pcs</div>
+          </div>
+          <div className='main_prod_action_down_div'>
+            <div>On Packaging:</div>
+            <div>5 pcs</div>
+          </div>
+          <div className='main_prod_action_down_div'>
+            <div>Total Stock:</div>
+            <div>10 pcs</div>
+          </div>
+        </div>
+      ))
+    }
 
     return ( 
         <div>
             <Header/>
+            <Modal isOpen={modal} toggle={toggle} size='sm'>
+                <ModalHeader toggle={toggle}>Chair</ModalHeader>
+                <ModalBody>
+                  {renderModalBody()}
+                </ModalBody>
+                <ModalFooter>
+                    <div className='modal_footer_tracking'>
+                        {/* <button className='btn btn-outline-info mr-3'>Proceed</button> */}
+                        <button className="btn btn-outline-primary" onClick={toggle}>OK</button>
+                    </div>
+                </ModalFooter>
+            </Modal>
             <div className='outest-div'>
               {
                 props.superadmin ?
