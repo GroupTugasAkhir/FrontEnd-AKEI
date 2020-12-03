@@ -150,8 +150,12 @@ const Login = (props) => {
                 <div className='log-right-side'>
                     <Fade right>
                         <div className='login-form'>
-                            <input className='mt-3' type="text" placeholder='Enter email' onChange={onEmailChange} />
-                            <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />
+                            <div className='input-button'>
+                                <input className='mt-3' type="text" placeholder='Enter email' onChange={onEmailChange} />
+                            </div>
+                            <div className='input-button'>
+                                <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />
+                            </div>
                             {
                                 seePass?
                                 <button className='seepassbut mb-4' onClick={()=>setseePass(false)} >

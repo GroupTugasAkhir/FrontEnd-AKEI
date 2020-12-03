@@ -85,7 +85,18 @@
     width: 100%;
 }
 
-input[type=text] {
+.reg-left-side input {
+    padding: 12px 20px;
+    margin: 8px 0;
+    width: 300px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 10px;
+    background-color: #F7F3F2;
+    outline: none;
+}
+
+/* input[type=text] {
     padding: 12px 20px;
     margin: 8px 0;
     width: 300px;
@@ -105,7 +116,7 @@ input[type=password] {
     border-radius: 10px;
     background-color: #F7F3F2;
     outline: none;
-}
+} */
 
 ::placeholder {
     color: gray;
