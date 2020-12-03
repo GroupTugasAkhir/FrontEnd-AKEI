@@ -133,12 +133,8 @@ const Login = (props) => {
         <>
             <div className='screenlog'>
                 <div className='log-left-side'>
-                    <div className='addon' >
-                        
-                    </div>
-                    <div className='addon2' >
-                        
-                    </div>
+                    <div className='addon' />
+                    <div className='addon2' />
                     <Bounce>
                         <div className="log-title-box">
                             <h2 className='maintext'>Sign In to <br/>Recharge Direct</h2>
