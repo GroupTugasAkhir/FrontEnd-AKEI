@@ -2,7 +2,7 @@ import React, { Component, useEffect, useState, useRef } from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import './style.css'
-import Logo from './../assets/AkeiLogo.png'
+import Logo from './../../assets/AkeiLogo.png'
 import {Link} from 'react-router-dom'
 
 const Header=(props)=>{
@@ -24,6 +24,20 @@ const Header=(props)=>{
 
     window.addEventListener('scroll',changeBackground)
 
+    const toSection=(section)=>{
+        let element = document.getElementById(section)
+        element.scrollIntoView(true)
+        let heightHeader = 80
+        let scrolledY = window.scrollY
+        if(scrolledY){
+            window.scrollTo({
+                behavior:'smooth',
+                top:scrolledY - heightHeader
+            })
+        }
+        setIsOpen(false)
+    }
+
     return(
         <section className={navbar?'header actived':'header'} style={{...props.style}} >
             <div className='header-logo'>
@@ -34,16 +48,14 @@ const Header=(props)=>{
             <div className={isOpen?"navigation show":"navigation"}>
                 <ul className='nav-list'>
                     <li className='nav-item'>
-                        <a className={'nav-link'}>Home</a>
+                        <Link to='/' className={'nav-link'}>Home</Link>
                     </li>
                     <li className='nav-item'>
-                        <a className={'nav-link'}>Product</a>
+                        <a onClick={()=>toSection('product')} className={'nav-link'}>Product</a>
                     </li>
-                    <Link to='/login'>
-                        <li className='nav-item'>
-                            <a className={'nav-link'}>Login</a>
-                        </li>
-                    </Link>
+                    <li className='nav-item'>
+                        <Link to='/login' className={'nav-link'}>Login</Link>
+                    </li>
                 </ul>
             </div>
             <div className='toggle-nav'>

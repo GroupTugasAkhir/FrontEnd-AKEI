@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from './../../component/Header'
+import Header from './../../component/header/Header'
 import './style.css'
 
 import Testimg from './../../assets/mainregimg.jpg'

@@ -7,7 +7,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-import Header from './../../component/Header'
+// import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import Header from './../../component/header/Header'
 import './style.css'
 import {priceFormatter, API_URL_SQL} from './../../helpers'
 import Axios from 'axios'
