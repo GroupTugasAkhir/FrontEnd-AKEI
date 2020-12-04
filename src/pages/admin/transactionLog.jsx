@@ -250,7 +250,7 @@ const TransactionLog = () => {
 
     const renderTrackingDetailTableBody=()=>{
         return data.map((val, index)=>(
-            <TableRow key={index}>
+            <TableRow key={index} hover={true}>
                 <TableCell>{index+1}</TableCell>
                 <TableCell >
                     <div style={{maxWidth:'100px'}}>

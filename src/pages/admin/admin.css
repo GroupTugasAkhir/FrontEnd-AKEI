@@ -58,6 +58,25 @@
     align-items: center;
 }
 
+.main_prod_div_button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.rata-tengah{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.modal_body_cat_div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+}
+
 /* Transaction Log Start */
 
 .box-confirm-modal{
