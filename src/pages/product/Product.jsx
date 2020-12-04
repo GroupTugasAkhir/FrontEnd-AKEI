@@ -20,19 +20,25 @@ const Product=()=> {
 
     },[])
 
-    // const productByCategory=(cat_id)=>{
-    //     // Axios.get(`${API_URL_SQL}/admin/getproductbycategory/${cat_id}`)
-    //     // .then((res)=>{
-    //     //     setCatalog(res.data)
-    //     // }).catch((err)=>console.log(err))
-    //     console.log(cat_id)
-    // }
+    const productByCategory=(cat_id)=>{
+        setCatalog(null)
+        if(cat_id < 0) {
+            Axios.get(`${API_URL_SQL}/admin/getproductbypage/1`)
+            .then((res)=>{
+                setCatalog(res.data)
+            }).catch((err)=>console.log(err))
+        } else {
+            Axios.get(`${API_URL_SQL}/admin/getproductbycategory/${cat_id}`)
+            .then((res)=>{
+                setCatalog(res.data)
+            }).catch((err)=>console.log(err))
+        }
+    }
 
     const renderCategory=()=>{
         return categories.map((val,index)=>{
             return (
-                // <li onClick={productByCategory(val.category_id)}>{val.category_name}</li>
-                <li>{val.category_name}</li>
+                <li onClick={()=>productByCategory(val.category_id)}>{val.category_name}</li>
             )
         })
     }
@@ -51,7 +57,7 @@ const Product=()=> {
             <div className="container">
                 <div className="nav-category">
                     <ul>
-                        <li className='active'>All</li>
+                        <li className='active' onClick={()=>productByCategory(-1)}>All</li>
                         {renderCategory()}
                     </ul>
                 </div>
