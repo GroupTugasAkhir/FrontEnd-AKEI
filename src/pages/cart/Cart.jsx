@@ -7,12 +7,13 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
-// import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
+import {Modal, ModalHeader, ModalBody, ModalFooter, CustomInput} from 'reactstrap'
 import Header from './../../component/header/Header'
 import './style.css'
-import {priceFormatter, API_URL_SQL} from './../../helpers'
+import {priceFormatter, API_URL_SQL, credit} from './../../helpers'
 import Axios from 'axios'
 import {connect} from 'react-redux'
+import Swal from 'sweetalert2'
 
 //testing
 import testImg from './../../assets/mainregimg.jpg'
@@ -35,6 +36,13 @@ const Cart = (props) => {
     const isCancelled = useRef(false)
     const classes = useStyles();
     const [dataCart, setdataCart] = useState([])
+    const [payModal, setpayModal] = useState(false)
+    const [choiceMethod, setchoiceMethod] = useState(0)
+    const ccPay = useRef()
+    const [invoicePhoto, setinvoicePhoto] = useState(null)
+    const [longlat, setlonglat] = useState('')
+    const [curloc, setcurloc] = useState(false)
+    const [inputloc, setinputloc] = useState(false)
 
     useEffect(()=> {
         getCartData()
@@ -43,6 +51,21 @@ const Cart = (props) => {
             isCancelled.current = true
         }
     },[])
+
+    const geoLocation = () => {
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition)
+        } else {
+            alert('Geolocation is not supported by this browser.')
+        }
+    }
+
+    const showPosition = (position) => {
+        let latitude = position.coords.latitude
+        let longitude = position.coords.longitude
+        console.log(`${latitude}` + `,${longitude}`);
+        setlonglat(`${latitude}` + `,${longitude}`)
+    }
 
     const getCartData = async () => {
         try {
@@ -103,13 +126,75 @@ const Cart = (props) => {
         return total
     }
 
+    const oninputFileChange = (e) => {
+        if(e.target.files[0]) {
+            setinvoicePhoto(e.target.files[0])
+        } else {
+            setinvoicePhoto(null)
+        }
+      }
+
+    const onPayClick=()=>{
+        if(choiceMethod === '1') {
+            onPaywithInvoicePhoto()
+        } else if(choiceMethod === '2') {
+            if(credit(parseInt(ccPay.current.value))){
+                onPaywithCreditCard()
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Your credit card is not valid!',
+                  })
+            }
+        } else {
+            Swal.fire(
+                'Payment Methode?',
+                'Choose your payment methode first!',
+                'question'
+              )
+        }
+    }
+
+    const onPaywithInvoicePhoto = () => {
+        console.log('onPaywithInvoicePhoto');
+    }
+
+    const onPaywithCreditCard = () => {
+        console.log('onPaywithCreditCard');
+        // const newIdTrans = [...dataCart]
+        // const insertIdTrans = newIdTrans[0].idtrans
+
+        console.log(dataCart[0].idtrans);
+        console.log(ccPay.current.value);
+
+        // Axios.post(`${API_URL_SQL}/transaction/onpaycc`,{
+        //     idtrans: insertIdTrans,
+        //     ccNumber: ccPay.current.value
+        // }).then((res)=> {
+        //     if(res.data === 'berhasil') {
+        //         Swal.fire({
+        //             position: 'top-center',
+        //             icon: 'success',
+        //             title: 'Thank you for buying with AKEI!',
+        //             showConfirmButton: false,
+        //             timer: 1500
+        //           })
+        //         setpayModal(false)
+        //     }
+        // }).catch((err)=> {
+        //     console.log(err);
+        //     alert(err)
+        // })
+    }
+
     const renderCart = () => {
         return dataCart.map((val, ind)=> {
             return (
                 <TableRow key={ind+1}>
                     <TableCell style={{width: '100px'}}>
                         <div className='cartimg'>
-                            <img style={{objectFit: 'contain', objectPosition: '50% 50%'}} width='100%' height='100%' src={testImg} alt=''/>
+                            <img style={{objectFit: 'contain', objectPosition: '50% 50%'}} width='100%' height='100%' src={API_URL_SQL + val.image} alt={val.product_name} />
                         </div>
                     </TableCell>
                     <TableCell>
@@ -141,8 +226,62 @@ const Cart = (props) => {
         })
     }
 
+    const curlocationChange = () => {
+        setcurloc(true)
+        setinputloc(false)
+        geoLocation()
+    }
+
+    const inputlocationChange = () => {
+        setinputloc(true)
+        setcurloc(false)
+    }
+
+    const toggle = () => {
+        setpayModal(!payModal)
+        setinvoicePhoto(null)
+    }
+
     return (
         <>
+            <Modal style={{marginTop:80}} isOpen={payModal} toggle={toggle}>
+                <ModalHeader toggle={toggle}>Payment</ModalHeader>
+                <ModalBody>
+                    <select onChange={(e)=> setchoiceMethod(e.target.value)} className='form-control' defaultValue={0} >
+                        <option value="0" hidden>Choose your payment method</option>
+                        <option value="1">Invoice Proof</option>
+                        <option value="2">Credit Card</option>
+                    </select>
+                    {
+                       choiceMethod === '2'?
+                        <input type='number' className='form-control my-2' ref={ccPay} placeholder='input your credit card'/>
+                        :
+                       choiceMethod === '1'?
+                       <div>
+                           <CustomInput className='form-control my-2' onChange={oninputFileChange} type='file' label={invoicePhoto ? invoicePhoto.name : 'select invoice'} />
+                           {
+                               invoicePhoto?
+                               <div className='mt-2'>
+                                   <img src={URL.createObjectURL(invoicePhoto)} 
+                                   height = '200' 
+                                   width = '200' 
+                                   alt = "invoice"/>
+                               </div>
+                               :
+                               null
+                           }
+                       </div>
+                        :
+                        null
+                    }
+                </ModalBody>
+                <ModalFooter>
+                    <button onClick={onPayClick} className='checkout-button'>
+                        Bayar
+                    </button>
+                </ModalFooter>
+            </Modal>
+
             <Header style={{backgroundColor: '#72ceb8'}}/>
             <div style={{marginTop: '80px', marginInline: '50px'}} >
                 <div className='cartsection'>
@@ -179,8 +318,14 @@ const Cart = (props) => {
                                         <div style={{color: 'gray'}}>Total Price</div>
                                         <div>{priceFormatter(renderTotalPrice())}</div>
                                     </div>
-                                    <button className='checkout-button'>Checkout</button>
+                                    <button onClick={()=> setpayModal(true)} className='checkout-button'>Checkout</button>
                                 </div>
+                            </div>
+                            <div onClick={curlocationChange} className={curloc?'location-change':'current-location'}>
+                                Using current location
+                            </div>
+                            <div className={inputloc?'location-change':'input-location'}>
+                                <input onClick={inputlocationChange} type="text" placeholder='input your address'/>
                             </div>
                         </div>
                     </div>
