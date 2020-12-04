@@ -27,8 +27,8 @@ export const LoginThunk = (loginData) => {
         Axios.post(`${API_URL_SQL}/auth/login`,loginData)
         .then((res)=> {
             console.log(res.data);
-            localStorage.setItem('user', JSON.stringify(res.data))
-            dispatch({type: 'LOGIN', payload: res.data})
+            localStorage.setItem('user', JSON.stringify(res.data.dataLogin))
+            dispatch({type: 'LOGIN', payload: res.data.dataLogin, cart: res.data.dataCart})
         }).catch((err)=> {
             console.log(err);
             dispatch({type: 'ERROR', payload: err.response.data.message})
