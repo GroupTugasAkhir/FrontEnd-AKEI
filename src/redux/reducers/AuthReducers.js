@@ -2,7 +2,7 @@ const INITIAL_STATE = {
     username: '',
     email: '',
     password: '',
-    id: 0,
+    user_id: 0,
     isLogin: false,
     isLoading: false,
     error: '',

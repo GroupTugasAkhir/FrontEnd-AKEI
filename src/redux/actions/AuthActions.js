@@ -45,8 +45,9 @@ export const KeepLogin = () => {
             datauser = JSON.parse(datauser)
             Axios.get(`${API_URL_SQL}/auth/keepLogin/${datauser.user_id}`)
             .then((res)=> {
-                localStorage.setItem('user', JSON.stringify(res.data))
-                dispatch({type: 'LOGIN', payload: res.data})
+                console.log(res.data.dataCart);
+                localStorage.setItem('user', JSON.stringify(res.data.dataLogin))
+                dispatch({type: 'LOGIN', payload: res.data.dataLogin, cart: res.data.dataCart})
             }).catch((err)=> {
                 dispatch({type: 'ERROR', payload: err.response.data.message})
                 console.log(err.response.data.message);
@@ -60,8 +61,8 @@ export const FirebaseAuth = (dataUserFirebase) => {
         Axios.post(`${API_URL_SQL}/auth/firebaseauth`,dataUserFirebase)
         .then((res)=> {
             console.log(res.data);
-            localStorage.setItem('user', JSON.stringify(res.data))
-            dispatch({type: 'LOGIN', payload: res.data})
+            localStorage.setItem('user', JSON.stringify(res.data.dataLogin))
+            dispatch({type: 'LOGIN', payload: res.data.dataLogin, cart: res.data.dataCart})
         }).catch((err)=> {
             console.log(err);
             dispatch({type: 'ERROR', payload: err.response.data.message})
