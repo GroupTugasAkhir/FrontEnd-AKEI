@@ -35,20 +35,6 @@ const Cart = (props) => {
     const isCancelled = useRef(false)
     const classes = useStyles();
     const [dataCart, setdataCart] = useState([])
-    // const [dataCart, setdataCart] = useState([
-    //     {
-    //         id: 1,
-    //         prod: 'Kursi',
-    //         qty: 0,
-    //         price: 1000
-    //     },
-    //     {
-    //         id: 2,
-    //         prod: 'Meja',
-    //         qty: 2,
-    //         price: 3000
-    //     }
-    // ])
 
     useEffect(()=> {
         getCartData()
@@ -154,44 +140,6 @@ const Cart = (props) => {
             )
         })
     }
-
-    // const renderCart = () => {
-    //     return dataCart.map((val, ind)=> {
-    //         return (
-    //             <TableRow>
-    //                 <TableCell style={{width: '100px'}}>
-    //                     <div className='cartimg'>
-    //                         <img style={{objectFit: 'contain', objectPosition: '50% 50%'}} width='100%' height='100%' src={testImg} alt=''/>
-    //                     </div>
-    //                 </TableCell>
-    //                 <TableCell>
-    //                     <div className='cart-words-prod'>
-    //                         {val.prod}
-    //                     </div> 
-    //                 </TableCell>
-    //                 <TableCell>
-    //                     <div className='cart-words'>
-    //                         {priceFormatter(val.price)}
-    //                     </div>
-    //                     </TableCell>
-    //                 <TableCell>
-    //                     <div className='d-flex'>
-    //                         <button className='qty-button-minus' onClick={()=>minBtn(ind)}>-</button>
-    //                         <div className='qty-area'>
-    //                             {val.qty}
-    //                         </div>
-    //                         <button className='qty-button-plus' onClick={()=>plusBtn(ind)}>+</button>
-    //                     </div>
-    //                 </TableCell>
-    //                 <TableCell>
-    //                     <div className='cart-words'>
-    //                         {priceFormatter(val.price*val.qty)}
-    //                     </div>
-    //                 </TableCell>
-    //             </TableRow>            
-    //         )
-    //     })
-    // }
 
     return (
         <>
