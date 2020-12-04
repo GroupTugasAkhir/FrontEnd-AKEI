@@ -50,9 +50,9 @@ const Header=(props)=>{
                     <li className='nav-item'>
                         <Link to='/' className={'nav-link'}>Home</Link>
                     </li>
-                    <li className='nav-item'>
+                    {/* <li className='nav-item'>
                         <a onClick={()=>toSection('product')} className={'nav-link'}>Product</a>
-                    </li>
+                    </li> */}
                     <li className='nav-item'>
                         <Link to='/login' className={'nav-link'}>Login</Link>
                     </li>

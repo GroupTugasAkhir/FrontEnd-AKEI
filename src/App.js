@@ -36,7 +36,7 @@ function App(props) {
         <Route exact path='/login' component={Login}/>
         <Route exact path='/register' component={Register}/>
         <Route exact path='/verified' component={Verified} />
-        <Route exact path='/detailproduct' component={DetailProduct} />
+        <Route exact path='/detailproduct/:id' component={DetailProduct} />
         <Route exact path='/cart' component={Cart} />
         <Route exact path='/test' component={Testing}/>
         <Route exact path='/userprofile' component={UserProfile}/>

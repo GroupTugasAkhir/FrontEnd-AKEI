@@ -57,13 +57,12 @@
     top: 10px;
     width: 200px;
     height: 250px;
-    object-fit: cover;
+    object-fit: contain;
     transition: .5s;
 }
 
 .card-img img:hover {
     top: -10px;
-    object-fit: cover;
 }
 
 div {

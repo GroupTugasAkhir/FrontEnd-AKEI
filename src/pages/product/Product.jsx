@@ -3,8 +3,6 @@ import CardCustom from '../../component/card/CardCustom';
 import './style.css'
 import Axios from 'axios'
 import {API_URL_SQL} from './../../helpers/apiurl'
-import {priceFormatter} from './../../helpers/priceFormatter'
-
 const Product=()=> {
 
     const [categories,setCategories]=useState(null)
@@ -22,9 +20,18 @@ const Product=()=> {
 
     },[])
 
+    // const productByCategory=(cat_id)=>{
+    //     // Axios.get(`${API_URL_SQL}/admin/getproductbycategory/${cat_id}`)
+    //     // .then((res)=>{
+    //     //     setCatalog(res.data)
+    //     // }).catch((err)=>console.log(err))
+    //     console.log(cat_id)
+    // }
+
     const renderCategory=()=>{
         return categories.map((val,index)=>{
             return (
+                // <li onClick={productByCategory(val.category_id)}>{val.category_name}</li>
                 <li>{val.category_name}</li>
             )
         })
@@ -50,14 +57,7 @@ const Product=()=> {
                 </div>
             </div>
             <div className="list-product mb-5">
-                <CardCustom/>
-                <CardCustom/>
-                <CardCustom/>
-                <CardCustom/>
-                <CardCustom/>
-                <CardCustom/>
-                <CardCustom/>
-                <CardCustom/>
+                <CardCustom catalog={catalog}/>
             </div>
         </div>
     )
