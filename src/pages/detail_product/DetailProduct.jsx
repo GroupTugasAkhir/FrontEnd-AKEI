@@ -4,6 +4,7 @@ import './style.css'
 import { priceFormatter } from '../../helpers/priceFormatter';
 import { API_URL_SQL } from '../../helpers/apiurl';
 import Axios from 'axios'
+import {connect} from 'react-redux'
 
 const DetailProduct = (props) => {
     const {match} = props
@@ -29,6 +30,21 @@ const DetailProduct = (props) => {
             setDetailProd(res.data[0])
         }).catch((err)=>console.log(err))
     },[])
+
+    const addToCart=()=>{
+        if(qtyproduct){
+            let obj = {
+                user_id: props.Auth.user_id,
+                product_id : id,
+                quantity : qtyproduct
+            }
+            Axios.post(`${API_URL_SQL}/cart/getTrx`,obj)
+            .then(()=>{
+                console.log('success')
+
+            }).catch((err)=>console.log(err))
+        }
+    }
 
     
     if(detailProd===null){
@@ -84,7 +100,7 @@ const DetailProduct = (props) => {
                                     {priceFormatter(detailProd.price)}
                                 </div>
                             </div>
-                            <button className='addcart-button'>Add to Cart</button>
+                            <button className='addcart-button' onClick={addToCart}>Add to Cart</button>
                         </div>
                     </div>
                 </div>
@@ -93,4 +109,10 @@ const DetailProduct = (props) => {
     )
 }
 
-export default DetailProduct
+const ReduxProps=(state)=>{
+    return{
+        Auth:state.Auth
+    }
+}
+
+export default connect(ReduxProps)(DetailProduct)

@@ -76,3 +76,10 @@ export const changeAdmin = (bool) => {
         payload: bool
     }
 }
+
+export const LogoutFunc=(obj)=>{
+    return{
+        type:'LOGOUT',
+        payload:obj
+    }
+}
