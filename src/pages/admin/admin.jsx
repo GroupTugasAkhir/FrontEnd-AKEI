@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import './admin.css'
 // import Header from './../../component/HeaderAdmin'
-import Header from './../../component/Header'
+import Header from './../../component/HeaderAdmin'
 import { API_URL_SQL } from '../../helpers/apiurl';
 import AdminBranch from './branch_admin'
 import InventoryLog from './inventoryLog'
