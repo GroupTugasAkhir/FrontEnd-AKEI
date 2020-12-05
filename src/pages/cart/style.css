@@ -108,7 +108,8 @@
 
 .location-change {
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-around;
     align-items: center;
     background-color: #44A08A;
     border-radius: 10px;
@@ -122,12 +123,20 @@
 
 .input-location {
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-around;
     align-items: center;
     background-color: #e9eff6;
     border-radius: 10px;
     height: 20%;
     cursor: pointer;
+}
+
+.getbutton {
+    width: 50px;
+    background-color: green;
+    border: none;
+    color: white;
 }
 /* right side end */
 
