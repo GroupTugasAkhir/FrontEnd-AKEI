@@ -4,6 +4,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import './style.css'
 import Logo from './../../assets/AkeiLogo.png'
 import {Link} from 'react-router-dom'
+import { connect } from 'react-redux';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 const Header=(props)=>{
 
@@ -50,12 +53,36 @@ const Header=(props)=>{
                     <li className='nav-item'>
                         <Link to='/' className={'nav-link'}>Home</Link>
                     </li>
-                    <li className='nav-item'>
+                    {/* <li className='nav-item'>
                         <a onClick={()=>toSection('product')} className={'nav-link'}>Product</a>
-                    </li>
-                    <li className='nav-item'>
-                        <Link to='/login' className={'nav-link'}>Login</Link>
-                    </li>
+                    </li> */}
+
+                    {
+                        props.Auth.isLogin?
+                            props.Auth.role===1?
+                            <>
+                                <li className='nav-item'>
+                                    <Link to='/cart' className={'nav-link'}>
+                                        <AddShoppingCartIcon/>{props.Auth.username}
+                                    </Link>
+                                </li>
+                                <li className='nav-item'>
+                                    <Link to='/userprofile' className={'nav-link'}>
+                                        <AccountCircleIcon/>
+                                    </Link>
+                                </li>
+                            </>
+                            :
+                            <li className='nav-item'>
+                                <Link to='/userprofile' className={'nav-link'}>
+                                    <AccountCircleIcon/>
+                                </Link>
+                            </li>
+                        :
+                        <li className='nav-item'>
+                            <Link to='/login' className={'nav-link'}>Login</Link>
+                        </li>
+                    }
                 </ul>
             </div>
             <div className='toggle-nav'>
@@ -70,4 +97,9 @@ const Header=(props)=>{
     )
 }
 
-export default Header
+const ReduxProps=(state)=>{
+    return{
+        Auth:state.Auth
+    }
+  }
+export default connect(ReduxProps)(Header)

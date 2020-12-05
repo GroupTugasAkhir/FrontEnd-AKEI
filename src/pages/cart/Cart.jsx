@@ -14,6 +14,8 @@ import {priceFormatter, API_URL_SQL, credit} from './../../helpers'
 import Axios from 'axios'
 import {connect} from 'react-redux'
 import Swal from 'sweetalert2'
+import {findNearest} from 'geolib'
+
 
 //testing
 import testImg from './../../assets/mainregimg.jpg'
@@ -40,9 +42,13 @@ const Cart = (props) => {
     const [choiceMethod, setchoiceMethod] = useState(0)
     const ccPay = useRef()
     const [invoicePhoto, setinvoicePhoto] = useState(null)
+
+    const [dataLocation, setdataLocation] = useState([])
+    const [matchLoc, setmatchLoc] = useState({})
     const [longlat, setlonglat] = useState('')
     const [curloc, setcurloc] = useState(false)
     const [inputloc, setinputloc] = useState(false)
+    const addressUser = useRef()
 
     useEffect(()=> {
         getCartData()
@@ -52,6 +58,20 @@ const Cart = (props) => {
         }
     },[])
 
+    const getCartData = async () => {
+        try {
+            const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
+            if(!isCancelled.current) {
+                setdataCart(data.cartData)
+                setdataLocation(data.locationData)
+                console.log(data.locationData);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    //show current location start
     const geoLocation = () => {
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition)
@@ -59,24 +79,22 @@ const Cart = (props) => {
             alert('Geolocation is not supported by this browser.')
         }
     }
-
+    
     const showPosition = (position) => {
         let latitude = position.coords.latitude
         let longitude = position.coords.longitude
-        console.log(`${latitude}` + `,${longitude}`);
         setlonglat(`${latitude}` + `,${longitude}`)
-    }
 
-    const getCartData = async () => {
-        try {
-            const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
-            if(!isCancelled.current) {
-                setdataCart(data)
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        const nearDist = findNearest({ latitude: latitude, longitude: longitude }, dataLocation);
+        setmatchLoc(nearDist)
+        console.log(nearDist);
     }
+    //show current location end
+
+    //address from user input start
+    
+
+    //address from user input end
 
     const plusBtn = (ind) => {
         const plusVar = [...dataCart]
@@ -161,31 +179,32 @@ const Cart = (props) => {
     }
 
     const onPaywithCreditCard = () => {
-        console.log('onPaywithCreditCard');
-        // const newIdTrans = [...dataCart]
-        // const insertIdTrans = newIdTrans[0].idtrans
-
         console.log(dataCart[0].idtrans);
         console.log(ccPay.current.value);
+        console.log(longlat);
+        console.log(matchLoc);
 
-        // Axios.post(`${API_URL_SQL}/transaction/onpaycc`,{
-        //     idtrans: insertIdTrans,
-        //     ccNumber: ccPay.current.value
-        // }).then((res)=> {
-        //     if(res.data === 'berhasil') {
-        //         Swal.fire({
-        //             position: 'top-center',
-        //             icon: 'success',
-        //             title: 'Thank you for buying with AKEI!',
-        //             showConfirmButton: false,
-        //             timer: 1500
-        //           })
-        //         setpayModal(false)
-        //     }
-        // }).catch((err)=> {
-        //     console.log(err);
-        //     alert(err)
-        // })
+        Axios.post(`${API_URL_SQL}/transaction/onpaycc`,{
+            user_id: props.Auth.user_id,
+            idtrans: dataCart[0].idtrans,
+            payment_proof: ccPay.current.value,
+            notes: longlat,
+            matchLoc: matchLoc
+        }).then((res)=> {
+            if(res.data === 'berhasil') {
+                setdataCart([])
+                Swal.fire({
+                    position: 'center-start',
+                    icon: 'success',
+                    title: 'Thank you for buying with AKEI!',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
+                setpayModal(false)
+            }
+        }).catch((err)=> {
+            console.log(err.response.data.message);
+        })
     }
 
     const renderCart = () => {
@@ -321,12 +340,22 @@ const Cart = (props) => {
                                     <button onClick={()=> setpayModal(true)} className='checkout-button'>Checkout</button>
                                 </div>
                             </div>
-                            <div onClick={curlocationChange} className={curloc?'location-change':'current-location'}>
-                                Using current location
-                            </div>
-                            <div className={inputloc?'location-change':'input-location'}>
-                                <input onClick={inputlocationChange} type="text" placeholder='input your address'/>
-                            </div>
+                            {
+                                dataCart.length?
+                                <>
+                                    <div className='d-flex justify-content-center align-items-center'>
+                                        <h5 className='mb-2 mt-5'>Choose Payment Address</h5>
+                                    </div>
+                                    <div onClick={curlocationChange} className={curloc?'location-change':'current-location'}>
+                                        Using current location
+                                    </div>
+                                    <div className={inputloc?'location-change':'input-location'}>
+                                        <input onClick={inputlocationChange} ref={addressUser} type="text" placeholder='input your address'/>
+                                    </div>
+                                </>
+                                :
+                                null
+                            }
                         </div>
                     </div>
                 </div>

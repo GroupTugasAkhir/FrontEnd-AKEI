@@ -1,0 +1,148 @@
+.outest-div {
+    padding: 1% 3%;
+}
+
+.title {
+    font-weight: 500;
+    font-size: x-large;
+    color:#0a043c;
+}
+
+/* .tabs {
+    display: flex;
+    flex-direction: row;
+    padding-top: 20px;
+    align-items: center;
+}
+
+.tab {
+    padding-right: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab:hover{
+    background-color: #b4d8ff34;
+    cursor: pointer;
+    font-weight: 500;
+} */
+
+.menu-tabs{
+    margin-left: -11px;
+}
+
+.table_footer{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+}
+
+.modal_stock{
+    cursor: pointer;
+}
+
+.modal_stock:hover{
+    font-weight: 500;
+}
+
+.to-hover{
+    cursor: pointer;
+}
+
+.main_prod_action_down_div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main_prod_div_button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.rata-tengah{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.modal_body_cat_div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+}
+
+/* Transaction Log Start */
+
+.box-confirm-modal{
+    width: 200px;
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal_payment_div{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal_payment_title{
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-bottom: 10px;
+}
+
+.modal_footer_tracking{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Transaction Log End */
+
+/* User Management Start */
+.user_management_table{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.prof-pict{
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.create_admin_button{
+    border: 2px solid black;
+    background-color: #16b895;
+    width: fit-content;
+    border-radius: 5%;
+    padding: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+/* .create_admin_button:hover{
+    border: 2px solid black;
+    background-color: #16b895;
+    width: fit-content;
+    border-radius: 5%;
+    padding: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+} */
+/* User Management End */

@@ -7,6 +7,7 @@ const INITIAL_STATE = {
     isLoading: false,
     error: '',
     cart: [],
+    role: 0
 }
 
 export default (state = INITIAL_STATE, action)=> {
@@ -21,6 +22,8 @@ export default (state = INITIAL_STATE, action)=> {
             return {...state, isLoading: true}
         case 'ERROR':
             return {...state, error: action.payload, isLoading: false}
+        case 'ADMIN':
+            return {...state, superadmin: action.payload}
         default:
             return state
     }
