@@ -48,6 +48,7 @@ const Cart = (props) => {
     const [longlat, setlonglat] = useState('')
     const [curloc, setcurloc] = useState(false)
     const [inputloc, setinputloc] = useState(false)
+    const addressUser = useRef()
 
     useEffect(()=> {
         getCartData()
@@ -70,6 +71,7 @@ const Cart = (props) => {
         }
     }
     
+    //show current location start
     const geoLocation = () => {
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition)
@@ -87,6 +89,12 @@ const Cart = (props) => {
         setmatchLoc(nearDist)
         console.log(nearDist);
     }
+    //show current location end
+
+    //address from user input start
+    
+
+    //address from user input end
 
     const plusBtn = (ind) => {
         const plusVar = [...dataCart]
@@ -342,7 +350,7 @@ const Cart = (props) => {
                                         Using current location
                                     </div>
                                     <div className={inputloc?'location-change':'input-location'}>
-                                        <input onClick={inputlocationChange} type="text" placeholder='input your address'/>
+                                        <input onClick={inputlocationChange} ref={addressUser} type="text" placeholder='input your address'/>
                                     </div>
                                 </>
                                 :

@@ -162,7 +162,7 @@ const Admin = (props) => {
         console.log(res.data)
         setAllProduct(res.data.dataproduct)
         setAllCategory(res.data.datacategory)
-        setAllRefProdCat(res.data.)
+        // setAllRefProdCat(res.data.)
         console.log(allProduct)
         console.log(allCategory)
       }).catch((err)=>{
