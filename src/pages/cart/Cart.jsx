@@ -49,6 +49,7 @@ const Cart = (props) => {
     const [curloc, setcurloc] = useState(false)
     const [inputloc, setinputloc] = useState(false)
     const addressUser = useRef()
+    const [getinputuser, setgetinputuser] = useState(false)
 
     useEffect(()=> {
         getCartData()
@@ -92,7 +93,25 @@ const Cart = (props) => {
     //show current location end
 
     //address from user input start
-    
+
+    const getUserAddress = () => {
+        const userAddress = addressUser.current.value
+        Axios.get(`https://api.opencagedata.com/geocode/v1/json?`,{
+            params:{
+                key: 'cdeab36e4fec4073b0de60ff6b595c70',
+                q: userAddress
+            }
+        }).then((res)=> {
+            console.log(res.data.results[0]);
+            setlonglat(`${res.data.results[0].geometry.lat}` + `,${res.data.results[0].geometry.lng}`)
+            const nearDist = findNearest({ latitude: res.data.results[0].geometry.lat, longitude: res.data.results[0].geometry.lng }, dataLocation);
+            setmatchLoc(nearDist)
+            console.log(nearDist);
+            setgetinputuser(true)
+        }).catch(err=> {
+            console.log(err);
+        })
+    }
 
     //address from user input end
 
@@ -337,7 +356,13 @@ const Cart = (props) => {
                                         <div style={{color: 'gray'}}>Total Price</div>
                                         <div>{priceFormatter(renderTotalPrice())}</div>
                                     </div>
-                                    <button onClick={()=> setpayModal(true)} className='checkout-button'>Checkout</button>
+                                    {
+                                        curloc || getinputuser ?
+
+                                        <button onClick={()=> setpayModal(true)} className='checkout-button'>Checkout</button>
+                                        :
+                                        null
+                                    }
                                 </div>
                             </div>
                             {
@@ -351,6 +376,7 @@ const Cart = (props) => {
                                     </div>
                                     <div className={inputloc?'location-change':'input-location'}>
                                         <input onClick={inputlocationChange} ref={addressUser} type="text" placeholder='input your address'/>
+                                        <button className='getbutton' onClick={getUserAddress}>Get</button>
                                     </div>
                                 </>
                                 :
