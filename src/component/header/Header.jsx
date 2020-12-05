@@ -63,19 +63,19 @@ const Header=(props)=>{
                             <>
                                 <li className='nav-item'>
                                     <Link to='/cart' className={'nav-link'}>
-                                        <AddShoppingCartIcon/>{props.Auth.username}
+                                        <AddShoppingCartIcon/>
                                     </Link>
                                 </li>
                                 <li className='nav-item'>
                                     <Link to='/userprofile' className={'nav-link'}>
-                                        <AccountCircleIcon/>
+                                        <AccountCircleIcon/>{props.Auth.username}
                                     </Link>
                                 </li>
                             </>
                             :
                             <li className='nav-item'>
                                 <Link to='/userprofile' className={'nav-link'}>
-                                    <AccountCircleIcon/>
+                                    <AccountCircleIcon/>{props.Auth.username}
                                 </Link>
                             </li>
                         :
