@@ -69,3 +69,10 @@ export const FirebaseAuth = (dataUserFirebase) => {
         })
     }
 }
+
+export const changeAdmin = (bool) => {
+    return {
+        type: 'ADMIN',
+        payload: bool
+    }
+}
