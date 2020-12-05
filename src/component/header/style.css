@@ -38,6 +38,7 @@ li {
     cursor: pointer;
     border-bottom: 1px solid transparent;
     margin: 10px;
+    text-transform: capitalize;
 }
 
 .header-logo {
