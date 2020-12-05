@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CardCustom from '../../component/card/CardCustom';
 import './style.css'
 import Axios from 'axios'
 import {API_URL_SQL} from './../../helpers/apiurl'
+import debounce from 'lodash.debounce'
 const Product=()=> {
 
     const [categories,setCategories]=useState(null)
     const [catalog,setCatalog]=useState(null)
+    const [searchKey,setSearchKey]=useState(null)
 
     useEffect(()=>{
         Axios.get(`${API_URL_SQL}/admin/category`)
@@ -42,6 +44,20 @@ const Product=()=> {
             )
         })
     }
+    
+    const debouncedSave = useRef(
+        debounce((nextValue)=>setSearchKey(nextValue),1000)
+    ).current 
+    
+    
+    const getItemfromSearch=(event)=>{
+        const {value:nextValue} = event.target
+        debouncedSave(nextValue)
+    }
+
+    useEffect(()=>{
+        console.log(searchKey)
+    })
 
     if(categories===null || catalog===null){
         return (
@@ -57,8 +73,17 @@ const Product=()=> {
             <div className="container">
                 <div className="nav-category">
                     <ul>
-                        <li className='active' onClick={()=>productByCategory(-1)}>All</li>
-                        {renderCategory()}
+                        <div>
+                            <li className='active' onClick={()=>productByCategory(-1)}>All</li>
+                            {renderCategory()}
+                        </div>
+                        <div>
+                            <li>
+                                <div className="search-bar">
+                                    <input type="text" value={searchKey} onChange={getItemfromSearch} name="search" autoComplete="off" placeholder="Search.."/>
+                                </div>
+                            </li>
+                        </div>
                     </ul>
                 </div>
             </div>

@@ -31,6 +31,10 @@
     transition: .3s;
 }
 
+.cart-icon a {
+    color: white !important;
+}
+
 .cart-icon:hover {
     box-shadow: 1px 1px 8px gray;
 }
