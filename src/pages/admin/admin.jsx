@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import './admin.css'
-import Header from './../../component/HeaderAdmin'
+// import Header from './../../component/HeaderAdmin'
+import Header from './../../component/Header'
 import { API_URL_SQL } from '../../helpers/apiurl';
 import AdminBranch from './branch_admin'
 import InventoryLog from './inventoryLog'
@@ -162,7 +163,7 @@ const Admin = (props) => {
         console.log(res.data)
         setAllProduct(res.data.dataproduct)
         setAllCategory(res.data.datacategory)
-        setAllRefProdCat(res.data.)
+        setAllRefProdCat(res.data.datarefcategory)
         console.log(allProduct)
         console.log(allCategory)
       }).catch((err)=>{
@@ -202,9 +203,9 @@ const Admin = (props) => {
     })
 
     const renderMainProdCat=(id)=>{
-      return allRefProdCat.map((val, index)=>{
-
-      })
+      return allRefProdCat.map((val, index)=>(
+        val.product_id == id ? val.category_name : null
+      ))
     }
 
     const onInputFileChange=(e)=>{
