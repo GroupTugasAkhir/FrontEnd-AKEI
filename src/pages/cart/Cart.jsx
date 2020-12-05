@@ -194,7 +194,41 @@ const Cart = (props) => {
     }
 
     const onPaywithInvoicePhoto = () => {
-        console.log('onPaywithInvoicePhoto');
+        console.log(dataCart[0].idtrans);
+        console.log(invoicePhoto);
+        console.log(longlat);
+        console.log(matchLoc);
+
+        var formData = new FormData()
+        var options = {
+            headers: {
+                'Content-type':'multipart/form-data',
+            },
+        }
+
+        formData.append('invoice', invoicePhoto)
+        formData.append('datainvoice', JSON.stringify({
+            user_id: props.Auth.user_id,
+            idtrans: dataCart[0].idtrans,
+            notes: longlat,
+            matchLoc: matchLoc
+        }))
+        Axios.post(`${API_URL_SQL}/transaction/onpayinvoice`,formData,options)
+        .then((res)=> {
+            if(res.data === 'succeed') {
+                setdataCart([])
+                Swal.fire({
+                    position: 'top',
+                    icon: 'success',
+                    title: 'Thank you for buying with AKEI!',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
+                setpayModal(false)
+            }
+        }).catch(err=> {
+            console.log(err.response.data.message);
+        })
     }
 
     const onPaywithCreditCard = () => {
@@ -210,10 +244,10 @@ const Cart = (props) => {
             notes: longlat,
             matchLoc: matchLoc
         }).then((res)=> {
-            if(res.data === 'berhasil') {
+            if(res.data === 'succeed') {
                 setdataCart([])
                 Swal.fire({
-                    position: 'center-start',
+                    position: 'top',
                     icon: 'success',
                     title: 'Thank you for buying with AKEI!',
                     showConfirmButton: false,
