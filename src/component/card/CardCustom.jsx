@@ -1,29 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './style.css'
-import Prod1 from './../../assets/prod1.png'
-import Prod2 from './../../assets/prod2.png'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import { priceFormatter } from '../../helpers/priceFormatter';
+import { API_URL_SQL } from '../../helpers/apiurl';
+import { Link } from 'react-router-dom';
 
-const CardCustom=()=>{
-    return (
-        <div className="card-box">
-            <div className="cart-icon">
-                <AddShoppingCartIcon fontSize="small"/>
-            </div>
-            <div className="card-text">
-                <div className="card-title">
-                    <h6>Lorem, ipsum dolor.</h6>
-                </div>
-                <div className="card-price">
-                    Rp 2.300.000
-                </div>
-            </div>
-            <div className="card-img">
-                <img src={Prod2} alt=""/>
-            </div>
-        </div>
+const CardCustom=(props)=>{
 
-    )
+    const [dataCatalog,setDataCatalog] = useState(props.catalog)
+
+    const renderCatalog=()=>{
+        return dataCatalog.map((val,index)=>{
+            return (
+                <div className="card-box">
+                    <div className="cart-icon">
+                        <Link to={"/detailproduct/"+val.product_id}>
+                            <AddShoppingCartIcon fontSize="small"/>
+                        </Link>
+                    </div>
+                    <div className="card-text">
+                        <div className="card-title">
+                            <h6>{val.product_name}</h6>
+                        </div>
+                        <div className="card-price">
+                            {priceFormatter(val.price)}
+                        </div>
+                    </div>
+                    <div className="card-img">
+                        <img src={API_URL_SQL+val.image} alt=""/>
+                    </div>
+                </div>
+            )
+        })
+    }
+
+    if(dataCatalog===null){
+        return (
+            <div>Loading</div>
+        )
+    }
+
+    return renderCatalog()
 }
 
 export default CardCustom

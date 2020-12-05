@@ -3,6 +3,7 @@
     margin-left: 12vw;
     margin-right: 12vw;
     padding-top: 36px;
+    padding-bottom: 36px;
 }
 
 .form-edit {
@@ -69,6 +70,8 @@
     }
 
     .form-right {
+        display: flex;
+        flex-direction: column;
         width: 100%;
         padding: 2px;
     }

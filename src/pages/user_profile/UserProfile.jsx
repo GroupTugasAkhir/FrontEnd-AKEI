@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from '../../component/Header';
+import Header from '../../component/header/Header';
 import './style.css'
 import { Breadcrumb,
     BreadcrumbItem,
@@ -54,7 +54,7 @@ const UserProfile=(props)=>{
                                 <Label for="exampleEmail">Confirm New Password</Label>
                                 <input style={{width:'70%'}} type="password"/>
                             </FormGroup>
-                            <Button>Submit</Button>
+                            <Button className='float-right'>Submit</Button>
                         </div>
                     </Form>
                 </div>

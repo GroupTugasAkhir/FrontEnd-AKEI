@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../component/Header';
+import Header from '../component/header/Header';
 import './style.css'
 import Intro from './../assets/intro.png'
 import NewArrival from './new_arrival/NewArrival'

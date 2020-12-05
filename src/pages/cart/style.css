@@ -93,6 +93,42 @@
     background-color: #44A08A;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
 }
+
+.current-location {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e9eff6;
+    border-radius: 10px;
+    height: 20%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.location-change {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #44A08A;
+    border-radius: 10px;
+    height: 20%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.6);
+}
+
+.input-location {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e9eff6;
+    border-radius: 10px;
+    height: 20%;
+    cursor: pointer;
+}
 /* right side end */
 
 @media screen and (max-width: 768px) {
