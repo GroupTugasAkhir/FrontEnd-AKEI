@@ -9,7 +9,7 @@ export const RegisThunk = (regisData) => {
             localStorage.setItem('user', JSON.stringify(res.data))
             dispatch({type: 'REGISTER', payload: res.data})
         }).catch((err)=> {
-            dispatch({type: 'ERROR', payload: err.response.data.message})
+            dispatch({type: 'ERROR'})
         })
     }
 }
@@ -49,8 +49,8 @@ export const KeepLogin = () => {
                 localStorage.setItem('user', JSON.stringify(res.data.dataLogin))
                 dispatch({type: 'LOGIN', payload: res.data.dataLogin, cart: res.data.dataCart})
             }).catch((err)=> {
-                dispatch({type: 'ERROR', payload: err.response.data.message})
-                console.log(err.response.data.message);
+                dispatch({type: 'ERROR'})
+                console.log(err);
             })
         }
     }
