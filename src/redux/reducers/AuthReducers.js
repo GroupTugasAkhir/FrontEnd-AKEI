@@ -7,7 +7,7 @@ const INITIAL_STATE = {
     isLoading: false,
     error: '',
     cart: [],
-    superadmin: true
+    role:0
 }
 
 export default (state = INITIAL_STATE, action)=> {
