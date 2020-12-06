@@ -73,6 +73,7 @@ const BranchInventory = (props) => {
         .then((res)=>{
             alert('sukses add prod')
             setCurrentWHprod(res.data)
+            toggle()
         }).catch((err)=>{
             console.log(err)
         })
@@ -101,12 +102,28 @@ const BranchInventory = (props) => {
     }
 
     const renderOnPackaging=(id)=>{
+        var num = 1
+        var counter = 0
+        var arr = []
+        var hasil = 0
         return productSold.map((val, index)=>{
+            if(counter == 0){
+                
+            }
             if(val.product_id == id){
-                return parseInt(val.real_quantity)*(-1) + ' pcs'
+                counter++
+                // return parseInt(val.real_quantity)*(-1) + ' pcs'
+                hasil = parseInt(val.real_quantity)*(-1)
+            }
+            if(val.product_id != id){
+                counter++
+                hasil = 0
+                // return '0 pcs'
             }
 
-            return '0 pcs'
+            if(counter > num){
+                return null
+            }
         })
     }
 
