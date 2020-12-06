@@ -15,6 +15,8 @@ import Axios from 'axios'
 import {connect} from 'react-redux'
 import Swal from 'sweetalert2'
 import {findNearest} from 'geolib'
+import Empty from './../../assets/empty.png'
+import {ClearFunc} from './../../redux/actions'
 
 
 //testing
@@ -49,6 +51,7 @@ const Cart = (props) => {
     const [curloc, setcurloc] = useState(false)
     const [inputloc, setinputloc] = useState(false)
     const addressUser = useRef()
+    const [getinputuser, setgetinputuser] = useState(false)
 
     useEffect(()=> {
         getCartData()
@@ -58,11 +61,17 @@ const Cart = (props) => {
         }
     },[])
 
+    // useEffect(()=>{
+    //     console.log(dataCart)
+    // })
+
     const getCartData = async () => {
         try {
+            // const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
             const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
             if(!isCancelled.current) {
                 setdataCart(data.cartData)
+                console.log(data.cartData);
                 setdataLocation(data.locationData)
                 console.log(data.locationData);
             }
@@ -92,7 +101,25 @@ const Cart = (props) => {
     //show current location end
 
     //address from user input start
-    
+
+    const getUserAddress = () => {
+        const userAddress = addressUser.current.value
+        Axios.get(`https://api.opencagedata.com/geocode/v1/json?`,{
+            params:{
+                key: 'cdeab36e4fec4073b0de60ff6b595c70',
+                q: userAddress
+            }
+        }).then((res)=> {
+            console.log(res.data.results[0]);
+            setlonglat(`${res.data.results[0].geometry.lat}` + `,${res.data.results[0].geometry.lng}`)
+            const nearDist = findNearest({ latitude: res.data.results[0].geometry.lat, longitude: res.data.results[0].geometry.lng }, dataLocation);
+            setmatchLoc(nearDist)
+            console.log(nearDist);
+            setgetinputuser(true)
+        }).catch(err=> {
+            console.log(err);
+        })
+    }
 
     //address from user input end
 
@@ -175,7 +202,42 @@ const Cart = (props) => {
     }
 
     const onPaywithInvoicePhoto = () => {
-        console.log('onPaywithInvoicePhoto');
+        console.log(dataCart[0].idtrans);
+        console.log(invoicePhoto);
+        console.log(longlat);
+        console.log(matchLoc);
+
+        var formData = new FormData()
+        var options = {
+            headers: {
+                'Content-type':'multipart/form-data',
+            },
+        }
+
+        formData.append('invoice', invoicePhoto)
+        formData.append('datainvoice', JSON.stringify({
+            user_id: props.Auth.user_id,
+            idtrans: dataCart[0].idtrans,
+            notes: longlat,
+            matchLoc: matchLoc
+        }))
+        Axios.post(`${API_URL_SQL}/transaction/onpayinvoice`,formData,options)
+        .then((res)=> {
+            if(res.data === 'succeed') {
+                setdataCart([])
+                Swal.fire({
+                    position: 'top',
+                    icon: 'success',
+                    title: 'Thank you for buying with AKEI!',
+                    showConfirmButton: false,
+                    timer: 1500
+                  })
+                props.ClearFunc()
+                setpayModal(false)
+            }
+        }).catch(err=> {
+            console.log(err.response.data.message);
+        })
     }
 
     const onPaywithCreditCard = () => {
@@ -191,15 +253,16 @@ const Cart = (props) => {
             notes: longlat,
             matchLoc: matchLoc
         }).then((res)=> {
-            if(res.data === 'berhasil') {
+            if(res.data === 'succeed') {
                 setdataCart([])
                 Swal.fire({
-                    position: 'center-start',
+                    position: 'top',
                     icon: 'success',
                     title: 'Thank you for buying with AKEI!',
                     showConfirmButton: false,
                     timer: 1500
                   })
+                props.ClearFunc()
                 setpayModal(false)
             }
         }).catch((err)=> {
@@ -261,6 +324,12 @@ const Cart = (props) => {
         setinvoicePhoto(null)
     }
 
+    if(dataCart===null){
+        return (
+            <div>Loading</div>
+        )
+    }
+
     return (
         <>
             <Modal style={{marginTop:80}} isOpen={payModal} toggle={toggle}>
@@ -302,24 +371,34 @@ const Cart = (props) => {
             </Modal>
 
             <Header style={{backgroundColor: '#72ceb8'}}/>
-            <div style={{marginTop: '80px', marginInline: '50px'}} >
+            <div style={{marginTop: '80px', marginInline: '50px',marginLeft:'12vw',marginRight:'12vw'}} >
                 <div className='cartsection'>
                     <div className='cart-left-side'>
                         <Paper elevation={0}>
                             <TableContainer>
-                                <Table stickyHeader className={classes.table}>
-                                    <TableHead>
-                                        <TableRow>
-                                            <StyledTableCell colSpan='2'>Product</StyledTableCell>
-                                            <StyledTableCell>Price</StyledTableCell>
-                                            <StyledTableCell>Quantity</StyledTableCell>
-                                            <StyledTableCell>Total</StyledTableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {renderCart()}
-                                    </TableBody>
-                                </Table>
+                                {
+                                    dataCart.length?
+                                    <Table stickyHeader className={classes.table}>
+                                        <TableHead>
+                                            <TableRow>
+                                                <StyledTableCell colSpan='2'>Product</StyledTableCell>
+                                                <StyledTableCell>Price</StyledTableCell>
+                                                <StyledTableCell>Quantity</StyledTableCell>
+                                                <StyledTableCell>Total</StyledTableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {
+                                                renderCart()
+                                            }
+                                        </TableBody>
+                                    </Table>
+                                    :
+                                    <div className="d-flex align-items-center justify-content-center flex-column" style={{overflow:'hidden'}}>
+                                        <img src={Empty} alt="" style={{width:'400px', height:'400px',objectFit:'contain'}}/>
+                                        <h4>Your cart is still empty</h4>
+                                    </div>
+                                }
                             </TableContainer>
                         </Paper>
                     </div>
@@ -337,7 +416,13 @@ const Cart = (props) => {
                                         <div style={{color: 'gray'}}>Total Price</div>
                                         <div>{priceFormatter(renderTotalPrice())}</div>
                                     </div>
-                                    <button onClick={()=> setpayModal(true)} className='checkout-button'>Checkout</button>
+                                    {
+                                        curloc || getinputuser ?
+
+                                        <button onClick={()=> setpayModal(true)} className='checkout-button'>Checkout</button>
+                                        :
+                                        null
+                                    }
                                 </div>
                             </div>
                             {
@@ -351,6 +436,7 @@ const Cart = (props) => {
                                     </div>
                                     <div className={inputloc?'location-change':'input-location'}>
                                         <input onClick={inputlocationChange} ref={addressUser} type="text" placeholder='input your address'/>
+                                        <button className='getbutton' onClick={getUserAddress}>Get</button>
                                     </div>
                                 </>
                                 :
@@ -370,4 +456,4 @@ const Mapstatetoprops = (state) => {
     }
 }
 
-export default connect(Mapstatetoprops)(Cart)
+export default connect(Mapstatetoprops,{ClearFunc})(Cart)

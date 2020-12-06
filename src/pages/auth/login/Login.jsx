@@ -7,7 +7,7 @@ import Bounce from 'react-reveal/Bounce';
 import {LoginThunk, FirebaseAuth} from './../../../redux/actions'
 
 import {connect} from 'react-redux'
-import {Redirect,Link} from 'react-router-dom'
+import {Redirect,Link, useHistory} from 'react-router-dom'
 import firebase from 'firebase'
 // import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
@@ -15,7 +15,10 @@ const config = {
     apiKey: 'AIzaSyAZSk2P-Ir4U_lvshtLuc3vXE3y4Imv-Pw',
     authDomain: 'akei-firebase-auth.firebaseapp.com',
 };
-firebase.initializeApp(config);
+// firebase.initializeApp(config);
+if (!firebase.apps.length) {
+    firebase.initializeApp(config);
+  }
 
 const Login = (props) => {
     const [seePass, setseePass] = useState(false)
@@ -117,16 +120,15 @@ const Login = (props) => {
           });
     }
 
-    const onLogoutGoogle = () => {
-        firebase.auth().signOut().then(function() {
-            // Sign-out successful.
-          }).catch(function(error) {
-            // An error happened.
-          });
-    }
+    //login route
+    let history = useHistory()
 
     if(props.Auth.isLogin) {
-        return <Redirect to='/' />
+        if(props.Auth.role_id === 1) {
+            return <Redirect to='/' />
+        } else {
+            history.push('/admin')
+        }
     }
 
     return (
@@ -201,9 +203,6 @@ const Login = (props) => {
                                 </div>
                                 <div className='authicon ml-3' onClick={onSubmitFacebook} >
                                     <i class="fab fa-facebook" style={{color: 'blue'}} ></i>
-                                </div>
-                                <div onClick={onLogoutGoogle}>
-                                    Logout
                                 </div>
                             </div>
                         </div>
