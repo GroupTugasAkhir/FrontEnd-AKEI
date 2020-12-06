@@ -12,13 +12,14 @@ import UserProfile from './pages/user_profile/UserProfile'
 import 'bootstrap/dist/css/bootstrap.css';
 
 import {connect} from 'react-redux'
-import {KeepLogin} from './redux/actions'
+import {KeepLogin, CartThunk} from './redux/actions'
 
 function App(props) {
   useEffect(()=> {
     let datauser = localStorage.getItem('user')
     if(datauser) {
       props.KeepLogin()
+      props.CartThunk(props.Auth.user_id)
     }
   },[])
 
@@ -49,8 +50,9 @@ function App(props) {
 
 const Mapstatetoprops = (state) => {
   return {
-    Auth: state.Auth
+    Auth: state.Auth,
+    Cart: state.Cart
   }
 }
 
-export default connect(Mapstatetoprops,{KeepLogin}) (App);
+export default connect(Mapstatetoprops,{KeepLogin,CartThunk}) (App);

@@ -1,6 +1,6 @@
 a {
     text-decoration: none !important;
-    color: black !important;
+    /* color: black !important; */
 }
 
 ul {
@@ -49,14 +49,66 @@ li {
 
 .header-logo img {
     width: 100px;
-    height: 300px;
-    object-fit: contain;
+    object-fit: cover;
+}
+
+.header .nav-item a {
+    color: black;
+}
+
+.header.actived .nav-item a {
+    color: white;
+}
+
+.header.actived .nav-item a:hover {
+    color: black;
 }
 
 .nav-item:hover, .toggle-nav:hover {
-    color: white;
+    color: black !important;
     border-bottom: 1px solid #F7F3F2;
     transition: 0.2s;
+}
+
+.drop-down {
+    position: relative;
+    display: inline-block;
+}
+  
+.drop-down-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 101;
+    color: black;
+    cursor: pointer;
+    top: 20px;
+}
+  
+.drop-down:hover .drop-down-content {
+    display: block;
+}
+
+.drop-down-content a {
+    color: black !important;
+}
+
+.badge-custom {
+    position: absolute;
+    top: 24px;
+    margin-left: 15px;
+    background-color: #e74b5a;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
 }
 
 @media screen and (max-width: 767px) {
@@ -120,4 +172,8 @@ li {
     .show {
         right: 0;
     }
+}
+
+div {
+    /* border: 1px black solid; */
 }

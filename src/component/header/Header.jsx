@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import './style.css'
@@ -7,15 +7,28 @@ import {Link} from 'react-router-dom'
 import { connect } from 'react-redux';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Swal from 'sweetalert2'
+import {LogoutFunc} from './../../redux/actions'
+import Axios from 'axios';
+import { API_URL_SQL } from '../../helpers';
 
 const Header=(props)=>{
 
     const [isOpen,setIsOpen]=useState(false)
     const [navbar,setNavbar]=useState(false)
+    const [cartCount,setCartCount]=useState(null)
     
     useEffect(()=>{
-        
+        console.log(props.Auth.user_id)
+        getCartLength()
     },[])
+
+    const getCartLength=()=>{
+        Axios.get(`${API_URL_SQL}/cart/cartLength/${props.Auth.user_id}`)
+        .then((res)=>{
+            setCartCount(res.data[0].cart)
+        }).catch((err)=>console.log(err))
+    }
     
     const changeBackground=()=>{
         if(window.scrollY >= 100){
@@ -41,6 +54,33 @@ const Header=(props)=>{
         setIsOpen(false)
     }
 
+    const logout = () => {
+        Swal.fire({
+          title: 'Are you sure?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Logout!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            localStorage.clear()
+            props.LogoutFunc()
+            Swal.fire(
+              'Goodbye!',
+              'You just logout',
+              'success'
+            )
+          }
+        })
+    }
+
+    if(cartCount===null){
+        return (
+            <div>Loading</div>
+        )
+    }
+
     return(
         <section className={navbar?'header actived':'header'} style={{...props.style}} >
             <div className='header-logo'>
@@ -50,37 +90,65 @@ const Header=(props)=>{
             </div>
             <div className={isOpen?"navigation show":"navigation"}>
                 <ul className='nav-list'>
-                    <li className='nav-item'>
-                        <Link to='/' className={'nav-link'}>Home</Link>
+                    <li className='nav-item drop-down'>
+                        <div>
+                            <Link to='/'>
+                                Home
+                            </Link>
+                        </div>
                     </li>
-                    {/* <li className='nav-item'>
-                        <a onClick={()=>toSection('product')} className={'nav-link'}>Product</a>
-                    </li> */}
-
                     {
                         props.Auth.isLogin?
-                            props.Auth.role===1?
+                            props.Auth.role_id===1?
                             <>
                                 <li className='nav-item'>
-                                    <Link to='/cart' className={'nav-link'}>
-                                        <AddShoppingCartIcon/>
-                                    </Link>
+                                    <div>
+                                        <Link to='/cart'>
+                                            <AddShoppingCartIcon/> 
+                                            {
+                                                cartCount?
+                                                <div className="badge-custom">
+                                                    <span>{props.Cart.cartLength}</span>
+                                                </div>
+                                                :
+                                                null
+                                            }
+                                        </Link>
+                                    </div>
                                 </li>
-                                <li className='nav-item'>
-                                    <Link to='/userprofile' className={'nav-link'}>
-                                        <AccountCircleIcon/>{props.Auth.username}
-                                    </Link>
+                                <li className='nav-item drop-down'>
+                                    <div><AccountCircleIcon/>{props.Auth.username}</div>
+                                    <div className="drop-down-content mt-2">
+                                        <li className="my-1">
+                                            <Link to='/userprofile'>
+                                                Profile
+                                            </Link>
+                                        </li>
+                                        <li className="my-1" onClick={logout}>Logout</li>
+                                    </div>
                                 </li>
                             </>
                             :
-                            <li className='nav-item'>
-                                <Link to='/userprofile' className={'nav-link'}>
-                                    <AccountCircleIcon/>{props.Auth.username}
-                                </Link>
-                            </li>
+                            <>
+                                <li className='nav-item drop-down'>
+                                    <div><AccountCircleIcon/>{props.Auth.username}</div>
+                                    <div className="drop-down-content mt-2">
+                                        <li className="my-1">
+                                            <Link to='/userprofile'>
+                                                Profile
+                                            </Link>
+                                        </li>
+                                        <li className="my-1" onClick={logout}>Logout</li>
+                                    </div>
+                                </li>
+                            </>
                         :
-                        <li className='nav-item'>
-                            <Link to='/login' className={'nav-link'}>Login</Link>
+                        <li className='nav-item drop-down'>
+                            <div>
+                                <Link to='/login'>
+                                    Login
+                                </Link>
+                            </div>
                         </li>
                     }
                 </ul>
@@ -99,7 +167,8 @@ const Header=(props)=>{
 
 const ReduxProps=(state)=>{
     return{
-        Auth:state.Auth
+        Auth:state.Auth,
+        Cart: state.Cart
     }
   }
-export default connect(ReduxProps)(Header)
+export default connect(ReduxProps,{LogoutFunc})(Header)
