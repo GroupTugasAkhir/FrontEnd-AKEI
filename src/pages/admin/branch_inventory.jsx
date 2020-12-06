@@ -39,17 +39,20 @@ const uriPic = {
 const BranchInventory = (props) => {
     const [modal, setModal] = useState(false)
     const [allProduct, setAllProduct] = useState([])
-    const [currentWHprod, setCurrentWHprod] = useState([])
+    const [currentWHprod, setCurrentWHprod] = useState([]) // all product on current WH
+    const [productSold, setProductSold] = useState([]) // all sold product on current WH
     const [addForm, setAddForm] = useState({
         qty: useRef(),
         product_id: useRef()
     })
 
     useEffect(()=>{
-      Axios.get(`${API_URL_SQL}/admin/getProduct`)
+      Axios.get(`${API_URL_SQL}/admin/getCurrentWHProduct/${parseInt(props.notes)}`)
       .then((res)=>{
         // console.log(res.data)
-        setAllProduct(res.data.dataproduct)
+        setAllProduct(res.data.dataMainProd)
+        setCurrentWHprod(res.data.dataCurrentWH)
+        setProductSold(res.data.dataSoldCurrentWH)
         console.log(allProduct)
       }).catch((err)=>{
         console.log(err)
@@ -82,7 +85,7 @@ const BranchInventory = (props) => {
     }
 
     const renderTableInventory=()=>{
-        return data.map((val, index)=>(
+        return currentWHprod.map((val, index)=>(
           <tr key={index}>
             <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
             <td>
@@ -90,10 +93,9 @@ const BranchInventory = (props) => {
                     <img width='100%' height='100%'  src={val.image}/>
                 </div>
             </td>
-            <td>{val.name}</td>
-            <td> {index %2 == 0 ? '10 pcs' : '15 pcs'}</td>
+            <td>{val.product_name}</td>
+            <td> {val.real_quantity}</td>
             <td>{index %2 == 0 ? '0 pcs' : '3 pcs'}</td>
-            <td>{index %2 == 0 ? '10 pcs' : '18 pcs'}</td>
           </tr>
         ))
     }
@@ -133,7 +135,6 @@ const BranchInventory = (props) => {
                         <th>Product</th>
                         <th>Avalaible Stock</th>
                         <th>On Packaging</th>
-                        <th style={{width:300}}>Total</th>
                     </tr>
                 </thead>
                 <tbody>
