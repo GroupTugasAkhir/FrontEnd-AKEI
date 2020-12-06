@@ -15,6 +15,8 @@ import Axios from 'axios'
 import {connect} from 'react-redux'
 import Swal from 'sweetalert2'
 import {findNearest} from 'geolib'
+import Empty from './../../assets/empty.png'
+import {ClearFunc} from './../../redux/actions'
 
 
 //testing
@@ -59,11 +61,17 @@ const Cart = (props) => {
         }
     },[])
 
+    // useEffect(()=>{
+    //     console.log(dataCart)
+    // })
+
     const getCartData = async () => {
         try {
+            // const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
             const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
             if(!isCancelled.current) {
                 setdataCart(data.cartData)
+                console.log(data.cartData);
                 setdataLocation(data.locationData)
                 console.log(data.locationData);
             }
@@ -224,6 +232,7 @@ const Cart = (props) => {
                     showConfirmButton: false,
                     timer: 1500
                   })
+                props.ClearFunc()
                 setpayModal(false)
             }
         }).catch(err=> {
@@ -253,6 +262,7 @@ const Cart = (props) => {
                     showConfirmButton: false,
                     timer: 1500
                   })
+                props.ClearFunc()
                 setpayModal(false)
             }
         }).catch((err)=> {
@@ -314,6 +324,12 @@ const Cart = (props) => {
         setinvoicePhoto(null)
     }
 
+    if(dataCart===null){
+        return (
+            <div>Loading</div>
+        )
+    }
+
     return (
         <>
             <Modal style={{marginTop:80}} isOpen={payModal} toggle={toggle}>
@@ -355,24 +371,34 @@ const Cart = (props) => {
             </Modal>
 
             <Header style={{backgroundColor: '#72ceb8'}}/>
-            <div style={{marginTop: '80px', marginInline: '50px'}} >
+            <div style={{marginTop: '80px', marginInline: '50px',marginLeft:'12vw',marginRight:'12vw'}} >
                 <div className='cartsection'>
                     <div className='cart-left-side'>
                         <Paper elevation={0}>
                             <TableContainer>
-                                <Table stickyHeader className={classes.table}>
-                                    <TableHead>
-                                        <TableRow>
-                                            <StyledTableCell colSpan='2'>Product</StyledTableCell>
-                                            <StyledTableCell>Price</StyledTableCell>
-                                            <StyledTableCell>Quantity</StyledTableCell>
-                                            <StyledTableCell>Total</StyledTableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {renderCart()}
-                                    </TableBody>
-                                </Table>
+                                {
+                                    dataCart.length?
+                                    <Table stickyHeader className={classes.table}>
+                                        <TableHead>
+                                            <TableRow>
+                                                <StyledTableCell colSpan='2'>Product</StyledTableCell>
+                                                <StyledTableCell>Price</StyledTableCell>
+                                                <StyledTableCell>Quantity</StyledTableCell>
+                                                <StyledTableCell>Total</StyledTableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {
+                                                renderCart()
+                                            }
+                                        </TableBody>
+                                    </Table>
+                                    :
+                                    <div className="d-flex align-items-center justify-content-center flex-column" style={{overflow:'hidden'}}>
+                                        <img src={Empty} alt="" style={{width:'400px', height:'400px',objectFit:'contain'}}/>
+                                        <h4>Your cart is still empty</h4>
+                                    </div>
+                                }
                             </TableContainer>
                         </Paper>
                     </div>
@@ -430,4 +456,4 @@ const Mapstatetoprops = (state) => {
     }
 }
 
-export default connect(Mapstatetoprops)(Cart)
+export default connect(Mapstatetoprops,{ClearFunc})(Cart)

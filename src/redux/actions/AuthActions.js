@@ -45,9 +45,21 @@ export const KeepLogin = () => {
             datauser = JSON.parse(datauser)
             Axios.get(`${API_URL_SQL}/auth/keepLogin/${datauser.user_id}`)
             .then((res)=> {
-                console.log(res.data.dataCart);
-                localStorage.setItem('user', JSON.stringify(res.data.dataLogin))
-                dispatch({type: 'LOGIN', payload: res.data.dataLogin, cart: res.data.dataCart})
+                // console.log(res.data.dataCart);
+
+                Axios.get(`${API_URL_SQL}/cart/cartLength/${datauser.user_id}`)
+                .then((res2)=>{
+                    let obj = {
+                        user_id: datauser.user_id,
+                        cartLength: res2.data[0].cart
+                    }
+                    localStorage.setItem("cart_length",res2.data[0].cart)
+                    dispatch({type: 'GET',payload: obj})
+
+                    localStorage.setItem('user', JSON.stringify(res.data.dataLogin))
+                    dispatch({type: 'LOGIN', payload: res.data.dataLogin, cart: res.data.dataCart})
+                }).catch((err)=> dispatch({type: 'ERROR'}))
+
             }).catch((err)=> {
                 dispatch({type: 'ERROR'})
                 console.log(err);
@@ -74,5 +86,12 @@ export const changeAdmin = (bool) => {
     return {
         type: 'ADMIN',
         payload: bool
+    }
+}
+
+export const LogoutFunc=(obj)=>{
+    return{
+        type:'LOGOUT',
+        payload:obj
     }
 }
