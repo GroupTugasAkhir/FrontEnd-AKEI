@@ -20,11 +20,15 @@ const Header=(props)=>{
     
     useEffect(()=>{
         console.log(props.Auth.user_id)
+        getCartLength()
+    },[])
+
+    const getCartLength=()=>{
         Axios.get(`${API_URL_SQL}/cart/cartLength/${props.Auth.user_id}`)
         .then((res)=>{
             setCartCount(res.data[0].cart)
         }).catch((err)=>console.log(err))
-    },[])
+    }
     
     const changeBackground=()=>{
         if(window.scrollY >= 100){
@@ -104,7 +108,7 @@ const Header=(props)=>{
                                             {
                                                 cartCount?
                                                 <div className="badge-custom">
-                                                    <span>{cartCount}</span>
+                                                    <span>{props.Cart.cartLength}</span>
                                                 </div>
                                                 :
                                                 null
@@ -163,7 +167,8 @@ const Header=(props)=>{
 
 const ReduxProps=(state)=>{
     return{
-        Auth:state.Auth
+        Auth:state.Auth,
+        Cart: state.Cart
     }
   }
 export default connect(ReduxProps,{LogoutFunc})(Header)

@@ -5,6 +5,7 @@ import { priceFormatter } from '../../helpers/priceFormatter';
 import { API_URL_SQL } from '../../helpers/apiurl';
 import Axios from 'axios'
 import {connect} from 'react-redux'
+import {CartThunk} from './../../redux/actions/CartAction'
 
 const DetailProduct = (props) => {
     const {match} = props
@@ -40,8 +41,7 @@ const DetailProduct = (props) => {
             }
             Axios.post(`${API_URL_SQL}/cart/getTrx`,obj)
             .then(()=>{
-                console.log('success')
-
+                props.CartThunk(props.Auth.user_id)
             }).catch((err)=>console.log(err))
         }
     }
@@ -111,8 +111,9 @@ const DetailProduct = (props) => {
 
 const ReduxProps=(state)=>{
     return{
-        Auth:state.Auth
+        Auth:state.Auth,
+        Cart:state.Cart
     }
 }
 
-export default connect(ReduxProps)(DetailProduct)
+export default connect(ReduxProps,{CartThunk})(DetailProduct)
