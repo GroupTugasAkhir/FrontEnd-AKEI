@@ -53,7 +53,7 @@ const BranchInventory = (props) => {
         setAllProduct(res.data.dataMainProd)
         setCurrentWHprod(res.data.dataCurrentWH)
         setProductSold(res.data.dataSoldCurrentWH)
-        console.log(allProduct)
+        // console.log(allProduct)
       }).catch((err)=>{
         console.log(err)
       })
@@ -90,17 +90,28 @@ const BranchInventory = (props) => {
             <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
             <td>
                 <div style={{maxWidth:'100px'}}>
-                    <img width='100%' height='100%'  src={val.image}/>
+                    <img width='100%' height='100%'  src={API_URL_SQL + val.image}/>
                 </div>
             </td>
             <td>{val.product_name}</td>
-            <td> {val.real_quantity}</td>
-            <td>{index %2 == 0 ? '0 pcs' : '3 pcs'}</td>
+            <td>{val.real_quantity} pcs</td>
+            <td>{renderOnPackaging(val.product_id)}</td>
           </tr>
         ))
     }
 
+    const renderOnPackaging=(id)=>{
+        return productSold.map((val, index)=>{
+            if(val.product_id == id){
+                return parseInt(val.real_quantity)*(-1) + ' pcs'
+            }
 
+            return '0 pcs'
+        })
+    }
+
+    console.log(currentWHprod)
+    console.log(productSold)
     return ( 
         <div style={{paddingTop:10}}>
             <Modal isOpen={modal} toggle={toggle} >

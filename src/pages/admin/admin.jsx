@@ -33,6 +33,7 @@ import {GiConfirmed, GiCancel} from 'react-icons/gi'
 import Axios from 'axios'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import Select from 'react-select'
 
 
 const uriPic = {
@@ -132,6 +133,7 @@ const Admin = (props) => {
     const [modalAdd, setModalAdd] = useState(false)
     const [modalCat, setModalCat] = useState(false)
     const [banner, setBanner] = useState(null)
+    const [valueCategory, setValueCategory] = useState(null)
     // const [editCatState, setEditCatState] = useState(false)
     const [editId, setEditId] = useState(0)
 
@@ -141,6 +143,7 @@ const Admin = (props) => {
       price: useRef(),
       image: useRef(),
       description: useRef(),
+      ref_category: useRef(),
 
       // for add category data
       category_name: useRef()
@@ -229,10 +232,12 @@ const Admin = (props) => {
       var product_name = addForm.product_name.current.value
       var price = addForm.price.current.value
       var description = addForm.description.current.value
-      var data = {product_name, price, description}
+      var ref_category = addForm.ref_category.value
+      var data = {product_name, price, description, ref_category}
       formData.append('image', banner)
       formData.append('data', JSON.stringify(data))
       console.log(data)
+      // toggleAdd()
       // Axios.post(`${API_URL_SQL}/admin/addProduct`, formData, options)
       // .then((res)=>{
       //   console.log(res.data)
@@ -305,6 +310,24 @@ const Admin = (props) => {
         }
       })
       
+    }
+
+    const renderOptionsCategory=()=>{
+      // console.log(allCategory[0].category_id)
+      return allCategory.map((val, index)=>(
+        { value: val.category_id, label: val.category_name }
+      ))
+    }
+
+    const options = [
+      { value: 'chocolate', label: 'Chocolate' },
+      { value: 'strawberry', label: 'Strawberry' },
+      { value: 'vanilla', label: 'Vanilla' }
+    ]
+
+    const onSelectCategoryChange=(e)=>{
+      // setValueCategory(e.target.value)
+      console.log(e)
     }
 
     const renderMainProducts=()=>(
@@ -437,8 +460,6 @@ const Admin = (props) => {
         </tr>
       ))
     }
-    console.log(props.role)
-    console.log(props)
 
     return ( 
         <div>
@@ -463,6 +484,16 @@ const Admin = (props) => {
                   <input type='text' ref={addForm.product_name} placeholder='Product name' className='form-control mb-2'/>
                   <input type='number' ref={addForm.price} placeholder='Price' className='form-control mb-2'/>
                   <input type='file' onChange={onInputFileChange} className='form-control mb-2'/>
+                  <Select
+                    // defaultValue={[colourOptions[2], colourOptions[3]]}
+                    isMulti
+                    name="categories"
+                    options={renderOptionsCategory()}
+                    placeholder='Select category'
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    onChange={onSelectCategoryChange}
+                  />
                   <textarea ref={addForm.description} className='form-control mb-2' cols='30' rows='7' placeholder='Description'></textarea>
                 </ModalBody>
                 <ModalFooter>
