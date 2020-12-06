@@ -437,6 +437,8 @@ const Admin = (props) => {
         </tr>
       ))
     }
+    console.log(props.role)
+    console.log(props)
 
     return ( 
         <div>
@@ -498,9 +500,9 @@ const Admin = (props) => {
             </Modal>
             <div className='outest-div'>
               {
-                props.superadmin ?
+                props.role_id == 2 ?
                 <>
-                  <div className='title'>Hello Super Admin!</div>
+                  <div className='title'>Hello {props.username}!</div>
                   <div className='menu-tabs'>
                       <div className={classes.root} >
                           <div className={classes.demo1}>

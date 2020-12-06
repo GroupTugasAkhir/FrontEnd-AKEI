@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
+import { connect } from 'react-redux';
 import './admin.css'
 import { Table, 
     Pagination, 
@@ -16,6 +17,8 @@ import Typography from '@material-ui/core/Typography';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 import { Add, Settings } from '@material-ui/icons';
+import Axios from 'axios'
+import { API_URL_SQL } from '../../helpers/apiurl';
 
 const uriPic = {
     chair: 'https://images.unsplash.com/photo-1561677978-583a8c7a4b43?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80',
@@ -33,10 +36,50 @@ const uriPic = {
     // {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
   ]
 
-const BranchInventory = () => {
+const BranchInventory = (props) => {
     const [modal, setModal] = useState(false)
+    const [allProduct, setAllProduct] = useState([])
+    const [currentWHprod, setCurrentWHprod] = useState([])
+    const [addForm, setAddForm] = useState({
+        qty: useRef(),
+        product_id: useRef()
+    })
+
+    useEffect(()=>{
+      Axios.get(`${API_URL_SQL}/admin/getProduct`)
+      .then((res)=>{
+        // console.log(res.data)
+        setAllProduct(res.data.dataproduct)
+        console.log(allProduct)
+      }).catch((err)=>{
+        console.log(err)
+      })
+    },[])
+
 
     const toggle = () => setModal(!modal);
+
+    const addQtyProduct=()=>{
+        var quantity = parseInt(addForm.qty.current.value)
+        var product_id = parseInt(addForm.product_id.current.value)
+        var location_id = parseInt(props.notes)
+        var status = 'add_stock'
+        var data = {quantity, product_id, location_id, status}
+        console.log(data)
+        Axios.post(`${API_URL_SQL}/admin/addWHProduct`, data)
+        .then((res)=>{
+            alert('sukses add prod')
+            setCurrentWHprod(res.data)
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
+    const renderOptions=()=>{
+        return allProduct.map((val, index)=>(
+            <option key={index} value={val.product_id}>{val.product_name}</option>
+        ))
+    }
 
     const renderTableInventory=()=>{
         return data.map((val, index)=>(
@@ -65,18 +108,16 @@ const BranchInventory = () => {
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="inputGroupSelect01">Product</label>
                     </div>
-                    <select class="custom-select" id="inputGroupSelect01">
+                    <select class="custom-select" id="inputGroupSelect01" ref={addForm.product_id}>
                         <option selected>Choose...</option>
-                        <option value="1">Chair</option>
-                        <option value="2">Table</option>
-                        <option value="3">Sofa</option>
+                        {renderOptions()}
                     </select>
                 </div>
-                <input type='number' placeholder='Enter product quantity...' className='form-control mb-2'/>
+                <input type='number' placeholder='Enter product quantity...' ref={addForm.qty} className='form-control mb-2'/>
                 </ModalBody>
                 <ModalFooter>
                     <div className='modal_footer_tracking'>
-                        <button className='btn btn-outline-info mr-3'>Add</button>
+                        <button className='btn btn-outline-info mr-3' onClick={addQtyProduct}>Add</button>
                         <button className="btn btn-outline-primary" onClick={toggle}>back</button>
                     </div>
                 </ModalFooter>
@@ -133,5 +174,10 @@ const BranchInventory = () => {
         </div>
     );
 }
- 
-export default BranchInventory;
+const MapstatetoProps=({Auth})=>{
+    return {
+      ...Auth, role: Auth.role
+    }
+  }
+  
+  export default connect(MapstatetoProps, {}) (BranchInventory);

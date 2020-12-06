@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
+import { connect } from 'react-redux';
 import BranchOrder from './branch_order'
 import BranchInventory from './branch_inventory'
 import BranchRequest from './branch_Request'
@@ -9,6 +10,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
+import Axios from 'axios'
 
 const AntTabs = withStyles({
     root: {
@@ -69,17 +71,21 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AdminBranch = () => {
+const AdminBranch = (props) => {
     const [showTab, setShowTab] = useState(1)
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
 
+    
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+
     return ( 
         <div>
-          <div className='title'>Hello BSD001!</div>
+          <div className='title'>Hello {props.username}!</div>
           <div className='menu-tabs'>
               <div className={classes.root} >
                   <div className={classes.demo1}>
@@ -102,5 +108,10 @@ const AdminBranch = () => {
         </div>
     );
 }
- 
-export default AdminBranch;
+const MapstatetoProps=({Auth})=>{
+  return {
+    ...Auth, role: Auth.role
+  }
+}
+
+export default connect(MapstatetoProps, {}) (AdminBranch);
