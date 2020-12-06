@@ -16,6 +16,7 @@ import {connect} from 'react-redux'
 import Swal from 'sweetalert2'
 import {findNearest} from 'geolib'
 import Empty from './../../assets/empty.png'
+import {ClearFunc} from './../../redux/actions'
 
 
 //testing
@@ -60,16 +61,17 @@ const Cart = (props) => {
         }
     },[])
 
-    useEffect(()=>{
-        console.log(dataCart)
-    })
+    // useEffect(()=>{
+    //     console.log(dataCart)
+    // })
 
     const getCartData = async () => {
         try {
             // const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
-            const {data} = await Axios.get(`${API_URL_SQL}/cart/userCart/${props.Auth.user_id}`)
+            const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
             if(!isCancelled.current) {
-                setdataCart(data)
+                setdataCart(data.cartData)
+                console.log(data.cartData);
                 setdataLocation(data.locationData)
                 console.log(data.locationData);
             }
@@ -230,6 +232,7 @@ const Cart = (props) => {
                     showConfirmButton: false,
                     timer: 1500
                   })
+                props.ClearFunc()
                 setpayModal(false)
             }
         }).catch(err=> {
@@ -259,6 +262,7 @@ const Cart = (props) => {
                     showConfirmButton: false,
                     timer: 1500
                   })
+                props.ClearFunc()
                 setpayModal(false)
             }
         }).catch((err)=> {
@@ -452,4 +456,4 @@ const Mapstatetoprops = (state) => {
     }
 }
 
-export default connect(Mapstatetoprops)(Cart)
+export default connect(Mapstatetoprops,{ClearFunc})(Cart)

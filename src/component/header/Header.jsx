@@ -3,7 +3,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import './style.css'
 import Logo from './../../assets/AkeiLogo.png'
-import {Link} from 'react-router-dom'
+import {Link, useHistory} from 'react-router-dom'
 import { connect } from 'react-redux';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -11,9 +11,10 @@ import Swal from 'sweetalert2'
 import {LogoutFunc} from './../../redux/actions'
 import Axios from 'axios';
 import { API_URL_SQL } from '../../helpers';
+import firebase from 'firebase'
 
 const Header=(props)=>{
-
+    let history = useHistory()
     const [isOpen,setIsOpen]=useState(false)
     const [navbar,setNavbar]=useState(false)
     const [cartCount,setCartCount]=useState(null)
@@ -22,6 +23,10 @@ const Header=(props)=>{
         console.log(props.Auth.user_id)
         getCartLength()
     },[])
+
+    useEffect(()=> {
+        getCartLength()
+    },[props.Cart.cartLength])
 
     const getCartLength=()=>{
         Axios.get(`${API_URL_SQL}/cart/cartLength/${props.Auth.user_id}`)
@@ -54,6 +59,14 @@ const Header=(props)=>{
         setIsOpen(false)
     }
 
+    const onLogoutGoogle = () => {
+        firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+          }).catch(function(error) {
+            // An error happened.
+          });
+    }
+
     const logout = () => {
         Swal.fire({
           title: 'Are you sure?',
@@ -66,11 +79,13 @@ const Header=(props)=>{
           if (result.isConfirmed) {
             localStorage.clear()
             props.LogoutFunc()
+            onLogoutGoogle()
             Swal.fire(
               'Goodbye!',
               'You just logout',
               'success'
             )
+            history.push('/')
           }
         })
     }

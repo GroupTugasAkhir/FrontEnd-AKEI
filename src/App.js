@@ -19,7 +19,7 @@ function App(props) {
     let datauser = localStorage.getItem('user')
     if(datauser) {
       props.KeepLogin()
-      props.CartThunk(props.Auth.user_id)
+      // props.CartThunk(props.Auth.user_id)
     }
   },[])
 

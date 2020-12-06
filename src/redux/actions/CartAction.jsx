@@ -14,3 +14,9 @@ export const CartThunk = (user_id) => {
         }).catch((err)=> dispatch({type: 'ERROR'}))
     }
 }
+
+export const ClearFunc = () => {
+    return {
+        type: 'CLEAR'
+    }
+}
