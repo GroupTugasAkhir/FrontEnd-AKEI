@@ -53,7 +53,7 @@ const BranchInventory = (props) => {
         setAllProduct(res.data.dataMainProd)
         setCurrentWHprod(res.data.dataCurrentWH)
         setProductSold(res.data.dataSoldCurrentWH)
-        console.log(allProduct)
+        // console.log(allProduct)
       }).catch((err)=>{
         console.log(err)
       })
@@ -73,6 +73,7 @@ const BranchInventory = (props) => {
         .then((res)=>{
             alert('sukses add prod')
             setCurrentWHprod(res.data)
+            toggle()
         }).catch((err)=>{
             console.log(err)
         })
@@ -90,17 +91,44 @@ const BranchInventory = (props) => {
             <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
             <td>
                 <div style={{maxWidth:'100px'}}>
-                    <img width='100%' height='100%'  src={val.image}/>
+                    <img width='100%' height='100%'  src={API_URL_SQL + val.image}/>
                 </div>
             </td>
             <td>{val.product_name}</td>
-            <td> {val.real_quantity}</td>
-            <td>{index %2 == 0 ? '0 pcs' : '3 pcs'}</td>
+            <td>{val.real_quantity} pcs</td>
+            <td>{renderOnPackaging(val.product_id)}</td>
           </tr>
         ))
     }
 
+    const renderOnPackaging=(id)=>{
+        var num = 1
+        var counter = 0
+        var arr = []
+        var hasil = 0
+        return productSold.map((val, index)=>{
+            if(counter == 0){
+                
+            }
+            if(val.product_id == id){
+                counter++
+                // return parseInt(val.real_quantity)*(-1) + ' pcs'
+                hasil = parseInt(val.real_quantity)*(-1)
+            }
+            if(val.product_id != id){
+                counter++
+                hasil = 0
+                // return '0 pcs'
+            }
 
+            if(counter > num){
+                return null
+            }
+        })
+    }
+
+    console.log(currentWHprod)
+    console.log(productSold)
     return ( 
         <div style={{paddingTop:10}}>
             <Modal isOpen={modal} toggle={toggle} >
