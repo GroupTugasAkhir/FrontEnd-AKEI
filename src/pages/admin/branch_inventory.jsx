@@ -66,7 +66,7 @@ const BranchInventory = (props) => {
         var quantity = parseInt(addForm.qty.current.value)
         var product_id = parseInt(addForm.product_id.current.value)
         var location_id = parseInt(props.notes)
-        var status = 'add_stock'
+        var status = 'add'
         var data = {quantity, product_id, location_id, status}
         console.log(data)
         Axios.post(`${API_URL_SQL}/admin/addWHProduct`, data)
@@ -107,26 +107,6 @@ const BranchInventory = (props) => {
         var hasil = arr.find((val)=>val.product_id == id)
         if (hasil) return hasil.real_quantity*(-1) + ' pcs'
         return '0 pcs'
-        // var num = 1
-        // var counter = 0
-        // var hasil = 0
-        // return productSold.map((val, index)=>{
-            
-        //     if(val.product_id == id){
-        //         counter++
-        //         return parseInt(val.real_quantity)*(-1) + ' pcs'
-        //         // hasil = parseInt(val.real_quantity)*(-1)
-        //     }
-        //     if(val.product_id != id){
-        //         counter++
-        //         hasil = 0
-        //         return '0 pcs'
-        //     }
-
-        //     if(counter > num){
-        //         return null
-        //     }
-        // })
     }
 
     console.log(currentWHprod)
