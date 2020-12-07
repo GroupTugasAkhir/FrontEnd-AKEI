@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import './admin.css'
 // import Header from './../../component/HeaderAdmin'
 import Header from './../../component/header/Header'
-import { API_URL_SQL } from '../../helpers/apiurl';
+import { API_URL_SQL, priceFormatter } from '../../helpers';
 import AdminBranch from './branch_admin'
 import InventoryLog from './inventoryLog'
 import TransactionLog from './transactionLog'
@@ -33,6 +33,7 @@ import {GiConfirmed, GiCancel} from 'react-icons/gi'
 import Axios from 'axios'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import Select from 'react-select'
 
 
 const uriPic = {
@@ -66,7 +67,7 @@ const AntTabs = withStyles({
       borderBottom: '0px solid #e8e8e8',
     },
     indicator: {
-      backgroundColor: 'coral',
+      backgroundColor: '#72ceb8',
     },
 })(Tabs);
   
@@ -92,11 +93,11 @@ const AntTab = withStyles((theme) => ({
         opacity: 1,
       },
       '&$selected': {
-        color: 'coral',
+        color: '#72ceb8',
         fontWeight: theme.typography.fontWeightMedium,
       },
       '&:focus': {
-        color: 'coral',
+        color: '#72ceb8',
       },
     },
     selected: {},
@@ -132,6 +133,7 @@ const Admin = (props) => {
     const [modalAdd, setModalAdd] = useState(false)
     const [modalCat, setModalCat] = useState(false)
     const [banner, setBanner] = useState(null)
+    const [valueCategory, setValueCategory] = useState(null)
     // const [editCatState, setEditCatState] = useState(false)
     const [editId, setEditId] = useState(0)
 
@@ -141,6 +143,7 @@ const Admin = (props) => {
       price: useRef(),
       image: useRef(),
       description: useRef(),
+      ref_category: useRef(),
 
       // for add category data
       category_name: useRef()
@@ -203,9 +206,21 @@ const Admin = (props) => {
     })
 
     const renderMainProdCat=(id)=>{
-      return allRefProdCat.map((val, index)=>(
-        val.product_id == id ? val.category_name : null
-      ))
+      var num = 1
+      var counter = 0
+      return allRefProdCat.map((val, index)=>{
+        if(counter >= num && val.product_id == id){
+          console.log(counter)
+          return ', ' + val.category_name
+        }
+        else if(val.product_id == id){ // prod id = 2 dan id = 2
+          counter++
+          num = counter
+          console.log('masuk')
+          return val.category_name
+        }
+
+      })
     }
 
     const onInputFileChange=(e)=>{
@@ -223,23 +238,27 @@ const Admin = (props) => {
       var formData = new FormData()
       var options = {
           headers: {
-              'Content-type': 'multipart/form-data'
+            'Content-type': 'multipart/form-data'
           }
       }
       var product_name = addForm.product_name.current.value
       var price = addForm.price.current.value
       var description = addForm.description.current.value
-      var data = {product_name, price, description}
+      var categoryRefCart = valueCategory
+      var data = {product_name, price, description, categoryRefCart}
       formData.append('image', banner)
       formData.append('data', JSON.stringify(data))
       console.log(data)
-      // Axios.post(`${API_URL_SQL}/admin/addProduct`, formData, options)
-      // .then((res)=>{
-      //   console.log(res.data)
-      //   alert('berhasil')
-      // }).catch((err)=>{
-      //     console.log(err)
-      // })
+      Axios.post(`${API_URL_SQL}/admin/addProduct`, formData, options)
+      .then((res)=>{
+        console.log(res.data)
+        setAllProduct(res.data.dataProduct)
+        setAllRefProdCat(res.data.datarefcategory)
+        toggleAdd()
+        alert('berhasil')
+      }).catch((err)=>{
+          console.log(err)
+      })
     }
 
     const onAddCatClick=()=>{
@@ -305,6 +324,24 @@ const Admin = (props) => {
         }
       })
       
+    }
+
+    const renderOptionsCategory=()=>{
+      // console.log(allCategory[0].category_id)
+      return allCategory.map((val, index)=>(
+        { value: val.category_id, label: val.category_name }
+      ))
+    }
+
+    const options = [
+      { value: 'chocolate', label: 'Chocolate' },
+      { value: 'strawberry', label: 'Strawberry' },
+      { value: 'vanilla', label: 'Vanilla' }
+    ]
+
+    const onSelectCategoryChange=(e)=>{
+      setValueCategory(e)
+      console.log(e)
     }
 
     const renderMainProducts=()=>(
@@ -378,7 +415,7 @@ const Admin = (props) => {
             </div>
           </td>
           <td>{val.product_name}</td>
-          <td>{val.price}</td>
+          <td>{priceFormatter(val.price)}</td>
           <td> 10 pcs</td>
           <td>{renderMainProdCat(val.product_id)}</td>
           <td>{val.description}</td>
@@ -437,8 +474,6 @@ const Admin = (props) => {
         </tr>
       ))
     }
-    console.log(props.role)
-    console.log(props)
 
     return ( 
         <div>
@@ -460,10 +495,26 @@ const Admin = (props) => {
             <Modal isOpen={modalAdd} toggle={toggleAdd}>
                 <ModalHeader toggle={toggleAdd}>Input Products</ModalHeader>
                 <ModalBody>
-                  <input type='text' ref={addForm.product_name} placeholder='Product name' className='form-control mb-2'/>
-                  <input type='number' ref={addForm.price} placeholder='Price' className='form-control mb-2'/>
+                  <label style={{fontSize:15, marginBottom:-5}}>Product name</label>
+                  <input type='text' ref={addForm.product_name} placeholder='...' className='form-control mb-2'/>
+                  <label style={{fontSize:15, marginBottom:-5}}>Price</label>
+                  <input type='number' ref={addForm.price} placeholder='...' className='form-control mb-2'/>
+                  <label style={{fontSize:15, marginBottom:-5}}>Image</label>
                   <input type='file' onChange={onInputFileChange} className='form-control mb-2'/>
-                  <textarea ref={addForm.description} className='form-control mb-2' cols='30' rows='7' placeholder='Description'></textarea>
+                  <label style={{fontSize:15, marginBottom:-5}}>Category</label>
+                  <Select
+                    // defaultValue={[colourOptions[2], colourOptions[3]]}
+                    isMulti
+                    name="categories"
+                    options={renderOptionsCategory()}
+                    placeholder='You can choose more than 1'
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    onChange={onSelectCategoryChange}
+                    className='mb-2'
+                  />
+                  <label style={{fontSize:15, marginBottom:-5}}>Description</label>
+                  <textarea ref={addForm.description} className='form-control mb-2' cols='30' rows='7' placeholder='...'></textarea>
                 </ModalBody>
                 <ModalFooter>
                     <div className='modal_footer_tracking'>
