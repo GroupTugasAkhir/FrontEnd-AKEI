@@ -66,7 +66,7 @@ const BranchInventory = (props) => {
         var quantity = parseInt(addForm.qty.current.value)
         var product_id = parseInt(addForm.product_id.current.value)
         var location_id = parseInt(props.notes)
-        var status = 'add_stock'
+        var status = 'add'
         var data = {quantity, product_id, location_id, status}
         console.log(data)
         Axios.post(`${API_URL_SQL}/admin/addWHProduct`, data)
