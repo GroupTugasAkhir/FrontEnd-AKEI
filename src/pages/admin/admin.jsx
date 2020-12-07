@@ -204,6 +204,8 @@ const Admin = (props) => {
         },
         buttonsStyling: false
     })
+    console.log(allRefProdCat)
+    console.log(allCategory)
 
     const renderMainProdCat=(id)=>{
       var num = 1
