@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './admin.css'
 import { Table, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -8,6 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 import { Settings } from '@material-ui/icons';
+import Axios from 'axios';
+import {API_URL_SQL} from './../../helpers/apiurl'
 
 const uriPic = {
     chair: 'https://images.unsplash.com/photo-1561677978-583a8c7a4b43?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80',
@@ -26,20 +28,42 @@ const uriPic = {
   ]
 
 const InventoryLog = () => {
+    const [trackInventLog, settrackInventLog] = useState([])
 
+    useEffect(()=> {
+        Axios.get(`${API_URL_SQL}/admin/getWHTrackingLog`)
+        .then((res)=> {
+            settrackInventLog(res.data)
+        }).catch(err=> {
+            console.log(err);
+        })
+    },[])
 
     const renderTableInventory=()=>{
-        return data.map((val, index)=>(
+        return trackInventLog.map((val, index)=>(
           <tr key={index}>
             <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
-            <td>{val.name}</td>
-            <td>Gudang BSD</td>
-            <td> {index %2 == 0 ? '10 pcs' : '-5 pcs'}</td>
-            <td>10 Januari 2020  11:44:55</td>
-            <td>to Gudang Bekasi</td>
+            <td>{val.product_name}</td>
+            <td>{val.location_name}</td>
+            <td>{val.quantity}</td>
+            <td>{val.date_in}</td>
+            <td>{val.notes === null? val.status : val.notes}</td>
           </tr>
         ))
     }
+
+    // const renderTableInventory=()=>{
+    //     return data.map((val, index)=>(
+    //       <tr key={index}>
+    //         <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
+    //         <td>{val.name}</td>
+    //         <td>Gudang BSD</td>
+    //         <td> {index %2 == 0 ? '10 pcs' : '-5 pcs'}</td>
+    //         <td>10 Januari 2020  11:44:55</td>
+    //         <td>to Gudang Bekasi</td>
+    //       </tr>
+    //     ))
+    // }
 
 
     return ( 
