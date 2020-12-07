@@ -100,31 +100,33 @@ const BranchInventory = (props) => {
           </tr>
         ))
     }
+    
 
     const renderOnPackaging=(id)=>{
-        var num = 1
-        var counter = 0
-        var arr = []
-        var hasil = 0
-        return productSold.map((val, index)=>{
-            if(counter == 0){
-                
-            }
-            if(val.product_id == id){
-                counter++
-                // return parseInt(val.real_quantity)*(-1) + ' pcs'
-                hasil = parseInt(val.real_quantity)*(-1)
-            }
-            if(val.product_id != id){
-                counter++
-                hasil = 0
-                // return '0 pcs'
-            }
+        var arr = productSold
+        var hasil = arr.find((val)=>val.product_id == id)
+        if (hasil) return hasil.real_quantity*(-1) + ' pcs'
+        return '0 pcs'
+        // var num = 1
+        // var counter = 0
+        // var hasil = 0
+        // return productSold.map((val, index)=>{
+            
+        //     if(val.product_id == id){
+        //         counter++
+        //         return parseInt(val.real_quantity)*(-1) + ' pcs'
+        //         // hasil = parseInt(val.real_quantity)*(-1)
+        //     }
+        //     if(val.product_id != id){
+        //         counter++
+        //         hasil = 0
+        //         return '0 pcs'
+        //     }
 
-            if(counter > num){
-                return null
-            }
-        })
+        //     if(counter > num){
+        //         return null
+        //     }
+        // })
     }
 
     console.log(currentWHprod)
