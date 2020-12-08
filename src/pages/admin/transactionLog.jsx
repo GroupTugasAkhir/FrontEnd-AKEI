@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './admin.css'
 import Header from './../../component/HeaderAdmin'
+import {API_URL_SQL, dateFormatter, priceFormatter} from './../../helpers'
 import { Table, 
     Pagination, 
     PaginationItem, 
@@ -32,6 +33,7 @@ import {
 } from '@material-ui/icons';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import Axios from 'axios'
 
 const uriPic = {
   chair: 'https://images.unsplash.com/photo-1561677978-583a8c7a4b43?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80',
@@ -74,9 +76,24 @@ const TransactionLog = () => {
     const [value, setValue] = useState(0);
     const [page, setPages] = useState(1)
     const [showProd, setShowProd] = useState(1)
+    const [allTrx, setAllTrx] = useState([])
+    const [allTrxDetail, setAllTrxDetail] = useState([])
+    const [allTotalPrice, setAllTotalPrice] = useState([])
+    const [idTrx, setIdTrx] = useState([])
     const [modal, setModal] = useState(false)
     const [modalPayment, setModalPayment] = useState(false)
     const [modalTracking, setModalTracking] = useState(false)
+
+
+    useEffect(()=>{
+        Axios.get(`${API_URL_SQL}/admin/getTrxUser`)
+        .then((res)=>{
+            console.log(res.data)
+            setAllTrx(res.data.dataTrxUser)
+            setAllTrxDetail(res.data.dataTrxDetail)
+            setAllTotalPrice(res.data.dataTotalPrice)
+        }).catch((err)=>console.log(err))
+    },[])
 
     const MySwal = withReactContent(Swal)
 
@@ -163,22 +180,32 @@ const TransactionLog = () => {
     }
 
     const renderTable=()=>{
-        return data.map((val, index)=>(
+        return allTrx.map((val, index)=>(
             <tr key={index}>
                 <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
-                <td>Username</td>
-                <td>17 Oktober 2020  10:34:55 AM</td>
-                <td>{val.price}</td>
-                <td>
-                    {index % 2 == 0 ? 'CC' :'Bank Transfer'}
+                <td>{val.username}</td>
+                <td>{dateFormatter(parseInt(val.date_in))}</td>
+                <td>1000</td>
+                <td>{val.method}</td>
+                <td onClick={()=>{toggle()
+                    setIdTrx(val.transaction_id)} 
+                    } className='to-hover'>
+                        click to see detail..
                 </td>
-                <td onClick={toggle} className='modal_stock'>click to see detail..</td>
-                <td>
-                    {index % 2 == 0 ? 'on packaging' :'payment checking'}
-                </td>
+                <td>{val.status}</td>
                 <td className='to-hover' onClick={index % 2 != 0 ? togglePayment : toggleTracking }><Settings/></td>
             </tr>
       ))
+    }
+
+    const renderTotalHarga=()=>{
+        // var total= allTrxDetail.reduce((total, num)=>{
+        //     if(num.transaction_id == idTrx) return total + (num.price * num.quantity)
+        // },0)
+
+        // return total
+        var hasil = allTotalPrice.find((val)=>val.product_id == idTrx)
+        if (hasil) return hasil.total_price
     }
 
     const renderProductDetail=()=>(
@@ -196,12 +223,31 @@ const TransactionLog = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {renderProductDetailTableBody()}
+                        {allTrxDetail.map((val, index)=>{
+                            if(val.transaction_id == idTrx){
+                                return (
+                                    <TableRow key={index} hover={true}>
+                                        <TableCell>{index+1}</TableCell>
+                                        <TableCell >
+                                            <div style={{maxWidth:'100px'}}>
+                                                <img width='100%' height='100%'  src={API_URL_SQL + val.image}/>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{val.product_name}</TableCell>
+                                        <TableCell>{val.quantity}</TableCell>
+                                        <TableCell>{priceFormatter(val.price)}</TableCell>
+                                        <TableCell>{priceFormatter(val.price*val.quantity)}</TableCell>
+                                    </TableRow>
+                                )
+                            }
+                        })}
                     </TableBody>
                     <TableFooter>
                         <TableCell colSpan={4}></TableCell>
                         <TableCell style={{fontWeight:'700', color:'black', fontSize:20}}>Subtotal Harga</TableCell>
-                        <TableCell style={{fontWeight:'700', color:'black', fontSize:20}}>20.000.000</TableCell>
+                        <TableCell style={{fontWeight:'700', color:'black', fontSize:20}}>
+                            {renderTotalHarga()}
+                        </TableCell>
                     </TableFooter>
                 </TableUI>
             </TableContainer>
@@ -209,7 +255,7 @@ const TransactionLog = () => {
     )
 
     const renderProductDetailTableBody=()=>{
-        return data.map((val, index)=>(
+        return allTrxDetail.map((val, index)=>(
             <TableRow key={index}>
                 <TableCell>{index+1}</TableCell>
                 <TableCell >
@@ -217,7 +263,7 @@ const TransactionLog = () => {
                         <img width='100%' height='100%'  src={val.image}/>
                     </div>
                 </TableCell>
-                <TableCell>{val.name}</TableCell>
+                <TableCell>{val.product_name}</TableCell>
                 <TableCell>5 pcs</TableCell>
                 <TableCell>1.000.000</TableCell>
                 <TableCell>5.000.000</TableCell>
