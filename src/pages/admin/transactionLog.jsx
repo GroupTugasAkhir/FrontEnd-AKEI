@@ -98,9 +98,6 @@ const TransactionLog = () => {
         .then((res)=>{
             console.log(res.data)
             setAllTrx(res.data)
-            // setAllTrxDetail(res.data.dataTrxDetail)
-            // setAllTotalPrice(res.data.dataTotalPrice)
-            // setProductWH(res.data.dataProductWH)
         }).catch((err)=>console.log(err))
     },[])
 
@@ -174,12 +171,15 @@ const TransactionLog = () => {
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                togglePayment()
-                swalWithBootstrapButtons.fire(
-                  'Rejected!',
-                  'Payment has been rejected.',
-                  'success'
-                )
+                Axios.put(`${API_URL_SQL}/admin/acceptPaymentTrf/${id}`)
+                .then((res)=>{
+                    setAllTrx(res.data)
+                    togglePayment()
+                    swalWithBootstrapButtons.fire(
+                        'Rejected!',
+                        'Payment has been rejected.',
+                    )
+                }).catch((err)=>console.log(err))
             } else if (
                 /* Read more about handling dismissals below */
                 result.dismiss === Swal.DismissReason.cancel
@@ -362,7 +362,7 @@ const TransactionLog = () => {
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={()=>onAcceptPaymentClick(paymentProof.transaction_id)}>Accept</Button>{'  '}
-                    <Button color="danger" onClick={onRejectPaymentClick}>Reject</Button>
+                    <Button color="danger" onClick={()=>onRejectPaymentClick(paymentProof.transaction_id)}>Reject</Button>
                 </ModalFooter>
             </Modal>
 
