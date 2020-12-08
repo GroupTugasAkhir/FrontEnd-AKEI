@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './admin.css'
 import Header from './../../component/HeaderAdmin'
 import { Table, 
@@ -32,24 +32,8 @@ import {
 } from '@material-ui/icons';
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-
-const uriPic = {
-  chair: 'https://images.unsplash.com/photo-1561677978-583a8c7a4b43?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80',
-  sofa: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
-  table: 'https://images.unsplash.com/photo-1602009445825-70e98455ea7c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80'
-}
-
-const bukti_trans = 'https://1.bp.blogspot.com/-aDTJn_UbwsI/XpV8pKryEuI/AAAAAAAACs8/JI_uvQxkPYc2bzIrokHLaCGdYcIIku4CgCLcBGAsYHQ/s1600/Langkah%2Bterakhi.JPG'
-
-const data = [
-  {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-  {image:uriPic.sofa, name:'sofa', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-  {image:uriPic.table, name:'table', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-  {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-  {image:uriPic.sofa, name:'sofa', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-  // {image:uriPic.table, name:'table', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-  // {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-]
+import Axios from 'axios';
+import { API_URL_SQL } from '../../helpers';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -77,6 +61,18 @@ const TransactionLog = () => {
     const [modal, setModal] = useState(false)
     const [modalRequest, setModalRequest] = useState(false)
     const [modalTracking, setModalTracking] = useState(false)
+    const [data,setData] = useState(null)
+    const [trxData,setTrxData] = useState([])
+    const [onPackage,setOnPackage] = useState([])
+    const [onWaiting,setOnWaiting] = useState([])
+
+    useEffect(()=>{
+        let getLocation = JSON.parse(localStorage.getItem('user'))
+        Axios.get(`${API_URL_SQL}/notification/gettransaction/${getLocation.notes}`)
+        .then((res)=>{
+            setData(res.data)
+        }).catch((err)=>console.log(err))
+    })
 
     const MySwal = withReactContent(Swal)
 
@@ -92,19 +88,75 @@ const TransactionLog = () => {
     const toggleRequest = () => setModalRequest(!modalRequest);
     const toggleTracking = () => setModalTracking(!modalTracking);
 
-
     const renderTable=()=>{
         return data.map((val, index)=>(
-            <tr key={index}>
+            <tr key={index} style={{textTransform:'capitalize'}}>
                 <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
-                <td>Username</td>
-                <td>17 Oktober 2020  10:34:55 AM</td>
-                <td>on packaging</td>
-                <td className='to-hover' onClick={toggleTracking}><Settings/></td>
+                <td>{val.username}</td>
+                <td>{val.date_in}</td>
+                <td>{val.status}</td>
+                <td className='to-hover' onClick={()=>getTransactionDetail(val.transaction_id)}><Settings/></td>
             </tr>
       ))
     }
 
+    const getTransactionDetail=(id)=>{
+        let getLocation = JSON.parse(localStorage.getItem('user'))
+        console.log(id)
+        console.log(getLocation.notes)
+        let obj = {
+            location_id : getLocation.notes,
+            transaction_id : id
+        }
+        Axios.post(`${API_URL_SQL}/notification/gettransactiondetail`,obj)
+        .then((res)=>{
+            console.log(res.data)
+            setTrxData(res.data)
+            setModalTracking(true)
+            Axios.post(`${API_URL_SQL}/notification/onpackagingitem`,obj).
+            then((res2)=>{
+                setOnPackage(res2.data)
+                Axios.post(`${API_URL_SQL}/notification/onwaitingitem`,obj)
+                .then((res3)=>{
+                    setOnWaiting(res3.data)
+                    console.log(trxData)
+                    console.log(onWaiting)
+                    let final
+                    final = trxData.filter((val)=> {
+                        return onWaiting.some((val2)=>{
+                            return val.id !== val2.id
+                        })
+                    })
+                    console.log(final)
+                    setTrxData(final)
+                })
+            }).catch((err)=>console.log(err))
+        }).catch((err)=>console.log(err))
+    }
+
+    const confirmItem=(prod_id,qty,trx_detail)=>{
+        let getLocation = JSON.parse(localStorage.getItem('user'))
+        Axios.post(`${API_URL_SQL}/notification/confirmUserRequest`,{
+            product_id : prod_id,
+            mod_qty : qty,
+            trx_detail_id : trx_detail,
+            location_id : getLocation.notes
+        }).then(()=>{
+            console.log('sukses oi')
+        }).catch((err)=>console.log(err))        
+    }
+
+    const requestItem=(id,qty,trx_detail,location)=>{
+        Axios.post(`${API_URL_SQL}/notification/requestHandling`,{
+            location_id : location,
+            product_id : id,
+            req_quantity : qty,
+            transaction_detail_id : trx_detail
+        }).then(()=>{
+            console.log('sukses oi')
+        }).catch((err)=>console.log(err))
+
+    }
 
     const renderTrackingDetail=()=>(
         <Paper >
@@ -124,27 +176,99 @@ const TransactionLog = () => {
                     <TableBody>
                         {renderTrackingDetailTableBody()}
                     </TableBody>
+                    <TableHead>
+                        <h4 className='mt-3'>Confirmed</h4>
+                        <TableRow>
+                            <TableCell>No.</TableCell>
+                            <TableCell>Image</TableCell>
+                            <TableCell>Product</TableCell>
+                            <TableCell>Order Qty</TableCell>
+                            <TableCell>Status</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {onPackage.length? renderOnPackage() : null}
+                    </TableBody>
+                    <TableHead>
+                        <h4 className='mt-3'>Waiting Confirmation</h4>
+                        <TableRow>
+                            <TableCell>No.</TableCell>
+                            <TableCell>Image</TableCell>
+                            <TableCell>Product</TableCell>
+                            <TableCell>Status</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {onPackage.length? renderOnWaiting() : null}
+                    </TableBody>
                 </TableUI>
             </TableContainer>
         </Paper>
     )
 
     const renderTrackingDetailTableBody=()=>{
-        return data.map((val, index)=>(
+        let getLocation = JSON.parse(localStorage.getItem('user'))
+        return trxData.map((val, index)=>(
             <TableRow key={index}>
                 <TableCell>{index+1}</TableCell>
                 <TableCell >
                     <div style={{maxWidth:'100px'}}>
-                        <img width='100%' height='100%'  src={val.image}/>
+                        <img width='100%' height='100%'  src={API_URL_SQL+val.image}/>
                     </div>
                 </TableCell>
-                <TableCell>{val.name}</TableCell>
-                <TableCell>4 pcs</TableCell>
-                <TableCell>{index % 2 == 0 ? '5 pcs' : '0 pcs'}</TableCell>
-                <TableCell>{index % 2 == 0 ? 'ready' : 'insufficient'}</TableCell>
-                <TableCell className='to-hover' onClick={index % 2 == 0 ? null : toggleRequest}><Settings/></TableCell>
+                <TableCell>{val.product_name}</TableCell>
+                <TableCell>{val.req_qty}</TableCell>
+                <TableCell>{val.stock}</TableCell>
+                <TableCell>{val.req_qty <= val.stock? 'ready' : 'insufficient'}</TableCell>
+                {
+                    val.req_qty <= val.stock?
+                    <TableCell className='to-hover'>
+                        <button className='btn btn-outline-info mr-3' onClick={()=>confirmItem(val.product_id, val.req_qty,val.transaction_detail_id)}>Confirm</button>
+                    </TableCell>
+                    :
+                    <TableCell className='to-hover'>
+                        <button className='btn btn-outline-success mr-3' onClick={()=>requestItem(val.product_id, val.req_qty,val.transaction_detail_id,getLocation.notes)}>Request</button>
+                    </TableCell>
+                }
             </TableRow>
         ))
+    }
+
+    const renderOnPackage=()=>{
+        return onPackage.map((val, index)=>(
+            <TableRow key={index}>
+                <TableCell>{index+1}</TableCell>
+                <TableCell >
+                    <div style={{maxWidth:'100px'}}>
+                        <img width='100%' height='100%'  src={API_URL_SQL+val.image}/>
+                    </div>
+                </TableCell>
+                <TableCell>{val.product_name}</TableCell>
+                <TableCell>{val.req_qty}</TableCell>
+                <TableCell>{val.notes}</TableCell>
+            </TableRow>
+        ))
+    }
+
+    const renderOnWaiting=()=>{
+        return onWaiting.map((val, index)=>(
+            <TableRow key={index}>
+                <TableCell>{index+1}</TableCell>
+                <TableCell >
+                    <div style={{maxWidth:'100px'}}>
+                        <img width='100%' height='100%'  src={API_URL_SQL+val.image}/>
+                    </div>
+                </TableCell>
+                <TableCell>{val.product_name}</TableCell>
+                <TableCell>{val.notes}</TableCell>
+            </TableRow>
+        ))
+    }
+
+    if(data===null){
+        return (
+            <div>Loading</div>
+        )
     }
     
     return ( 
@@ -163,23 +287,6 @@ const TransactionLog = () => {
                     </div>
                 </ModalFooter>
             </Modal>
-
-            {/* Modal untuk request barang ke gudang lain */}
-            <Modal isOpen={modalRequest} toggle={toggleRequest} size='sm'>
-                <ModalHeader toggle={toggleRequest}>Request order</ModalHeader>
-                <ModalBody>
-                    <div style={{fontWeight:'bolder', fontSize:20, color:'red'}}>Insufficient stock!</div>
-                    <div>Request 4 Chair from BSD</div>
-                    <div>Request 2 Chair from Pluit</div>
-                </ModalBody>
-                <ModalFooter>
-                    <div className='modal_footer_tracking'>
-                        <button className='btn btn-outline-info mr-3'>Proceed</button>
-                        <button className="btn btn-outline-primary" onClick={toggleRequest}>back</button>
-                    </div>
-                </ModalFooter>
-            </Modal>
-
             {/* Render component */}
             <Table>
                 <thead>
