@@ -9,12 +9,24 @@ import { Breadcrumb,
     Label, 
     Input
  } from 'reactstrap';
+ import {connect} from 'react-redux'
+// import { API_URL_SQL } from '../../helpers';
 
 const UserProfile=(props)=>{
     const [imgPreview,setImgPreview] = useState(null)
 
     const changePicture=(e)=>{
         setImgPreview(URL.createObjectURL(e.target.files[0]))
+    }
+
+    const photoUser = () => {
+        let strPhoto = props.Auth.photo
+
+        if(strPhoto.indexOf('https') > -1) {
+            return strPhoto
+        } 
+
+        return imgPreview
     }
 
     return (
@@ -29,18 +41,18 @@ const UserProfile=(props)=>{
                     <Form className='form-edit'>
                         <div className="form-left">
                             <FormGroup className='avatar-box'>
-                                <img src={imgPreview} alt=""/>
+                                <img src={photoUser()} alt=""/>
                                 <Input type="file" name="file" onChange={changePicture}/>
                             </FormGroup>
                         </div>
                         <div className="form-right">
                             <FormGroup className='input-box'>
                                 <Label>Username</Label>
-                                <input style={{width:'70%'}} type="text"/>
+                                <input value={props.Auth.username} style={{width:'70%'}} type="text"/>
                             </FormGroup>
                             <FormGroup className='input-box'>
                                 <Label>Email</Label>
-                                <input style={{width:'70%'}} type="text"/>
+                                <input value={props.Auth.email} style={{width:'70%'}} type="text"/>
                             </FormGroup>
                             <FormGroup className='input-box'>
                                 <Label for="exampleEmail">Old Password</Label>
@@ -63,4 +75,10 @@ const UserProfile=(props)=>{
     )
 } 
 
-export default UserProfile
+const Mapstatetoprops = (state) => {
+    return {
+        Auth: state.Auth
+    }
+}
+
+export default connect(Mapstatetoprops)(UserProfile)
