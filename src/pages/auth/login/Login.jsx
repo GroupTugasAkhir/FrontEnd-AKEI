@@ -22,7 +22,7 @@ if (!firebase.apps.length) {
 
 const Login = (props) => {
     const [seePass, setseePass] = useState(false)
-    const [email, setemail] = useState('')
+    const [emailuser, setemailuser] = useState('')
     const [pass, setpass] = useState('')
     const [errorinfo, seterrorinfo] = useState('')
     // const [isSignedIn, setisSignedIn] = useState(false)
@@ -40,9 +40,9 @@ const Login = (props) => {
           });
     },[])
 
-    const onEmailChange = (e) => {
+    const onEmailUserChange = (e) => {
         if(e.target.value) {
-            setemail(e.target.value)
+            setemailuser(e.target.value)
             seterrorinfo('')
         } else {
             seterrorinfo('')
@@ -59,9 +59,9 @@ const Login = (props) => {
     }
 
     const onSignIn = () => {
-        if(email && pass) {
+        if(emailuser && pass) {
             let dataLogin = {
-                email: email,
+                emailuser: emailuser,
                 password: pass
             }
             props.LoginThunk(dataLogin)
@@ -153,7 +153,7 @@ const Login = (props) => {
                     <Fade right>
                         <div className='login-form'>
                             <div className='input-button'>
-                                <input className='mt-3' type="text" placeholder='Enter email' onChange={onEmailChange} />
+                                <input className='mt-3' type="text" placeholder='Enter email / username' onChange={onEmailUserChange} />
                             </div>
                             <div className='input-button'>
                                 <input type={seePass?"text":"password"} placeholder='Password' onChange={onPasswordChange} />

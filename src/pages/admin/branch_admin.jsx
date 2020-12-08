@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import BranchOrder from './branch_order'
 import BranchInventory from './branch_inventory'
 import BranchRequest from './branch_Request'
+import BranchActivity from './branch_activity'
 import { Table, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
@@ -93,6 +94,7 @@ const AdminBranch = (props) => {
                           <AntTab label="Order" onClick={()=>setShowTab(1)}/>
                           <AntTab label="Inventory" onClick={()=>setShowTab(2)}/>
                           <AntTab label="Request" onClick={()=>setShowTab(3)}/>
+                          <AntTab label="Activity" onClick={()=>setShowTab(4)}/>
                       </AntTabs>
                       <Typography className={classes.padding} />
                   </div>
@@ -103,7 +105,9 @@ const AdminBranch = (props) => {
                 <BranchOrder/>
                 : showTab == 2 ?
                 <BranchInventory/>
-                : <BranchRequest/>
+                : showTab == 3 ?
+                <BranchRequest/>
+                : <BranchActivity/>
             }
         </div>
     );
