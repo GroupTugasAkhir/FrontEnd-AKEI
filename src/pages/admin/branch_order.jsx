@@ -112,7 +112,6 @@ const TransactionLog = () => {
         .then((res)=>{
             console.log(res.data)
             setTrxData(res.data)
-            setModalTracking(true)
             Axios.post(`${API_URL_SQL}/notification/onpackagingitem`,obj).
             then((res2)=>{
                 setOnPackage(res2.data)
@@ -122,13 +121,16 @@ const TransactionLog = () => {
                     console.log(trxData)
                     console.log(onWaiting)
                     let final
-                    final = trxData.filter((val)=> {
-                        return onWaiting.some((val2)=>{
-                            return val.id !== val2.id
+                    if(onWaiting.length){
+                        final = trxData.filter((val)=> {
+                            return onWaiting.some((val2)=>{
+                                return val.id !== val2.id
+                            })
                         })
-                    })
-                    console.log(final)
-                    setTrxData(final)
+                        console.log(final)
+                        setTrxData(final)
+                    }
+                    setModalTracking(true)
                 })
             }).catch((err)=>console.log(err))
         }).catch((err)=>console.log(err))
