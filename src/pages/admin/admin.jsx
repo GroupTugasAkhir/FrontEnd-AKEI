@@ -166,6 +166,10 @@ const Admin = (props) => {
     })
 
     useEffect(()=>{
+      Axios.post(`${API_URL_SQL}/notification/createRequest`)
+      .then(()=>{
+        console.log('success update data')
+      }).catch((err)=>console.log(err))
       Axios.get(`${API_URL_SQL}/admin/getProduct`)
       .then((res)=>{
         console.log(res.data)
