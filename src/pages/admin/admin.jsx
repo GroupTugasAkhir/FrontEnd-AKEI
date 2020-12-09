@@ -130,6 +130,7 @@ const Admin = (props) => {
     const [refProdCat, setRefProdCat] = useState([]) //by id
     const [allCategory, setAllCategory] = useState([])
     const [allRefProdCat, setAllRefProdCat] = useState([])
+    const [stockProdByWH, setStockProdByWH] = useState([]) //stock tiap produk semua WH
     const [showProd, setShowProd] = useState(1)
     const [modal, setModal] = useState(false)
     const [modalAdd, setModalAdd] = useState(false)
@@ -286,17 +287,22 @@ const Admin = (props) => {
       var data = {product_name, price, description, newcategory, product_id, oldcategory, oldimage}
       formData.append('image', banner)
       formData.append('data', JSON.stringify(data))
+      console.log(newcategory)
       console.log(data)
-      Axios.put(`${API_URL_SQL}/admin/editProduct/${product_id}`, formData, options)
-      .then((res)=>{
-        console.log(res.data)
-        setAllProduct(res.data.dataProduct)
-        setAllRefProdCat(res.data.datarefcategory)
-        toggleEdit()
-        alert('berhasil')
-      }).catch((err)=>{
-          console.log(err)
-      })
+      if(data){
+        Axios.put(`${API_URL_SQL}/admin/editProduct/${product_id}`, formData, options)
+        .then((res)=>{
+          console.log(res.data)
+          setAllProduct(res.data.dataProduct)
+          setAllRefProdCat(res.data.datarefcategory)
+          toggleEdit()
+          alert('berhasil')
+        }).catch((err)=>{
+            console.log(err)
+        })
+      }else{
+        alert('Empty Form!')
+      }
     }
 
     const onAddCatClick=()=>{
@@ -371,11 +377,6 @@ const Admin = (props) => {
       ))
     }
 
-    const options = [
-      { value: 'chocolate', label: 'Chocolate' },
-      { value: 'strawberry', label: 'Strawberry' },
-      { value: 'vanilla', label: 'Vanilla' }
-    ]
 
     const onSelectCategoryChange=(e)=>{
       setValueCategory(e)
@@ -383,7 +384,7 @@ const Admin = (props) => {
     }
 
     const onSettingsClick=(prod_id)=>{
-      Axios.get(`${API_URL_SQL}/admin/getProductStock/${prod_id}`)
+      Axios.get(`${API_URL_SQL}/admin/getProductStock/${prod_id}`) // get total stock all WH
       .then((res)=>{
         console.log(res.data)
         setProdById(res.data.dataproduct)
@@ -392,6 +393,16 @@ const Admin = (props) => {
         // setIdProd(prod_id)
       }).catch((err)=>console.log(err))
     }
+
+    const onArrowDownClick=(prod_id)=>{
+      Axios.get(`${API_URL_SQL}/admin/getStock/${prod_id}`) // get total stock current WH
+      .then((res)=>{
+        // console.log(res.data)
+        setStockProdByWH(res.data)
+        toggle()
+      }).catch((err)=>console.log(err))
+    }
+
     const renderMainProducts=()=>(
       <div style={{paddingTop:10}}>
         <div className='main_prod_div_button'>
@@ -432,7 +443,7 @@ const Admin = (props) => {
                     <td>{val.description}</td>
                     <td>
                       <Settings className='mr-4 to-hover' onClick={()=>onSettingsClick(val.product_id)}/>
-                      <FaChevronCircleDown className='to-hover' onClick={toggle}/>
+                      <FaChevronCircleDown className='to-hover' onClick={()=>onArrowDownClick(val.product_id)}/>
                     </td>
                   </tr>
                 ))
@@ -473,25 +484,28 @@ const Admin = (props) => {
       </div>
     )
 
-    const renderModalStockBody=()=>{
-      return dataGudang.map((val, index)=>(
-        <div className='mb-3' key={index}>
-          <div style={{fontWeight:'bolder', fontSize:17}}>{val.name}</div>
-          <div className='main_prod_action_down_div'>
-            <div>Available Stock:</div>
-            <div>5 pcs</div>
-          </div>
-          <div className='main_prod_action_down_div'>
-            <div>On Packaging:</div>
-            <div>5 pcs</div>
-          </div>
-          <div className='main_prod_action_down_div'>
-            <div>Total Stock:</div>
-            <div>10 pcs</div>
-          </div>
-        </div>
-      ))
-    }
+    const renderModalStockBody=()=>(
+      <Table hover>
+        <thead>
+          <tr>
+              <th>Ware House</th>
+              <th>Avalaible Stock</th>
+              <th>On Packaging</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            stockProdByWH.map((val, index)=>(
+              <tr key={index} >
+                <td>{val.location_name}</td>
+                <td>{val.stock ? val.stock : 0} pcs</td>
+                <td> {val.stock_packaging ? val.stock_packaging*(-1) : 0} pcs</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </Table>
+    )
 
     const renderModalCategoryTbody=()=>{
       return allCategory.map((val, index)=>(
@@ -537,6 +551,7 @@ const Admin = (props) => {
     return ( 
         <div>
             <Header/>
+            {/* Modal untuk lihat stock semua gudang */}
             <Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader toggle={toggle}>Stock</ModalHeader>
                 <ModalBody>

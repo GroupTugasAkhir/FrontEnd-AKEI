@@ -324,7 +324,7 @@ const TransactionLog = () => {
                                     <TableCell>{val.product_name}</TableCell>
                                     <TableCell>{val.quantity}</TableCell>
                                     <TableCell>{val.stock_warehouse ? val.stock_warehouse : 0}</TableCell>
-                                    <TableCell>{val.quantity <= val.stock_warehouse ? 'ready' : 'requesting to BSD'}</TableCell>
+                                    <TableCell>{val.quantity <= val.stock_warehouse ? 'ready' : 'insufficient'}</TableCell>
                                 </TableRow>
                             ))
                         }
