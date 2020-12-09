@@ -79,6 +79,23 @@ const BranchInventory = (props) => {
         })
     }
 
+    const correctQtyProduct=()=>{
+        var quantity = parseInt(addForm.qty.current.value)*(-1)
+        var product_id = parseInt(addForm.product_id.current.value)
+        var location_id = parseInt(props.notes)
+        var status = 'correction'
+        var data = {quantity, product_id, location_id, status}
+        console.log(data)
+        Axios.post(`${API_URL_SQL}/admin/addWHProduct`, data)
+        .then((res)=>{
+            alert('sukses koreksi prod')
+            setCurrentWHprod(res.data)
+            toggle()
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
     const renderOptions=()=>{
         return allProduct.map((val, index)=>(
             <option key={index} value={val.product_id}>{val.product_name}</option>
@@ -130,6 +147,7 @@ const BranchInventory = (props) => {
                 <ModalFooter>
                     <div className='modal_footer_tracking'>
                         <button className='btn btn-outline-info mr-3' onClick={addQtyProduct}>Add</button>
+                        <button className='btn btn-outline-info mr-3' onClick={correctQtyProduct}>Correction</button>
                         <button className="btn btn-outline-primary" onClick={toggle}>back</button>
                     </div>
                 </ModalFooter>
