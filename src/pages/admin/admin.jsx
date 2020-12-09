@@ -126,15 +126,20 @@ const Admin = (props) => {
     const [value, setValue] = useState(0);
     const [page, setPages] = useState(1)
     const [allProduct, setAllProduct] = useState([])
+    const [prodById, setProdById] = useState({})
+    const [refProdCat, setRefProdCat] = useState([]) //by id
     const [allCategory, setAllCategory] = useState([])
     const [allRefProdCat, setAllRefProdCat] = useState([])
+    const [stockProdByWH, setStockProdByWH] = useState([]) //stock tiap produk semua WH
     const [showProd, setShowProd] = useState(1)
     const [modal, setModal] = useState(false)
     const [modalAdd, setModalAdd] = useState(false)
+    const [modalEdit, setModalEdit] = useState(false)
     const [modalCat, setModalCat] = useState(false)
     const [banner, setBanner] = useState(null)
     const [valueCategory, setValueCategory] = useState(null)
     // const [editCatState, setEditCatState] = useState(false)
+    const [idProd, setIdProd] = useState(0)
     const [editId, setEditId] = useState(0)
 
     const [addForm, setAddForm] = useState({
@@ -161,6 +166,10 @@ const Admin = (props) => {
     })
 
     useEffect(()=>{
+      Axios.post(`${API_URL_SQL}/notification/createRequest`)
+      .then(()=>{
+        console.log('success update data')
+      }).catch((err)=>console.log(err))
       Axios.get(`${API_URL_SQL}/admin/getProduct`)
       .then((res)=>{
         console.log(res.data)
@@ -175,7 +184,8 @@ const Admin = (props) => {
     },[])
 
     const toggle = () => setModal(!modal);
-    const toggleAdd = () => setModalAdd(!modalAdd);
+    const toggleAdd = () => setModalAdd(!modalAdd)
+    const toggleEdit = () => setModalEdit(!modalEdit)
     const toggleCat = () => setModalCat(!modalCat)
 
     const handleChange = (event, newValue) => {
@@ -204,21 +214,22 @@ const Admin = (props) => {
         },
         buttonsStyling: false
     })
-    console.log(allRefProdCat)
-    console.log(allCategory)
+    
+    // console.log(allRefProdCat)
+    // console.log(allCategory)
 
     const renderMainProdCat=(id)=>{
       var num = 1
       var counter = 0
       return allRefProdCat.map((val, index)=>{
         if(counter >= num && val.product_id == id){
-          console.log(counter)
+          // console.log(counter)
           return ', ' + val.category_name
         }
-        else if(val.product_id == id){ // prod id = 2 dan id = 2
+        else if(val.product_id == id){
           counter++
           num = counter
-          console.log('masuk')
+          // console.log('masuk')
           return val.category_name
         }
 
@@ -261,6 +272,41 @@ const Admin = (props) => {
       }).catch((err)=>{
           console.log(err)
       })
+    }
+
+    const onSaveEditClick=()=>{
+      var formData = new FormData()
+      var options = {
+          headers: {
+            'Content-type': 'multipart/form-data'
+          }
+      }
+      var product_name = editForm.product_name.current.value
+      var price = editForm.price.current.value
+      var description = editForm.description.current.value
+      var newcategory = valueCategory
+      var product_id = prodById.product_id
+      var oldimage = prodById.image
+      var oldcategory = refProdCat
+      var data = {product_name, price, description, newcategory, product_id, oldcategory, oldimage}
+      formData.append('image', banner)
+      formData.append('data', JSON.stringify(data))
+      console.log(newcategory)
+      console.log(data)
+      if(data){
+        Axios.put(`${API_URL_SQL}/admin/editProduct/${product_id}`, formData, options)
+        .then((res)=>{
+          console.log(res.data)
+          setAllProduct(res.data.dataProduct)
+          setAllRefProdCat(res.data.datarefcategory)
+          toggleEdit()
+          alert('berhasil')
+        }).catch((err)=>{
+            console.log(err)
+        })
+      }else{
+        alert('Empty Form!')
+      }
     }
 
     const onAddCatClick=()=>{
@@ -335,15 +381,30 @@ const Admin = (props) => {
       ))
     }
 
-    const options = [
-      { value: 'chocolate', label: 'Chocolate' },
-      { value: 'strawberry', label: 'Strawberry' },
-      { value: 'vanilla', label: 'Vanilla' }
-    ]
 
     const onSelectCategoryChange=(e)=>{
       setValueCategory(e)
       console.log(e)
+    }
+
+    const onSettingsClick=(prod_id)=>{
+      Axios.get(`${API_URL_SQL}/admin/getProductStock/${prod_id}`) // get total stock all WH
+      .then((res)=>{
+        console.log(res.data)
+        setProdById(res.data.dataproduct)
+        setRefProdCat(res.data.dataRefCategory)
+        toggleEdit()
+        // setIdProd(prod_id)
+      }).catch((err)=>console.log(err))
+    }
+
+    const onArrowDownClick=(prod_id)=>{
+      Axios.get(`${API_URL_SQL}/admin/getStock/${prod_id}`) // get total stock current WH
+      .then((res)=>{
+        // console.log(res.data)
+        setStockProdByWH(res.data)
+        toggle()
+      }).catch((err)=>console.log(err))
     }
 
     const renderMainProducts=()=>(
@@ -363,14 +424,34 @@ const Admin = (props) => {
                     <th>Image</th>
                     <th>Name</th>
                     <th>Price</th>
-                    <th>Stock</th>
+                    <th>Total Stock</th>
                     <th>Category</th>
                     <th style={{width:300}}>Description</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-              {renderTableMainProducts()}
+              {
+                allProduct.map((val, index)=>(
+                  <tr key={index} >
+                    <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
+                    <td style={{width:200}}>
+                      <div style={{maxWidth:'200px'}}>
+                        <img width='50%' height='25%'  src={API_URL_SQL + val.image}/>
+                      </div>
+                    </td>
+                    <td>{val.product_name}</td>
+                    <td>{priceFormatter(val.price)}</td>
+                    <td> {val.stock} pcs</td>
+                    <td>{renderMainProdCat(val.product_id)}</td>
+                    <td>{val.description}</td>
+                    <td>
+                      <Settings className='mr-4 to-hover' onClick={()=>onSettingsClick(val.product_id)}/>
+                      <FaChevronCircleDown className='to-hover' onClick={()=>onArrowDownClick(val.product_id)}/>
+                    </td>
+                  </tr>
+                ))
+              }
             </tbody>
         </Table>
         <div className='table_footer'>
@@ -407,47 +488,28 @@ const Admin = (props) => {
       </div>
     )
 
-    const renderTableMainProducts=()=>{
-      return allProduct.map((val, index)=>(
-        <tr key={index} >
-          <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
-          <td style={{width:200}}>
-            <div style={{maxWidth:'200px'}}>
-              <img width='50%' height='25%'  src={API_URL_SQL + val.image}/>
-            </div>
-          </td>
-          <td>{val.product_name}</td>
-          <td>{priceFormatter(val.price)}</td>
-          <td> 10 pcs</td>
-          <td>{renderMainProdCat(val.product_id)}</td>
-          <td>{val.description}</td>
-          <td>
-            <Settings className='mr-4 to-hover'/>
-            <FaChevronCircleDown className='to-hover' onClick={toggle}/>
-          </td>
-        </tr>
-      ))
-    }
-
-    const renderModalStockBody=()=>{
-      return dataGudang.map((val, index)=>(
-        <div className='mb-3' key={index}>
-          <div style={{fontWeight:'bolder', fontSize:17}}>{val.name}</div>
-          <div className='main_prod_action_down_div'>
-            <div>Available Stock:</div>
-            <div>5 pcs</div>
-          </div>
-          <div className='main_prod_action_down_div'>
-            <div>On Packaging:</div>
-            <div>5 pcs</div>
-          </div>
-          <div className='main_prod_action_down_div'>
-            <div>Total Stock:</div>
-            <div>10 pcs</div>
-          </div>
-        </div>
-      ))
-    }
+    const renderModalStockBody=()=>(
+      <Table hover>
+        <thead>
+          <tr>
+              <th>Ware House</th>
+              <th>Avalaible Stock</th>
+              <th>On Packaging</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            stockProdByWH.map((val, index)=>(
+              <tr key={index} >
+                <td>{val.location_name}</td>
+                <td>{val.stock ? val.stock : 0} pcs</td>
+                <td> {val.stock_packaging ? val.stock_packaging*(-1) : 0} pcs</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </Table>
+    )
 
     const renderModalCategoryTbody=()=>{
       return allCategory.map((val, index)=>(
@@ -476,10 +538,24 @@ const Admin = (props) => {
         </tr>
       ))
     }
+    console.log(allCategory)
+    console.log(allRefProdCat)
+
+    const renderDefaulValueCat=()=>{
+      var arr = allCategory.map((val, index)=>{
+        if (val.product_id == idProd){
+          return(
+            { value: val.category_id, label: val.category_name }
+          )
+        }
+      })
+      return arr
+    }
 
     return ( 
         <div>
             <Header/>
+            {/* Modal untuk lihat stock semua gudang */}
             <Modal isOpen={modal} toggle={toggle} >
                 <ModalHeader toggle={toggle}>Stock</ModalHeader>
                 <ModalBody>
@@ -522,6 +598,47 @@ const Admin = (props) => {
                     <div className='modal_footer_tracking'>
                         <button className='btn btn-outline-info mr-3' onClick={onAddDataClick}>Add Data</button>
                         <button className="btn btn-outline-secondary" onClick={toggleAdd}>Cancel</button>
+                    </div>
+                </ModalFooter>
+            </Modal>
+
+            {/* Modal untuk edit data */}
+            <Modal isOpen={modalEdit} toggle={toggleEdit}>
+                <ModalHeader toggle={toggleEdit}>Edit Products</ModalHeader>
+                <ModalBody>
+                  <label style={{fontSize:15, marginBottom:-5}}>Product name</label>
+                  <input type='text' ref={editForm.product_name} defaultValue={prodById.product_name} placeholder='...' className='form-control mb-2'/>
+
+                  <label style={{fontSize:15, marginBottom:-5}}>Price</label>
+                  <input type='number' ref={editForm.price} defaultValue={prodById.price} placeholder='...' className='form-control mb-2'/>
+
+                  <label style={{fontSize:15, marginBottom:-5}}>Image</label>
+                  <input type='file' onChange={onInputFileChange} className='form-control mb-2'/>
+
+                  <label style={{fontSize:15, marginBottom:-5}}>Category</label>
+                  <Select
+                    defaultValue={
+                      refProdCat.map((val, index)=>(
+                        { value: val.category_id, label: val.category_name }
+                      ))
+                    }
+                    isMulti
+                    name="categories"
+                    options={renderOptionsCategory()}
+                    placeholder='You can choose more than 1'
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    onChange={onSelectCategoryChange}
+                    className='mb-2'
+                  />
+
+                  <label style={{fontSize:15, marginBottom:-5}}>Description</label>
+                  <textarea ref={editForm.description} defaultValue={prodById.description} className='form-control mb-2' cols='30' rows='7' placeholder='...'></textarea>
+                </ModalBody>
+                <ModalFooter>
+                    <div className='modal_footer_tracking'>
+                        <button className='btn btn-outline-info mr-3' onClick={onSaveEditClick}>Save</button>
+                        <button className="btn btn-outline-secondary" onClick={toggleEdit}>Cancel</button>
                     </div>
                 </ModalFooter>
             </Modal>

@@ -77,9 +77,17 @@ const TransactionLog = () => {
     const [page, setPages] = useState(1)
     const [showProd, setShowProd] = useState(1)
     const [allTrx, setAllTrx] = useState([])
-    const [allTrxDetail, setAllTrxDetail] = useState([])
-    const [allTotalPrice, setAllTotalPrice] = useState([])
-    const [idTrx, setIdTrx] = useState([])
+    const [trxDetById, setTrxDetById] = useState([])
+    const [trxTrackingById, setTrxTrackingById] = useState([])
+    const [paymentProof, setPaymentProof] = useState({})
+    // const [allTrxDetail, setAllTrxDetail] = useState([])
+    // const [allTotalPrice, setAllTotalPrice] = useState([])
+    const [totalPriceTrx, setTotalPriceTrx] = useState(0)
+    const [wareHouseTrx, setWareHouseTrx] = useState('')
+    const [productWH, setProductWH] = useState([])
+    const [idWHTrx, setIdWHTrx] = useState(0)
+    const [idTrx, setIdTrx] = useState(0)
+    const [realQty, setRealQty] = useState(0)
     const [modal, setModal] = useState(false)
     const [modalPayment, setModalPayment] = useState(false)
     const [modalTracking, setModalTracking] = useState(false)
@@ -89,9 +97,7 @@ const TransactionLog = () => {
         Axios.get(`${API_URL_SQL}/admin/getTrxUser`)
         .then((res)=>{
             console.log(res.data)
-            setAllTrx(res.data.dataTrxUser)
-            setAllTrxDetail(res.data.dataTrxDetail)
-            setAllTotalPrice(res.data.dataTotalPrice)
+            setAllTrx(res.data)
         }).catch((err)=>console.log(err))
     },[])
 
@@ -127,7 +133,8 @@ const TransactionLog = () => {
 
     const id = open ? 'simple-popover' : undefined;
 
-    const onAcceptPaymentClick = () => {
+    const onAcceptPaymentClick = (id) => {
+        console.log(id)
         MySwal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -138,11 +145,15 @@ const TransactionLog = () => {
             confirmButtonText: 'Yes, Accept!'
         }).then((result) => {
             if (result.isConfirmed) {
-                togglePayment()
-                Swal.fire(
-                    'Accepted!',
-                    'Payment has been accepted.'
-                )
+                Axios.put(`${API_URL_SQL}/admin/acceptPaymentTrf/${id}`)
+                .then((res)=>{
+                    setAllTrx(res.data)
+                    togglePayment()
+                    Swal.fire(
+                        'Accepted!',
+                        'Payment has been accepted.'
+                    )
+                }).catch((err)=>console.log(err))
             }
         })
     }
@@ -160,12 +171,15 @@ const TransactionLog = () => {
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                togglePayment()
-                swalWithBootstrapButtons.fire(
-                  'Rejected!',
-                  'Payment has been rejected.',
-                  'success'
-                )
+                Axios.put(`${API_URL_SQL}/admin/acceptPaymentTrf/${id}`)
+                .then((res)=>{
+                    setAllTrx(res.data)
+                    togglePayment()
+                    swalWithBootstrapButtons.fire(
+                        'Rejected!',
+                        'Payment has been rejected.',
+                    )
+                }).catch((err)=>console.log(err))
             } else if (
                 /* Read more about handling dismissals below */
                 result.dismiss === Swal.DismissReason.cancel
@@ -179,34 +193,64 @@ const TransactionLog = () => {
         })
     }
 
+    const onClickToSeeDetail=(idTrans)=>{
+        Axios.get(`${API_URL_SQL}/admin/getTrxDetailById/${idTrans}`)
+        .then((res)=>{
+            setTrxDetById(res.data)
+            toggle()
+        }).catch((err)=>console.log(err))
+    }
+
+    const actionPaymentCompleted=(idTrans)=>{
+        Axios.get(`${API_URL_SQL}/admin/getTrxTrackingById/${idTrans}`)
+        .then((res)=>{
+            setTrxTrackingById(res.data)
+            toggleTracking()
+        }).catch((err)=>console.log(err))
+    }
+
+    const actionConfirmPayment=(idTrans)=>{
+        Axios.get(`${API_URL_SQL}/admin/getPaymentCheck/${idTrans}`)
+        .then((res)=>{
+            setPaymentProof(res.data.dataPaymentCheck)
+            togglePayment()
+        }).catch((err)=>console.log(err))
+    }
+
     const renderTable=()=>{
         return allTrx.map((val, index)=>(
             <tr key={index}>
                 <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
                 <td>{val.username}</td>
                 <td>{dateFormatter(parseInt(val.date_in))}</td>
-                <td>1000</td>
+                <td>{priceFormatter(val.total_price)}</td>
                 <td>{val.method}</td>
-                <td onClick={()=>{toggle()
-                    setIdTrx(val.transaction_id)} 
-                    } className='to-hover'>
+                <td>{val.location_name}</td>
+                <td onClick={()=>onClickToSeeDetail(val.transaction_id)} className='to-hover'>
                         click to see detail..
                 </td>
                 <td>{val.status}</td>
-                <td className='to-hover' onClick={index % 2 != 0 ? togglePayment : toggleTracking }><Settings/></td>
+                <td className='to-hover' 
+                    onClick={()=>{
+                        val.status == 'waitingAdminConfirmation' ? 
+                        actionConfirmPayment(val.transaction_id) 
+                        : actionPaymentCompleted(val.transaction_id)
+                    }}>
+                    <Settings/>
+                </td>
             </tr>
       ))
     }
 
     const renderTotalHarga=()=>{
-        // var total= allTrxDetail.reduce((total, num)=>{
-        //     if(num.transaction_id == idTrx) return total + (num.price * num.quantity)
-        // },0)
+        var total= trxDetById.reduce((total, num)=>{
+            return total + (num.price * num.quantity)
+        },0)
 
-        // return total
-        var hasil = allTotalPrice.find((val)=>val.product_id == idTrx)
-        if (hasil) return hasil.total_price
+        return priceFormatter(total)
     }
+
+    console.log(trxDetById)
 
     const renderProductDetail=()=>(
         <Paper >
@@ -223,28 +267,26 @@ const TransactionLog = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {allTrxDetail.map((val, index)=>{
-                            if(val.transaction_id == idTrx){
-                                return (
-                                    <TableRow key={index} hover={true}>
-                                        <TableCell>{index+1}</TableCell>
-                                        <TableCell >
-                                            <div style={{maxWidth:'100px'}}>
-                                                <img width='100%' height='100%'  src={API_URL_SQL + val.image}/>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>{val.product_name}</TableCell>
-                                        <TableCell>{val.quantity}</TableCell>
-                                        <TableCell>{priceFormatter(val.price)}</TableCell>
-                                        <TableCell>{priceFormatter(val.price*val.quantity)}</TableCell>
-                                    </TableRow>
-                                )
-                            }
+                        {trxDetById.map((val, index)=>{
+                            return (
+                                <TableRow key={index} hover={true}>
+                                    <TableCell>{index+1}</TableCell>
+                                    <TableCell >
+                                        <div style={{maxWidth:'100px'}}>
+                                            <img width='100%' height='100%'  src={API_URL_SQL + val.image}/>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>{val.product_name}</TableCell>
+                                    <TableCell>{val.quantity}</TableCell>
+                                    <TableCell>{priceFormatter(val.price)}</TableCell>
+                                    <TableCell>{priceFormatter(val.price*val.quantity)}</TableCell>
+                                </TableRow>
+                            )
                         })}
                     </TableBody>
                     <TableFooter>
                         <TableCell colSpan={4}></TableCell>
-                        <TableCell style={{fontWeight:'700', color:'black', fontSize:20}}>Subtotal Harga</TableCell>
+                        <TableCell style={{fontWeight:'700', color:'black', fontSize:20}}>Total Harga</TableCell>
                         <TableCell style={{fontWeight:'700', color:'black', fontSize:20}}>
                             {renderTotalHarga()}
                         </TableCell>
@@ -253,23 +295,7 @@ const TransactionLog = () => {
             </TableContainer>
         </Paper>
     )
-
-    const renderProductDetailTableBody=()=>{
-        return allTrxDetail.map((val, index)=>(
-            <TableRow key={index}>
-                <TableCell>{index+1}</TableCell>
-                <TableCell >
-                    <div style={{maxWidth:'100px'}}>
-                        <img width='100%' height='100%'  src={val.image}/>
-                    </div>
-                </TableCell>
-                <TableCell>{val.product_name}</TableCell>
-                <TableCell>5 pcs</TableCell>
-                <TableCell>1.000.000</TableCell>
-                <TableCell>5.000.000</TableCell>
-            </TableRow>
-        ))
-    }
+   
 
     const renderTrackingDetail=()=>(
         <Paper >
@@ -281,36 +307,32 @@ const TransactionLog = () => {
                             <TableCell>Image</TableCell>
                             <TableCell>Product</TableCell>
                             <TableCell>Order Qty</TableCell>
-                            <TableCell>Closest WH</TableCell>
                             <TableCell>Stock Qty</TableCell>
                             <TableCell>Status</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {renderTrackingDetailTableBody()}
+                        {
+                            trxTrackingById.map((val, index)=>(
+                                <TableRow key={index} hover={true}>
+                                    <TableCell>{index+1}</TableCell>
+                                    <TableCell >
+                                        <div style={{maxWidth:'100px'}}>
+                                            <img width='100%' height='100%'  src={API_URL_SQL + val.image}/>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>{val.product_name}</TableCell>
+                                    <TableCell>{val.quantity}</TableCell>
+                                    <TableCell>{val.stock_warehouse ? val.stock_warehouse : 0}</TableCell>
+                                    <TableCell>{val.quantity <= val.stock_warehouse ? 'ready' : 'insufficient'}</TableCell>
+                                </TableRow>
+                            ))
+                        }
                     </TableBody>
                 </TableUI>
             </TableContainer>
         </Paper>
     )
-
-    const renderTrackingDetailTableBody=()=>{
-        return data.map((val, index)=>(
-            <TableRow key={index} hover={true}>
-                <TableCell>{index+1}</TableCell>
-                <TableCell >
-                    <div style={{maxWidth:'100px'}}>
-                        <img width='100%' height='100%'  src={val.image}/>
-                    </div>
-                </TableCell>
-                <TableCell>{val.name}</TableCell>
-                <TableCell>4 pcs</TableCell>
-                <TableCell>{index % 2 == 0 ? 'Bekasi' : 'Pluit'}</TableCell>
-                <TableCell>{index % 2 == 0 ? '5 pcs' : '0 pcs'}</TableCell>
-                <TableCell>{index % 2 == 0 ? 'ready' : 'requesting to BSD'}</TableCell>
-            </TableRow>
-        ))
-    }
     
     return ( 
         <div style={{paddingTop:10}}>
@@ -331,16 +353,16 @@ const TransactionLog = () => {
                 <ModalHeader toggle={togglePayment}>Payment Checking</ModalHeader>
                 <ModalBody>
                     <div className='modal_payment_title'>
-                        <div style={{fontWeight:'bold'}}>username</div>
-                        <div>1.000.000</div>
-                    </div>
-                    <div className='modal_payment_div'>
-                        <img width='100%' height='100%' src={bukti_trans}/>
+                            <div style={{fontWeight:'bold', fontSize:14}}>{paymentProof.username}</div>
+                            <div style={{fontSize:14}}>{priceFormatter(paymentProof.total_price)}</div>
+                        </div>
+                        <div className='modal_payment_div'>
+                            <img width='100%' height='100%' src={API_URL_SQL + paymentProof.payment_proof}/>
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={onAcceptPaymentClick}>Accept</Button>{'  '}
-                    <Button color="danger" onClick={onRejectPaymentClick}>Reject</Button>
+                    <Button color="primary" onClick={()=>onAcceptPaymentClick(paymentProof.transaction_id)}>Accept</Button>{'  '}
+                    <Button color="danger" onClick={()=>onRejectPaymentClick(paymentProof.transaction_id)}>Reject</Button>
                 </ModalFooter>
             </Modal>
 
@@ -352,14 +374,13 @@ const TransactionLog = () => {
                 </ModalBody>
                 <ModalFooter>
                     <div className='modal_footer_tracking'>
-                        <button className='btn btn-outline-info mr-3'>Dispatch</button>
                         <button className="btn btn-outline-primary" onClick={toggleTracking}>back</button>
                     </div>
                 </ModalFooter>
             </Modal>
 
             {/* Render component */}
-            <Table>
+            <Table hover>
                 <thead>
                     <tr>
                         <th></th>
@@ -367,6 +388,7 @@ const TransactionLog = () => {
                         <th>Date</th>
                         <th>Total Price</th>
                         <th>Payment Method</th>
+                        <th>Closest Warehouse</th>
                         <th>Product</th>
                         <th>Status</th>
                         <th>Action</th>
