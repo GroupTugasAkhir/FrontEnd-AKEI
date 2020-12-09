@@ -1,4 +1,4 @@
-import React, { useRef, useState, Component, Fragment } from 'react';
+import React, { useRef, useState, Component, Fragment, useEffect } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -20,6 +20,8 @@ import {
 } from 'reactstrap';
 import { Add, PlusOneOutlined } from '@material-ui/icons';
 import Select from 'react-select';
+import Axios from 'axios';
+import {API_URL_SQL} from './../../helpers/apiurl'
 
 
 const data = [
@@ -40,10 +42,18 @@ const UserManagement = () => {
 
     const [modal, setModal] = useState(false);
     // const [options, setOptions] = useState('')
-    const [addForm, setAddForm] = useState({
-        username: useRef(),
-        warehouse: useRef()
-    })
+    const [locOptions, setlocOptions] = useState([])
+    const [dataadminWH, setdataadminWH] = useState([])
+    const userAdd = useRef()
+    const [selectedIdWH, setselectedIdWH] = useState('')
+
+    useEffect(()=> {
+        Axios.get(`${API_URL_SQL}/admin/getwhlocation`)
+        .then((res)=> {
+            setlocOptions(res.data.dataWH)
+            setdataadminWH(res.data.dataAdminWH)
+        }).catch((err)=> console.log(err))
+    },[])
 
     const toggle = () => setModal(!modal);
 
@@ -51,8 +61,27 @@ const UserManagement = () => {
         <Select options={options} />
     )
 
+    const onChangeWH = (e) => {
+        setselectedIdWH(e.target.value)
+    }
+
+    const onaddAdmin = () => {
+        let newUser = userAdd.current.value
+        let adminData = {
+            username: newUser,
+            notes: selectedIdWH,
+            password: 'Admin123',
+            email: 'adminwh@gmail.com'
+        }
+
+        Axios.post(`${API_URL_SQL}/admin/createAdminWH`,adminData)
+        .then((res)=> {
+            setdataadminWH(res.data)
+        }).catch((err)=> console.log(err))
+    }
+
     const renderUserDetailTableBody=()=>{
-        return data.map((val, index)=>(
+        return dataadminWH.map((val, index)=>(
             <TableRow key={index}>
                 <TableCell>{index+1}</TableCell>
                 <TableCell >
@@ -72,22 +101,30 @@ const UserManagement = () => {
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Create Admin</ModalHeader>
                 <ModalBody>
-                    <input type='text' placeholder='Enter username' className='form-control mb-2'/>
+                    <input ref={userAdd} type='text' placeholder='Enter username' className='form-control mb-2'/>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <label class="input-group-text" for="inputGroupSelect01">Ware House</label>
                         </div>
-                        <select class="custom-select" id="inputGroupSelect01">
+                        <select onChange={onChangeWH} class="custom-select" id="inputGroupSelect01">
                             <option selected>Choose...</option>
-                            <option value="1">Gudang BSD</option>
+                            {
+                                locOptions.map((val, index)=> {
+                                    return (
+                                        <option value={val.location_id}>{val.location_name}</option>
+                                    )
+                                })
+                            }
+
+                            {/* <option value="1">Gudang BSD</option>
                             <option value="2">Gudang Bekasi</option>
-                            <option value="3">Gudang </option>
+                            <option value="3">Gudang </option> */}
                         </select>
                     </div>
                 </ModalBody>
                 <ModalFooter>
                     <div className='modal_footer_tracking'>
-                        <button className='btn btn-outline-info mr-3'>Add</button>
+                        <button onClick={onaddAdmin} className='btn btn-outline-info mr-3'>Add</button>
                         <button className="btn btn-outline-primary" onClick={toggle}>back</button>
                     </div>
                 </ModalFooter>
