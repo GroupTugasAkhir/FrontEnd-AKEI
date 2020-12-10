@@ -53,7 +53,7 @@ const BranchRequest = () => {
         buttonsStyling: false
     })
 
-    const onSettingClick=(prod_id,destination_id,req_qty,loc_name,loc_id,notif_id)=>{
+    const onSettingClick=(prod_id,destination_id,req_qty,loc_name,loc_id,notif_id,notes)=>{
         console.log(loc_id)
         fetchDetail(prod_id,loc_id)
         if(detail.length){
@@ -67,7 +67,7 @@ const BranchRequest = () => {
                 confirmButtonText: 'Confirm'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    confirmRequest(notif_id,prod_id,loc_id,destination_id,req_qty)
+                    confirmRequest(notif_id,prod_id,loc_id,destination_id,req_qty,notes)
                     MySwal.fire(
                         'Confirm!',
                         `sent ${req_qty} items to ${loc_name}`,
@@ -91,14 +91,16 @@ const BranchRequest = () => {
         }).catch((err)=>console.log(err))
     }
 
-    const confirmRequest=(notif_id,prod_id,loc_id,destination_id,mod_qty)=>{
+    const confirmRequest=(notif_id,prod_id,loc_id,destination_id,mod_qty,notes)=>{
         let obj = {
             product_id : prod_id, 
             mod_qty,
             notification_id : notif_id,
             location_id : loc_id,
-            destination_id
+            destination_id,
+            notes
         }
+        // console.log(notes)
         Axios.post(`${API_URL_SQL}/notification/confirmrequest`,obj)
         .then(()=>{
             console.log('confirmed, check tbl_notif and product_detail')
@@ -126,7 +128,8 @@ const BranchRequest = () => {
                         val.req_qty,
                         val.location_name,
                         val.from,
-                        val.notification_id
+                        val.notification_id,
+                        val.notes
                         )}
                     }>Details</button>
             </td>

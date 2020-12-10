@@ -67,13 +67,17 @@ const TransactionLog = (props) => {
     const [trxData,setTrxData] = useState([])
     const [onPackage,setOnPackage] = useState([])
     const [onWaiting,setOnWaiting] = useState([])
+    const [isValid,setIsValid] = useState(0)
+    const [trxId,setTrxId] = useState(0)
 
     useEffect(()=>{
-        let getLocation = JSON.parse(localStorage.getItem('user'))
-        Axios.get(`${API_URL_SQL}/notification/gettransaction/${getLocation.notes}`)
-        .then((res)=>{
-            setData(res.data)
-        }).catch((err)=>console.log(err))
+        if(props.Auth.isLogin){
+            let getLocation = JSON.parse(localStorage.getItem('user'))
+            Axios.get(`${API_URL_SQL}/notification/gettransaction/${getLocation.notes}`)
+            .then((res)=>{
+                setData(res.data)
+            }).catch((err)=>console.log(err))
+        }
     })
 
     useEffect(()=> {
@@ -99,7 +103,9 @@ const TransactionLog = (props) => {
 
     const transactionModal = (trxid) => {
         localStorage.setItem('trxID', JSON.stringify(trxid))
+        checkSendButton(trxid)
         getTransactionDetail(trxid)
+        setTrxId(trxid)
     }
 
     const renderTable=()=>{
@@ -132,18 +138,6 @@ const TransactionLog = (props) => {
                 Axios.post(`${API_URL_SQL}/notification/onwaitingitem`,obj)
                 .then((res3)=>{
                     setOnWaiting(res3.data)
-                    console.log(trxData)
-                    console.log(onWaiting)
-                    let final
-                    if(onWaiting.length){
-                        final = trxData.filter((val)=> {
-                            return onWaiting.some((val2)=>{
-                                return val.id !== val2.id
-                            })
-                        })
-                        console.log(final)
-                        setTrxData(final)
-                    }
                     setModalTracking(true)
                 })
             }).catch((err)=>console.log(err))
@@ -164,18 +158,35 @@ const TransactionLog = (props) => {
         }).catch((err)=>console.log(err))        
     }
 
-    const requestItem=(id,qty,trx_detail,location)=>{
+    const requestItem=(id,qty,trx_detail,location,notif_id)=>{
         Axios.post(`${API_URL_SQL}/notification/requestHandling`,{
             location_id : location,
             product_id : id,
             req_quantity : qty,
-            transaction_detail_id : trx_detail
+            transaction_detail_id : trx_detail,
+            notification_id : notif_id
         }).then(()=>{
             console.log('sukses oi')
             let transacID = localStorage.getItem('trxID')
             props.ModalChange(transacID)
         }).catch((err)=>console.log(err))
+    }
 
+    const checkSendButton=(trx_id)=>{
+        Axios.get(`${API_URL_SQL}/notification/checkitem/${trx_id}`)
+        .then((res)=>{
+            console.log(res.data)
+            setIsValid(res.data)
+        }).catch((err)=>console.log(err))
+    }
+
+    const sendItem=()=>{
+        console.log(trxId)
+        Axios.post(`${API_URL_SQL}/notification/senditem/${trxId}`)
+        .then(()=>{
+            console.log('item send')
+            toggleTracking()
+        }).catch((err)=>console.log(err))
     }
 
     const renderTrackingDetail=()=>(
@@ -247,7 +258,7 @@ const TransactionLog = (props) => {
                     </TableCell>
                     :
                     <TableCell className='to-hover'>
-                        <button className='btn btn-outline-success mr-3' onClick={()=>requestItem(val.product_id, val.req_qty,val.transaction_detail_id,getLocation.notes)}>Request</button>
+                        <button className='btn btn-outline-success mr-3' onClick={()=>requestItem(val.product_id, val.req_qty,val.transaction_detail_id,getLocation.notes,val.notification_id)}>Request</button>
                     </TableCell>
                 }
             </TableRow>
@@ -265,7 +276,7 @@ const TransactionLog = (props) => {
                 </TableCell>
                 <TableCell>{val.product_name}</TableCell>
                 <TableCell>{val.req_qty}</TableCell>
-                <TableCell>{val.notes}</TableCell>
+                <TableCell>onPackaging</TableCell>
             </TableRow>
         ))
     }
@@ -280,7 +291,7 @@ const TransactionLog = (props) => {
                     </div>
                 </TableCell>
                 <TableCell>{val.product_name}</TableCell>
-                <TableCell>{val.notes}</TableCell>
+                <TableCell>onWaiting from {val.destination}</TableCell>
             </TableRow>
         ))
     }
@@ -302,7 +313,12 @@ const TransactionLog = (props) => {
                 </ModalBody>
                 <ModalFooter>
                     <div className='modal_footer_tracking'>
-                        <button className='btn btn-outline-info mr-3'>Dispatch</button>
+                        {
+                            isValid?
+                            <button className='btn btn-outline-info mr-3' onClick={sendItem}>Send</button>
+                            :
+                            null
+                        }
                         <button className="btn btn-outline-primary" onClick={toggleTracking}>back</button>
                     </div>
                 </ModalFooter>
@@ -359,6 +375,7 @@ const TransactionLog = (props) => {
 
 const Mapstatetoprops = (state) => {
     return {
+        Auth : state.Auth,
         Admin: state.Admin
     }
 }
