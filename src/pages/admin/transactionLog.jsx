@@ -80,6 +80,8 @@ const TransactionLog = () => {
     const [trxDetById, setTrxDetById] = useState([])
     const [trxTrackingById, setTrxTrackingById] = useState([])
     const [paymentProof, setPaymentProof] = useState({})
+    const [procurement, setProcurement] = useState([])
+    const [procurementName, setProcurementName] = useState('')
     // const [allTrxDetail, setAllTrxDetail] = useState([])
     // const [allTotalPrice, setAllTotalPrice] = useState([])
     const [totalPriceTrx, setTotalPriceTrx] = useState(0)
@@ -91,6 +93,7 @@ const TransactionLog = () => {
     const [modal, setModal] = useState(false)
     const [modalPayment, setModalPayment] = useState(false)
     const [modalTracking, setModalTracking] = useState(false)
+    const [modalProcurement, setModalProcurement] = useState(false)
 
 
     useEffect(()=>{
@@ -114,6 +117,7 @@ const TransactionLog = () => {
     const toggle = () => setModal(!modal);
     const togglePayment = () => setModalPayment(!modalPayment);
     const toggleTracking = () => setModalTracking(!modalTracking);
+    const toggleProcurement = () => setModalProcurement(!modalProcurement);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -201,8 +205,8 @@ const TransactionLog = () => {
         }).catch((err)=>console.log(err))
     }
 
-    const actionPaymentCompleted=(idTrans)=>{
-        Axios.get(`${API_URL_SQL}/admin/getTrxTrackingById/${idTrans}`)
+    const actionPaymentCompleted=(idTrans, idLoc)=>{
+        Axios.get(`${API_URL_SQL}/admin/getTrxTrackingById/${idTrans}/${idLoc}`)
         .then((res)=>{
             setTrxTrackingById(res.data)
             toggleTracking()
@@ -210,14 +214,29 @@ const TransactionLog = () => {
     }
 
     const actionConfirmPayment=(idTrans)=>{
+        console.log(idTrans)
         Axios.get(`${API_URL_SQL}/admin/getPaymentCheck/${idTrans}`)
         .then((res)=>{
             setPaymentProof(res.data.dataPaymentCheck)
+            console.log(paymentProof)
             togglePayment()
         }).catch((err)=>console.log(err))
     }
 
+    const onActionProcurement=(idTransDet, prodName)=>{
+        console.log(idTransDet)
+        Axios.get(`${API_URL_SQL}/admin/getSupplyFlow/${idTransDet}`)
+        .then((res)=>{
+            setProcurement(res.data)
+            setProcurementName(prodName)
+            console.log(procurement)
+            // console.log(res.data)
+            toggleProcurement()
+        }).catch((err)=>console.log(err))
+    }
+
     const renderTable=()=>{
+        // console.log(allTrx)
         return allTrx.map((val, index)=>(
             <tr key={index}>
                 <th style={{display:'flex', justifyContent:'center', alignItems:'center'}}>{index+1}</th>
@@ -234,7 +253,7 @@ const TransactionLog = () => {
                     onClick={()=>{
                         val.status == 'waitingAdminConfirmation' ? 
                         actionConfirmPayment(val.transaction_id) 
-                        : actionPaymentCompleted(val.transaction_id)
+                        : actionPaymentCompleted(val.transaction_id, val.location_id)
                     }}>
                     <Settings/>
                 </td>
@@ -250,7 +269,7 @@ const TransactionLog = () => {
         return priceFormatter(total)
     }
 
-    console.log(trxDetById)
+    // console.log(trxDetById)
 
     const renderProductDetail=()=>(
         <Paper >
@@ -307,8 +326,9 @@ const TransactionLog = () => {
                             <TableCell>Image</TableCell>
                             <TableCell>Product</TableCell>
                             <TableCell>Order Qty</TableCell>
-                            <TableCell>Stock Qty</TableCell>
+                            <TableCell>Stock Available</TableCell>
                             <TableCell>Status</TableCell>
+                            <TableCell>Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -325,6 +345,49 @@ const TransactionLog = () => {
                                     <TableCell>{val.quantity}</TableCell>
                                     <TableCell>{val.stock_warehouse ? val.stock_warehouse : 0}</TableCell>
                                     <TableCell>{val.quantity <= val.stock_warehouse ? 'ready' : 'insufficient'}</TableCell>
+                                    <TableCell className='to-hover' onClick={()=>onActionProcurement(val.transaction_detail_id, val.product_name)}>
+                                        procurement detail...
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        }
+                    </TableBody>
+                </TableUI>
+            </TableContainer>
+        </Paper>
+    )
+
+    const renderProcurementDetail=()=>(
+        <Paper >
+            <TableContainer >
+                <TableUI stickyHeader aria-label="sticky table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>No.</TableCell>
+                            <TableCell>Date</TableCell>
+                            <TableCell>Procurement Activity</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            procurement.map((val, index)=>(
+                                <TableRow key={index} hover={true}>
+                                    <TableCell>{index+1}</TableCell>
+                                    <TableCell>{dateFormatter(parseInt(val.date_in))}</TableCell>
+                                    <TableCell>
+                                        {
+                                            
+                                            val.from == 0 && val.status=='request' ?
+                                            `Waiting ${val.destination_name} Confirmation`
+                                            : val.from == 0 && val.status=='confirm' ?
+                                             `${val.destination_name} has confirmed`
+                                            : val.status=='request' ?
+                                             `Requesting to ${val.destination_name}`
+                                            : val.status=='confirm' ?
+                                             `Accepted, ${val.destination_name} sending supply`
+                                            : 'Sent to user'
+                                        }
+                                    </TableCell>
                                 </TableRow>
                             ))
                         }
@@ -375,6 +438,19 @@ const TransactionLog = () => {
                 <ModalFooter>
                     <div className='modal_footer_tracking'>
                         <button className="btn btn-outline-primary" onClick={toggleTracking}>back</button>
+                    </div>
+                </ModalFooter>
+            </Modal>
+
+            {/* Modal untuk lihat procurement transaksi detail */}
+            <Modal isOpen={modalProcurement} toggle={toggleProcurement} size='xl'>
+                <ModalHeader toggle={toggleProcurement}>{procurementName} Procurement</ModalHeader>
+                <ModalBody>
+                    {renderProcurementDetail()}
+                </ModalBody>
+                <ModalFooter>
+                    <div className='modal_footer_tracking'>
+                        <button className="btn btn-outline-primary" onClick={toggleProcurement}>back</button>
                     </div>
                 </ModalFooter>
             </Modal>

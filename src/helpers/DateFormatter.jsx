@@ -8,6 +8,6 @@ export const dateFormatter=(n)=>{
     var sec = ((today.getSeconds() < 10)?"0":"") + today.getSeconds()
   
     // today =dd + '-' + mm + '-' + yyyy
-    today = yyyy + '-' + mm + '-' + dd + ' ' + hr + ':' + mn + ':' + sec
+    today = dd + '-' + mm + '-' + yyyy + `  ` + hr + ':' + mn + ':' + sec
     return today
 }
