@@ -495,6 +495,7 @@ const Admin = (props) => {
               <th>Ware House</th>
               <th>Avalaible Stock</th>
               <th>On Packaging</th>
+              <th>Operational Stock (Total)</th>
           </tr>
         </thead>
         <tbody>
@@ -502,8 +503,14 @@ const Admin = (props) => {
             stockProdByWH.map((val, index)=>(
               <tr key={index} >
                 <td>{val.location_name}</td>
-                <td>{val.stock ? val.stock : 0} pcs</td>
-                <td> {val.stock_packaging ? val.stock_packaging*(-1) : 0} pcs</td>
+                <td>{val.available_stock ? val.available_stock : 0} pcs</td>
+                <td> {val.hold_stock ? val.hold_stock*(-1) : 0} pcs</td>
+                <td>
+                  {
+                    val.hold_stock && val.available_stock ?
+                    val.available_stock - val.hold_stock : 0
+                  } pcs
+                </td>
               </tr>
             ))
           }
