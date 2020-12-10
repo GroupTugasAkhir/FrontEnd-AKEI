@@ -3,7 +3,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import './style.css'
 import Logo from './../../assets/AkeiLogo.png'
-import {Link, useHistory} from 'react-router-dom'
+import {Link, Redirect, useHistory} from 'react-router-dom'
 import { connect } from 'react-redux';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
