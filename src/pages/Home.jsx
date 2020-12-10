@@ -11,11 +11,11 @@ import { Redirect } from 'react-router-dom';
 
 const Home=(props)=>{
 
-    if(props.Auth.isLogin){
-        if(props.role !== 1){
-            return <Redirect to='/admin'/>
-        }
-    }
+    // if(props.Auth.isLogin){
+    //     if(props.role !== 1){
+    //         return <Redirect to='/admin'/>
+    //     }
+    // }
 
     return (
         <div>
