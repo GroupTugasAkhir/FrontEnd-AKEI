@@ -219,7 +219,8 @@ const Cart = (props) => {
             user_id: props.Auth.user_id,
             idtrans: dataCart[0].idtrans,
             notes: longlat,
-            matchLoc: matchLoc
+            matchLoc: matchLoc,
+            userCart: dataCart
         }))
         Axios.post(`${API_URL_SQL}/transaction/onpayinvoice`,formData,options)
         .then((res)=> {
@@ -235,7 +236,7 @@ const Cart = (props) => {
                 props.ClearFunc()
                 setpayModal(false)
             }
-        }).catch(err=> {
+        }).catch((err)=> {
             console.log(err.response.data.message);
         })
     }
@@ -251,7 +252,8 @@ const Cart = (props) => {
             idtrans: dataCart[0].idtrans,
             payment_proof: ccPay.current.value,
             notes: longlat,
-            matchLoc: matchLoc
+            matchLoc: matchLoc,
+            userCart: dataCart
         }).then((res)=> {
             if(res.data === 'succeed') {
                 setdataCart([])

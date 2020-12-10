@@ -20,21 +20,7 @@ import { Add, Settings } from '@material-ui/icons';
 import Axios from 'axios'
 import { API_URL_SQL } from '../../helpers/apiurl';
 
-const uriPic = {
-    chair: 'https://images.unsplash.com/photo-1561677978-583a8c7a4b43?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80',
-    sofa: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
-    table: 'https://images.unsplash.com/photo-1602009445825-70e98455ea7c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80'
-  }
-  
-  const data = [
-    {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-    {image:uriPic.sofa, name:'sofa', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-    {image:uriPic.table, name:'table', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-    {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-    {image:uriPic.sofa, name:'sofa', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-    // {image:uriPic.table, name:'table', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-    // {image:uriPic.chair, name:'chair', price:'1.000.000', category:'category', description:'White elegant chair super comfy'},
-  ]
+
 
 const BranchInventory = (props) => {
     const [modal, setModal] = useState(false)
@@ -52,7 +38,7 @@ const BranchInventory = (props) => {
         // console.log(res.data)
         setAllProduct(res.data.dataMainProd)
         setCurrentWHprod(res.data.dataCurrentWH)
-        setProductSold(res.data.dataSoldCurrentWH)
+        // setProductSold(res.data.dataSoldCurrentWH)
         // console.log(allProduct)
       }).catch((err)=>{
         console.log(err)
@@ -79,6 +65,23 @@ const BranchInventory = (props) => {
         })
     }
 
+    const correctQtyProduct=()=>{
+        var quantity = parseInt(addForm.qty.current.value)*(-1)
+        var product_id = parseInt(addForm.product_id.current.value)
+        var location_id = parseInt(props.notes)
+        var status = 'correction'
+        var data = {quantity, product_id, location_id, status}
+        console.log(data)
+        Axios.post(`${API_URL_SQL}/admin/addWHProduct`, data)
+        .then((res)=>{
+            alert('sukses koreksi prod')
+            setCurrentWHprod(res.data)
+            toggle()
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
     const renderOptions=()=>{
         return allProduct.map((val, index)=>(
             <option key={index} value={val.product_id}>{val.product_name}</option>
@@ -95,19 +98,13 @@ const BranchInventory = (props) => {
                 </div>
             </td>
             <td>{val.product_name}</td>
-            <td>{val.real_quantity} pcs</td>
-            <td>{renderOnPackaging(val.product_id)}</td>
+            <td>{val.available_stock} pcs</td>
+            <td>{val.hold_stock ? val.hold_stock*(-1) : 0} pcs</td>
+            <td>{val.available_stock - val.hold_stock} pcs</td>
           </tr>
         ))
     }
     
-
-    const renderOnPackaging=(id)=>{
-        var arr = productSold
-        var hasil = arr.find((val)=>val.product_id == id)
-        if (hasil) return hasil.real_quantity*(-1) + ' pcs'
-        return '0 pcs'
-    }
 
     console.log(currentWHprod)
     console.log(productSold)
@@ -130,6 +127,7 @@ const BranchInventory = (props) => {
                 <ModalFooter>
                     <div className='modal_footer_tracking'>
                         <button className='btn btn-outline-info mr-3' onClick={addQtyProduct}>Add</button>
+                        <button className='btn btn-outline-info mr-3' onClick={correctQtyProduct}>Correction</button>
                         <button className="btn btn-outline-primary" onClick={toggle}>back</button>
                     </div>
                 </ModalFooter>
@@ -145,6 +143,7 @@ const BranchInventory = (props) => {
                         <th>Product</th>
                         <th>Avalaible Stock</th>
                         <th>On Packaging</th>
+                        <th>Operational Stock (Total)</th>
                     </tr>
                 </thead>
                 <tbody>

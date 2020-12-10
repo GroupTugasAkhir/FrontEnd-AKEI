@@ -57,6 +57,7 @@ export const KeepLogin = () => {
                     dispatch({type: 'GET',payload: obj})
 
                     localStorage.setItem('user', JSON.stringify(res.data.dataLogin))
+                    console.log(res.data.dataCart);
                     dispatch({type: 'LOGIN', payload: res.data.dataLogin, cart: res.data.dataCart})
                 }).catch((err)=> dispatch({type: 'ERROR'}))
 
