@@ -34,6 +34,8 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import Axios from 'axios';
 import { API_URL_SQL } from '../../helpers';
+import {connect} from 'react-redux'
+import {ModalChange} from './../../redux/actions'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -53,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TransactionLog = () => {
+const TransactionLog = (props) => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const [page, setPages] = useState(1)
@@ -74,6 +76,13 @@ const TransactionLog = () => {
         }).catch((err)=>console.log(err))
     })
 
+    useEffect(()=> {
+        if(props.Admin.adminData !== '') {    
+            console.log(props.Admin.adminData);
+            getTransactionDetail(props.Admin.adminData)
+        }
+    },[props.Admin.adminData])
+
     const MySwal = withReactContent(Swal)
 
     const swalWithBootstrapButtons = Swal.mixin({
@@ -88,6 +97,11 @@ const TransactionLog = () => {
     const toggleRequest = () => setModalRequest(!modalRequest);
     const toggleTracking = () => setModalTracking(!modalTracking);
 
+    const transactionModal = (trxid) => {
+        localStorage.setItem('trxID', JSON.stringify(trxid))
+        getTransactionDetail(trxid)
+    }
+
     const renderTable=()=>{
         return data.map((val, index)=>(
             <tr key={index} style={{textTransform:'capitalize'}}>
@@ -95,7 +109,7 @@ const TransactionLog = () => {
                 <td>{val.username}</td>
                 <td>{val.date_in}</td>
                 <td>{val.status}</td>
-                <td className='to-hover' onClick={()=>getTransactionDetail(val.transaction_id)}><Settings/></td>
+                <td className='to-hover' onClick={()=>transactionModal(val.transaction_id)}><Settings/></td>
             </tr>
       ))
     }
@@ -145,6 +159,8 @@ const TransactionLog = () => {
             location_id : getLocation.notes
         }).then(()=>{
             console.log('sukses oi')
+            let transacID = localStorage.getItem('trxID')
+            props.ModalChange(transacID)
         }).catch((err)=>console.log(err))        
     }
 
@@ -156,6 +172,8 @@ const TransactionLog = () => {
             transaction_detail_id : trx_detail
         }).then(()=>{
             console.log('sukses oi')
+            let transacID = localStorage.getItem('trxID')
+            props.ModalChange(transacID)
         }).catch((err)=>console.log(err))
 
     }
@@ -201,7 +219,7 @@ const TransactionLog = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {onPackage.length? renderOnWaiting() : null}
+                        {onPackage.length || onWaiting.length? renderOnWaiting() : null}
                     </TableBody>
                 </TableUI>
             </TableContainer>
@@ -338,5 +356,11 @@ const TransactionLog = () => {
         </div>
      );
 }
- 
-export default TransactionLog;
+
+const Mapstatetoprops = (state) => {
+    return {
+        Admin: state.Admin
+    }
+}
+
+export default connect(Mapstatetoprops,{ModalChange})(TransactionLog);
