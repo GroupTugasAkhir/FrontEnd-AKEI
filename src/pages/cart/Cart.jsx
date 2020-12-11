@@ -16,7 +16,7 @@ import {connect} from 'react-redux'
 import Swal from 'sweetalert2'
 import {findNearest} from 'geolib'
 import Empty from './../../assets/empty.png'
-import {ClearFunc} from './../../redux/actions'
+import {ClearFunc, CartThunk} from './../../redux/actions'
 
 
 //testing
@@ -61,13 +61,8 @@ const Cart = (props) => {
         }
     },[])
 
-    // useEffect(()=>{
-    //     console.log(dataCart)
-    // })
-
     const getCartData = async () => {
         try {
-            // const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
             const {data} = await Axios.get(`${API_URL_SQL}/cart/getCart/${props.Auth.user_id}`)
             if(!isCancelled.current) {
                 setdataCart(data.cartData)
@@ -110,12 +105,20 @@ const Cart = (props) => {
                 q: userAddress
             }
         }).then((res)=> {
-            console.log(res.data.results[0]);
-            setlonglat(`${res.data.results[0].geometry.lat}` + `,${res.data.results[0].geometry.lng}`)
-            const nearDist = findNearest({ latitude: res.data.results[0].geometry.lat, longitude: res.data.results[0].geometry.lng }, dataLocation);
-            setmatchLoc(nearDist)
-            console.log(nearDist);
-            setgetinputuser(true)
+            if(res.data.results.length) {
+                console.log(res.data.results[0]);
+                setlonglat(`${res.data.results[0].geometry.lat}` + `,${res.data.results[0].geometry.lng}`)
+                const nearDist = findNearest({ latitude: res.data.results[0].geometry.lat, longitude: res.data.results[0].geometry.lng }, dataLocation);
+                setmatchLoc(nearDist)
+                console.log(nearDist);
+                setgetinputuser(true)
+            } else {
+                Swal.fire(
+                    'Oopps...',
+                    'Sorry your address cannot be found!',
+                    'question'
+                  )
+            }
         }).catch(err=> {
             console.log(err);
         })
@@ -151,6 +154,7 @@ const Cart = (props) => {
             Axios.post(`${API_URL_SQL}/cart/deleteCart`,idData)
             .then((res)=> {
                 console.log(res.data);
+                props.CartThunk(props.Auth.user_id)
             }).catch(err=> {
                 console.log(err.response.data.message);
             })
@@ -234,6 +238,8 @@ const Cart = (props) => {
                     timer: 1500
                   })
                 props.ClearFunc()
+                setcurloc(false)
+                setgetinputuser(false)
                 setpayModal(false)
             }
         }).catch((err)=> {
@@ -265,6 +271,8 @@ const Cart = (props) => {
                     timer: 1500
                   })
                 props.ClearFunc()
+                setcurloc(false)
+                setgetinputuser(false)
                 setpayModal(false)
             }
         }).catch((err)=> {
@@ -297,7 +305,14 @@ const Cart = (props) => {
                             <div className='qty-area'>
                                 {val.quantity}
                             </div>
-                            <button className='qty-button-plus' onClick={()=>plusBtn(ind)}>+</button>
+                            {
+                                val.quantity >= val.totalprod ?
+                                <button className='qty-button-plus' style={{backgroundColor:'#e5e5e5'}} disabled>+</button>
+                                :
+                                <button className='qty-button-plus' onClick={()=>plusBtn(ind)}>+</button>
+                            }
+                            <h6 className='mx-2'>/</h6>
+                            <div>{val.totalprod}</div>
                         </div>
                     </TableCell>
                     <TableCell>
@@ -397,7 +412,7 @@ const Cart = (props) => {
                                     </Table>
                                     :
                                     <div className="d-flex align-items-center justify-content-center flex-column" style={{overflow:'hidden'}}>
-                                        <img src={Empty} alt="" style={{width:'400px', height:'400px',objectFit:'contain'}}/>
+                                        <img src={Empty} alt="gambar" style={{width:'400px', height:'400px',objectFit:'contain'}}/>
                                         <h4>Your cart is still empty</h4>
                                     </div>
                                 }
@@ -458,4 +473,4 @@ const Mapstatetoprops = (state) => {
     }
 }
 
-export default connect(Mapstatetoprops,{ClearFunc})(Cart)
+export default connect(Mapstatetoprops,{ClearFunc, CartThunk})(Cart)
