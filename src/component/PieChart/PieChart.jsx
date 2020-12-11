@@ -32,9 +32,17 @@ const PieChart = (props) => {
             ],
             }}
             height={200}
-            width={600}
+            width={300}
             options={{
             maintainAspectRatio: false,
+            title:{
+                display: true,
+                text: props.data.obj.title,
+                position: "bottom"
+            },
+            legend:{
+                position:"right"
+            }
             }}
         />
         </div>

@@ -8,6 +8,8 @@ import { API_URL_SQL } from '../../helpers';
 const AdminDashboard = () => {
 
     const [user,setUser] = useState(null)
+    const [product,setProduct] = useState(null)
+    const [branch,setBranch] = useState(null)
 
     useEffect(()=>{
         Axios.get(`${API_URL_SQL}/report/getuser`)
@@ -15,17 +17,56 @@ const AdminDashboard = () => {
             let temp = res.data[0][0].user_qty - res.data[1][0].user_qty 
             let obj = {
                 legend : ['Active User','Not Active'],
-                raw_data : [res.data[1][0].user_qty,temp]
+                raw_data : [res.data[1][0].user_qty,temp],
+                title : 'User count'
             }
             let var_color = []
             for(let i=0;i<obj.legend.length;i++){
                 var_color[i] = randomCssRgba()
             }
-            // console.log(obj.legend.length)
             obj = {...obj,color:var_color}
             console.log(obj)
             setUser({obj})
         }).catch((err)=>console.log(err))
+        Axios.get(`${API_URL_SQL}/report/getproduct`)
+        .then((res)=>{
+            let products = res.data
+            let legend = [] 
+            let raw_data = []
+            let color = []
+            products.map((val,index)=>{
+                legend[index] = val.product_name
+                raw_data[index] = val.qty
+                color[index] = randomCssRgba()
+            })
+            let obj = {
+                legend,
+                raw_data,
+                color,
+                title: 'Product Inventory'
+            }
+            setProduct({obj})
+        })
+        Axios.get(`${API_URL_SQL}/report/getbranch`)
+        .then((res)=>{
+            let branchs = res.data
+            let legend = [] 
+            let raw_data = []
+            let color = []
+            branchs.map((val,index)=>{
+                legend[index] = val.location_name
+                raw_data[index] = val.act_branch
+                color[index] = randomCssRgba()
+            })
+            let obj = {
+                legend,
+                raw_data,
+                color,
+                title: 'Active Branch'
+            }
+            setBranch({obj})
+        })
+        
     },[])
 
     const randomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
@@ -44,10 +85,10 @@ const AdminDashboard = () => {
                     <PieChart data={user}/>
                 </div>
                 <div className="content-chart">
-                    <PieChart data={user}/>
+                    <PieChart data={product}/>
                 </div>
                 <div className="content-chart">
-                    <PieChart data={user}/>
+                    <PieChart data={branch}/>
                 </div>
             </div>
         </div>
