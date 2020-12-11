@@ -66,6 +66,7 @@ const AdminDashboard = () => {
             }
             setBranch({obj})
         })
+        console.log(branch)
         
     },[])
 
@@ -74,7 +75,7 @@ const AdminDashboard = () => {
     const randomCssRgba = () => `rgba(${[randomByte(), randomByte(), randomByte(), 0.5].join(',')})`
     
 
-    if(user === null){
+    if(user === null && product === null && branch === null){
         return <div>Loading</div>
     }
         
@@ -82,13 +83,25 @@ const AdminDashboard = () => {
         <div className='dashboard-tab'>
             <div className="piechart-container">
                 <div className="content-chart">
-                    <PieChart data={user}/>
+                    {
+                        user?
+                        <PieChart data={user}/>
+                        : null
+                    }
                 </div>
                 <div className="content-chart">
-                    <PieChart data={product}/>
+                    {
+                        product?
+                        <PieChart data={product}/>
+                        : null
+                    }
                 </div>
                 <div className="content-chart">
-                    <PieChart data={branch}/>
+                    {
+                        branch?
+                        <PieChart data={branch}/>
+                        : null
+                    }
                 </div>
             </div>
         </div>
