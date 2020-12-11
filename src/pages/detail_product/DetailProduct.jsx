@@ -6,6 +6,7 @@ import { API_URL_SQL } from '../../helpers/apiurl';
 import Axios from 'axios'
 import {connect} from 'react-redux'
 import {CartThunk} from './../../redux/actions/CartAction'
+import Swal from 'sweetalert2'
 
 const DetailProduct = (props) => {
     const {match} = props
@@ -34,15 +35,29 @@ const DetailProduct = (props) => {
 
     const addToCart=()=>{
         if(qtyproduct){
-            let obj = {
-                user_id: props.Auth.user_id,
-                product_id : id,
-                quantity : qtyproduct
+            if(qtyproduct > detailProd.totalprod) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sorry...',
+                    text: 'Exceed from amount of product!',
+                  })
+            } else {
+                let obj = {
+                    user_id: props.Auth.user_id,
+                    product_id : id,
+                    quantity : qtyproduct
+                }
+                Axios.post(`${API_URL_SQL}/cart/getTrx`,obj)
+                .then(()=>{
+                    props.CartThunk(props.Auth.user_id)
+                }).catch((err)=>console.log(err))
             }
-            Axios.post(`${API_URL_SQL}/cart/getTrx`,obj)
-            .then(()=>{
-                props.CartThunk(props.Auth.user_id)
-            }).catch((err)=>console.log(err))
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sorry...',
+                text: `${detailProd.product_name} has been sold out!`
+              })
         }
     }
 
@@ -94,6 +109,8 @@ const DetailProduct = (props) => {
                                             {qtyproduct}
                                         </div>
                                         <button className='qty-button-plus' onClick={()=>plusBtn()}>+</button>
+                                        <h5 className='mx-2'>/</h5>
+                                        <div>{detailProd.totalprod}</div>
                                     </div>
                                 </div>
                                 <div className='price-side'>
