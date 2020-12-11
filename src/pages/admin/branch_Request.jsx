@@ -152,7 +152,7 @@ const BranchRequest = () => {
                         <th></th>
                         <th>Image</th>
                         <th>Product</th>
-                        <th>Avalaible Stock</th>
+                        <th>Request Stock</th>
                         <th>Request by</th>
                         <th>Action</th>
                     </tr>
