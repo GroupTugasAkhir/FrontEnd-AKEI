@@ -34,6 +34,7 @@ import Axios from 'axios'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import Select from 'react-select'
+import BarChart from './admin_dashboard'
 
 
 const uriPic = {
@@ -688,6 +689,7 @@ const Admin = (props) => {
                                   <AntTab label="Inventory Log" onClick={()=>setShowProd(2)}/>
                                   <AntTab label="Transaction Log" onClick={()=>setShowProd(3)}/>
                                   <AntTab label="User Management" onClick={()=>setShowProd(4)}/>
+                                  <AntTab label="Dashboard" onClick={()=>setShowProd(5)}/>
                               </AntTabs>
                               <Typography className={classes.padding} />
                           </div>
@@ -700,7 +702,9 @@ const Admin = (props) => {
                     <InventoryLog/>
                     : showProd == 3 ?
                     <TransactionLog/>
-                    : <UserManagement/>
+                    : showProd == 4 ? 
+                    <UserManagement/>
+                    : <BarChart/>
                   }
                 </>
                 : <AdminBranch/>
