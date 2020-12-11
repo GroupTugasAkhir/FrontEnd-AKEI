@@ -52,6 +52,12 @@ const DetailProduct = (props) => {
                     props.CartThunk(props.Auth.user_id)
                 }).catch((err)=>console.log(err))
             }
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sorry...',
+                text: `${detailProd.product_name} has been sold out!`
+              })
         }
     }
 
