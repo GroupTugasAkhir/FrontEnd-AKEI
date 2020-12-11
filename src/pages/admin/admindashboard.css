@@ -1,0 +1,20 @@
+.dashboard-tab {
+    width: 100%;
+    border: 1px solid black;
+}
+
+.piechart-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.content-chart {
+    overflow: hidden;
+}
+
+div {
+    /* border: 1px solid black; */
+
+}
