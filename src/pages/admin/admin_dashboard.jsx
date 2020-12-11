@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import PieChart from './../../component/PieChart/PieChart'
+import LineChart from './../../component/LineChart/LineChart'
 import './admindashboard.css'
 import { API_URL_SQL } from '../../helpers';
 
@@ -10,6 +11,7 @@ const AdminDashboard = () => {
     const [user,setUser] = useState(null)
     const [product,setProduct] = useState(null)
     const [branch,setBranch] = useState(null)
+    const [trx,setTrx] = useState(null)
 
     useEffect(()=>{
         Axios.get(`${API_URL_SQL}/report/getuser`)
@@ -66,7 +68,24 @@ const AdminDashboard = () => {
             }
             setBranch({obj})
         })
-        console.log(branch)
+        Axios.get(`${API_URL_SQL}/report/gettransactions`)
+        .then((res)=>{
+            let labels = []
+            let data = []
+            res.data.map((val,index)=>{
+                var date = new Date(parseInt(val.date_in));
+                var fdate = date.getFullYear() + '/' + ("0" + (date.getMonth() + 1)).slice(-2) + '/' + ("0" + date.getDate()).slice(-2);
+                labels[index] = fdate
+                console.log(fdate)
+                data[index] = val.price
+            })
+            let obj = {
+                labels,
+                data,
+                title : 'Daily Transaction'
+            }
+            setTrx({obj})
+        })
         
     },[])
 
@@ -75,7 +94,7 @@ const AdminDashboard = () => {
     const randomCssRgba = () => `rgba(${[randomByte(), randomByte(), randomByte(), 0.5].join(',')})`
     
 
-    if(user === null && product === null && branch === null){
+    if(user === null && product === null && branch === null && trx === null){
         return <div>Loading</div>
     }
         
@@ -102,6 +121,11 @@ const AdminDashboard = () => {
                         <PieChart data={branch}/>
                         : null
                     }
+                </div>
+            </div>
+            <div className='linechart-container mt-5'>
+                <div className="content-chart">
+                    <LineChart data={trx}/>
                 </div>
             </div>
         </div>
