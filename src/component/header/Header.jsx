@@ -139,6 +139,11 @@ const Header=(props)=>{
                                                 Profile
                                             </Link>
                                         </li>
+                                        <li className="my-1">
+                                            <Link to='/userorders'>
+                                                Orders
+                                            </Link>
+                                        </li>
                                         <li className="my-1" onClick={logout}>Logout</li>
                                     </div>
                                 </li>

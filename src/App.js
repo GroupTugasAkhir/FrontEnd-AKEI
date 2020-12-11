@@ -9,6 +9,7 @@ import DetailProduct from './pages/detail_product/DetailProduct'
 import Testing from './pages/Testing'
 import Admin from './pages/admin/admin'
 import UserProfile from './pages/user_profile/UserProfile'
+import UserOrders from './pages/user_orders/userOrders'
 import Loading from './component/Loading'
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -42,6 +43,7 @@ function App(props) {
         <Route exact path='/test' component={Testing}/>
         <Route exact path='/admin' component={Admin}/>
         <Route exact path='/userprofile' component={UserProfile}/>
+        <Route exact path='/userorders' component={UserOrders}/>
       </Switch>      
     </div>
   );
