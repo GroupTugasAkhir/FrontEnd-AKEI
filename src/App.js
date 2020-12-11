@@ -44,7 +44,7 @@ function App(props) {
         <Route exact path='/test' component={Testing}/>
         <Route exact path='/admin' component={Admin}/>
         <Route exact path='/userprofile' component={UserProfile}/>
-        <Route exact path='/userorders' component={UserOrders}/>
+        <Route exact path='/user/:address' component={UserOrders}/>
       </Switch>      
     </div>
   );

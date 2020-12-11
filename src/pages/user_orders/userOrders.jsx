@@ -3,12 +3,14 @@ import './style.css'
 import Header from '../../component/header/Header'
 import OnGoing from './ongoing'
 import Completed from './completed'
+import Notification from './../user_notification/userNotification'
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
+import { Link , useHistory} from 'react-router-dom';
 
 const AntTabs = withStyles({
     root: {
@@ -16,6 +18,7 @@ const AntTabs = withStyles({
     },
     indicator: {
       backgroundColor: '#72ceb8',
+      
     },
 })(Tabs);
   
@@ -44,9 +47,12 @@ const AntTab = withStyles((theme) => ({
       '&$selected': {
         color: '#72ceb8',
         fontWeight: theme.typography.fontWeightMedium,
+        border: 'none'
       },
       '&:focus': {
         color: '#72ceb8',
+        border: 'none'
+        
       },
     },
     selected: {},
@@ -74,7 +80,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const UserOrders = () => {
+const UserOrders = (props) => {
+    const {match} = props
+    let {address} = match.params
+    const history = useHistory()
+
     const [showTab, setShowTab] = useState(1)
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
@@ -94,8 +104,9 @@ const UserOrders = () => {
                     <div className={classes.root} >
                     <div className={classes.demo1}>
                         <AntTabs value={value} onChange={handleChange} aria-label="ant example" >
-                            <AntTab label="On Going" onClick={()=>setShowTab(1)}/>
-                            <AntTab label="Completed" onClick={()=>setShowTab(2)}/>
+                          <AntTab label="On Going" onClick={()=>history.push('/user/ongoing')}/>
+                          <AntTab label="Completed" onClick={()=>history.push('/user/completed')}/>
+                          <AntTab label="Notification" onClick={()=>history.push('/user/notification')}/>
                         </AntTabs>
                         <Typography className={classes.padding} />
                     </div>
@@ -103,11 +114,11 @@ const UserOrders = () => {
                 </div>
                 <div className='tabs-content'>
                 {
-                    showTab == 1 ?
+                    address == 'ongoing' ?
                     <OnGoing/>
-                    : showTab == 2 ?
+                    : address == 'completed' ?
                     <Completed/>
-                    : 'asasas'
+                    : <Notification/>
                 }
                 </div>
             </div>

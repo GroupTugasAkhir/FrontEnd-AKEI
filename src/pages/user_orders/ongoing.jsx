@@ -1,10 +1,12 @@
 import React, { useState , useEffect, useRef} from 'react';
 import './style.css'
 import { connect } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -13,6 +15,7 @@ import Swal from 'sweetalert2'
 import Axios from 'axios'
 import withReactContent from 'sweetalert2-react-content'
 import { API_URL_SQL, priceFormatter } from '../../helpers';
+import { useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -22,13 +25,77 @@ const useStyles = makeStyles((theme) => ({
         fontSize: theme.typography.pxToRem(15),
         fontWeight: theme.typography.fontWeightRegular,
     },
+    padding: {
+        padding: theme.spacing(1),
+      },
+    demo1: {
+    //   backgroundColor: theme.palette.background.paper,
+        backgroundColor: '#F7F3F2',
+        paddingTop: 10,
+        paddingLeft: 40,
+        borderRadius:15
+    },
+    demo2: {
+        backgroundColor: '#2e1534',
+    },
+    typography: {
+        padding: theme.spacing(1),
+    },
 }));
+
+// const AntTabs = withStyles({
+//     root: {
+//       borderBottom: '0px solid #e8e8e8',
+//     },
+//     indicator: {
+//       backgroundColor: '#72ceb8',
+      
+//     },
+// })(Tabs);
+  
+// const AntTab = withStyles((theme) => ({
+//     root: {
+//       textTransform: 'none',
+//       minWidth: 72,
+//       fontSize: 18,
+//       fontWeight: theme.typography.fontWeightRegular,
+//       marginRight: theme.spacing(4),
+//       fontFamily: [
+//         '-apple-system',
+//         'BlinkMacSystemFont',
+//         '"Segoe UI"',
+//         'Roboto',
+//         '"Helvetica Neue"',
+//         'Arial',
+//         'sans-serif',
+//         '"Apple Color Emoji"',
+//         '"Segoe UI Emoji"',
+//         '"Segoe UI Symbol"',
+//       ].join(','),
+//       '&:hover': {
+//         opacity: 1,
+//       },
+//       '&$selected': {
+//         color: '#72ceb8',
+//         fontWeight: theme.typography.fontWeightMedium,
+//         border: 'none'
+//       },
+//       '&:focus': {
+//         color: '#72ceb8',
+//         border: 'none'
+        
+//       },
+//     },
+//     selected: {},
+// }))((props) => <Tab disableRipple {...props} />);
 
 
 
 const OnGoing = (props) => {
     // console.log(props)
     const classes = useStyles();
+    const history = useHistory()
+    const [value, setValue] = React.useState(0);
     const [modal, setModal] = useState(false);
     const [rating, setRating] = useState(0)
     const [orderDatas, setOrderDatas] = useState([])
@@ -45,6 +112,10 @@ const OnGoing = (props) => {
     const toggle = () =>{
         setModal(!modal)
     }
+
+    // const handleChange = (event, newValue) => {
+    //     setValue(newValue);
+    // };
 
     const changeRating=(newRating, name)=>{
         console.log(newRating)
@@ -94,12 +165,16 @@ const OnGoing = (props) => {
                             'Confirming your payment'
                             : val.status == 'paymentCompleted' ?
                             'Payment confirmed'
+                            : val.status_log == 'completed' ?
+                            'Completed'
                             : val.status == 'productOTW' ?
                             'On your way'
                             : 'Delivered'
                         }
                     </div>
-
+                    <div>
+                        Transaction ID: {val.date_in}
+                    </div>
                 </div>
                 <div className='order-content'>
                     <div className='order-top'>
@@ -136,7 +211,7 @@ const OnGoing = (props) => {
                         <div className='order-bottom-txt' style={{fontSize:19}}>
                             Total pesanan:
                         </div>
-                        <div className='order-bottom-txt ml-2' style={{fontSize:25}}>
+                        <div className='order-bottom-txt ml-2' style={{fontSize:30, fontWeight:500, color:'#72ceb8'}}>
                             {priceFormatter(val.quantity*val.price)}
                         </div>
                     </div>
