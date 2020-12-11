@@ -130,17 +130,10 @@ const TransactionLog = (props) => {
         }
         Axios.post(`${API_URL_SQL}/notification/gettransactiondetail`,obj)
         .then((res)=>{
-            console.log(res.data)
-            setTrxData(res.data)
-            Axios.post(`${API_URL_SQL}/notification/onpackagingitem`,obj).
-            then((res2)=>{
-                setOnPackage(res2.data)
-                Axios.post(`${API_URL_SQL}/notification/onwaitingitem`,obj)
-                .then((res3)=>{
-                    setOnWaiting(res3.data)
-                    setModalTracking(true)
-                })
-            }).catch((err)=>console.log(err))
+            setTrxData(res.data[0])
+            setOnPackage(res.data[1])
+            setOnWaiting(res.data[2])
+            setModalTracking(true)
         }).catch((err)=>console.log(err))
     }
 
@@ -193,42 +186,57 @@ const TransactionLog = (props) => {
         <Paper >
             <TableContainer >
                 <TableUI stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>No.</TableCell>
-                            <TableCell>Image</TableCell>
-                            <TableCell>Product</TableCell>
-                            <TableCell>Order Qty</TableCell>
-                            <TableCell>Stock</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell>Action</TableCell>
-                        </TableRow>
-                    </TableHead>
+                    {
+                        trxData.length?
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>No.</TableCell>
+                                <TableCell>Image</TableCell>
+                                <TableCell>Product</TableCell>
+                                <TableCell>Order Qty</TableCell>
+                                <TableCell>Stock</TableCell>
+                                <TableCell>Status</TableCell>
+                                <TableCell>Action</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        :
+                        null
+                    }
                     <TableBody>
                         {renderTrackingDetailTableBody()}
                     </TableBody>
-                    <TableHead>
-                        <h4 className='mt-3'>Confirmed</h4>
-                        <TableRow>
-                            <TableCell>No.</TableCell>
-                            <TableCell>Image</TableCell>
-                            <TableCell>Product</TableCell>
-                            <TableCell>Order Qty</TableCell>
-                            <TableCell>Status</TableCell>
-                        </TableRow>
-                    </TableHead>
+                    {
+                        onPackage.length?
+                        <TableHead>
+                            <h6 className='mt-3'>Confirmed</h6>
+                            <TableRow>
+                                <TableCell>No.</TableCell>
+                                <TableCell>Image</TableCell>
+                                <TableCell>Product</TableCell>
+                                <TableCell>Order Qty</TableCell>
+                                <TableCell>Status</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        :
+                        null
+                    }
                     <TableBody>
                         {onPackage.length? renderOnPackage() : null}
                     </TableBody>
-                    <TableHead>
-                        <h4 className='mt-3'>Waiting Confirmation</h4>
-                        <TableRow>
-                            <TableCell>No.</TableCell>
-                            <TableCell>Image</TableCell>
-                            <TableCell>Product</TableCell>
-                            <TableCell>Status</TableCell>
-                        </TableRow>
-                    </TableHead>
+                    {
+                        onWaiting.length?
+                        <TableHead>
+                            <h6 className='mt-3'>Waiting Confirmation</h6>
+                            <TableRow>
+                                <TableCell>No.</TableCell>
+                                <TableCell>Image</TableCell>
+                                <TableCell>Product</TableCell>
+                                <TableCell>Status</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        :
+                        null
+                    }
                     <TableBody>
                         {onPackage.length || onWaiting.length? renderOnWaiting() : null}
                     </TableBody>
@@ -291,7 +299,7 @@ const TransactionLog = (props) => {
                     </div>
                 </TableCell>
                 <TableCell>{val.product_name}</TableCell>
-                <TableCell>onWaiting from {val.destination}</TableCell>
+                <TableCell>onWaiting from another branch</TableCell>
             </TableRow>
         ))
     }
