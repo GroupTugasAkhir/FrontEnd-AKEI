@@ -6,8 +6,17 @@ import NewArrival from './new_arrival/NewArrival'
 import BestProduct from './best_product/BestProduct';
 import Product from './product/Product';
 import Footer from '../component/footer/Footer';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
-const Home=()=>{
+const Home=(props)=>{
+
+    // if(props.Auth.isLogin){
+    //     if(props.role !== 1){
+    //         return <Redirect to='/admin'/>
+    //     }
+    // }
+
     return (
         <div>
             <Header/>
@@ -38,4 +47,10 @@ const Home=()=>{
     )
 }
 
-export default Home
+const Mapstatetoprops = (state) => {
+    return {
+      Auth: state.Auth
+    }
+}
+
+export default connect(Mapstatetoprops)(Home)
