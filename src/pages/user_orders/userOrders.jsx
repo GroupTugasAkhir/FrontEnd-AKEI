@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#F7F3F2',
       paddingTop: 10,
       paddingLeft: 40,
-      borderRadius:30
+      borderRadius:15
     },
     demo2: {
       backgroundColor: '#2e1534',

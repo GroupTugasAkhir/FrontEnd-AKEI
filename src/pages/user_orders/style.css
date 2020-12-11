@@ -1,11 +1,42 @@
 /* user orders start */
 
 .tabs-content {
-    background-color:#F7F3F2;
+    /* background-color:#F7F3F2; */
     margin-top: 30px;
-    border-radius: 30px;
     min-height: 25vw;
-    padding: 2%;
 }
 
 /* user orders end */
+
+
+/* Ongoing tab start */
+.order-box{
+    background-color:#F7F3F2;
+    border-radius: 15px;
+    padding: 2%;
+    height: 250px;
+}
+
+.order-content{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+}
+
+.order-top{
+    display: flex;
+    flex-direction: row;
+    /* align-items: center; */
+}
+.order-content-bottom-box{
+    background-color: aquamarine;
+    height: 100px;
+    padding-top: 30px;
+}
+.order-content-bottom{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+/* Ongoing tab end */

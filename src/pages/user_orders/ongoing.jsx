@@ -9,60 +9,54 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      width: '100%',
+        width: '100%',
     },
     heading: {
-      fontSize: theme.typography.pxToRem(15),
-      fontWeight: theme.typography.fontWeightRegular,
+        fontSize: theme.typography.pxToRem(15),
+        fontWeight: theme.typography.fontWeightRegular,
     },
-  }));
+}));
+
+const uriPic = {
+chair: 'https://images.unsplash.com/photo-1561677978-583a8c7a4b43?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80',
+sofa: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+table: 'https://images.unsplash.com/photo-1602009445825-70e98455ea7c?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80'
+}
 
 const OnGoing = () => {
     const classes = useStyles();
 
     return ( 
-        <div>
-            <div className={classes.root}>
-                <Accordion square={false}>
-                    <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                    >
-                    <Typography className={classes.heading}>Accordion 1</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                    <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
-                    </Typography>
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion>
-                    <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel2a-content"
-                    id="panel2a-header"
-                    >
-                    <Typography className={classes.heading}>Accordion 2</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                    <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                        sit amet blandit leo lobortis eget.
-                    </Typography>
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion disabled>
-                    <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel3a-content"
-                    id="panel3a-header"
-                    >
-                    <Typography className={classes.heading}>Disabled Accordion</Typography>
-                    </AccordionSummary>
-                </Accordion>
+        <div className='order-box'>
+            <div className='order-content'>
+                <div className='order-top'>
+                    <div>
+                        <img width={80} height={80} style={{borderRadius:10}} src={uriPic.chair} alt="AKEI"/>
+                    </div>
+                    <div className='order-detail pl-3'>
+                        <div className='order-name' style={{fontSize:18}}>
+                            Chairrr
+                        </div>
+                        <div className='order-name'>
+                            x 5
+                        </div>
+                    </div>
+                </div>
+                <div className='order-price' style={{fontSize:18}}>
+                    100000
+                </div>
             </div>
+            <div className='order-content-bottom-box'>
+                <div className='order-content-bottom'>
+                    <div>
+                        Total pesanan:
+                    </div>
+                    <div>
+                        Rp 500.000
+                    </div>
+                </div>
+            </div>
+            
         </div>
      );
 }
