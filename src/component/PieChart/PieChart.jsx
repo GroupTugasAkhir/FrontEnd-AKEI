@@ -8,33 +8,41 @@ const PieChart = (props) => {
     const [color,setColor] = useState(null)
 
     useEffect(()=>{
-        setColor(props.data.obj.color)
-        setLegend(props.data.obj.legend)
-        setValue(props.data.obj.raw_data)
+        // setColor(props.data.obj.color)
+        // setLegend(props.data.obj.legend)
+        // setValue(props.data.obj.raw_data)
     },[])
 
-    if(legend === null && value === null && color === null){
-        return <div>Loading</div>
-    }
+    // if(legend === null && value === null && color === null){
+    //     return <div>Loading</div>
+    // }
 
     return (
         <div>
         <Pie
             data={{
-            labels: legend,
+            labels: props.data.obj.legend,
             datasets: [
                 {
-                data: value,
-                backgroundColor: color,
-                borderColor: color,
+                data: props.data.obj.raw_data,
+                backgroundColor: props.data.obj.color,
+                borderColor: props.data.obj.color,
                 borderWidth: 1,
                 },
             ],
             }}
             height={200}
-            width={600}
+            width={300}
             options={{
             maintainAspectRatio: false,
+            title:{
+                display: true,
+                text: props.data.obj.title,
+                position: "bottom"
+            },
+            legend:{
+                position:"right"
+            }
             }}
         />
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './style.css'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import { priceFormatter } from '../../helpers/priceFormatter';
@@ -8,6 +8,10 @@ import { Link } from 'react-router-dom';
 const CardCustom=(props)=>{
 
     const [dataCatalog,setDataCatalog] = useState(props.catalog)
+
+    useEffect(()=> {
+        setDataCatalog(props.catalog)
+    },[props.catalog])
 
     const renderCatalog=()=>{
         return dataCatalog.map((val,index)=>{
