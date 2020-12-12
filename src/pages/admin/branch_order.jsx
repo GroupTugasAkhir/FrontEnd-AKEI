@@ -80,12 +80,12 @@ const TransactionLog = (props) => {
         }
     })
 
-    useEffect(()=> {
-        if(props.Admin.adminData !== '') {    
-            console.log(props.Admin.adminData);
-            getTransactionDetail(props.Admin.adminData)
-        }
-    },[props.Admin.adminData])
+    // useEffect(()=> {
+    //     if(props.Admin.adminData !== '') {    
+    //         console.log(props.Admin.adminData);
+    //         getTransactionDetail(props.Admin.adminData)
+    //     }
+    // },[props.Admin.adminData])
 
     const MySwal = withReactContent(Swal)
 
