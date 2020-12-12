@@ -79,9 +79,10 @@ const BranchRequest = () => {
     }
 
     const fetchDetail=(prod_id,loc_id)=>{
+        let location = JSON.parse(localStorage.getItem('user'))
         let obj = {
             product_id : prod_id,
-            location_id : loc_id
+            location_id : location.notes
         }
         console.log(obj)
         Axios.post(`${API_URL_SQL}/notification/requestNotificationDetail`,obj)
