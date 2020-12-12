@@ -75,7 +75,7 @@ const DetailProduct = (props) => {
                 <div className='detailsection'>
                     <div className='det-left-side'>
                         <div className='det-img'>
-                            <img src={API_URL_SQL+detailProd.image} style={{objectFit: 'cover', objectPosition: '50% 50%'}} width='100%' height='100%' alt="productimg"/>
+                            <img src={API_URL_SQL+detailProd.image} style={{objectFit: 'scale-down', objectPosition: '50% 50%'}} width='100%' height='100%' alt="productimg"/>
                         </div>
                     </div>
                     <div className='det-right-side'>
