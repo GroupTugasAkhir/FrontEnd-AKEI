@@ -10,6 +10,7 @@ import Testing from './pages/Testing'
 import Admin from './pages/admin/admin'
 import UserProfile from './pages/user_profile/UserProfile'
 import UserOrders from './pages/user_orders/userOrders'
+import Loading from './component/Loading'
 import 'bootstrap/dist/css/bootstrap.css';
 
 import {connect} from 'react-redux'
@@ -26,9 +27,7 @@ function App(props) {
 
   if(props.Auth.isLoading) {
     return (
-      <div>
-        LOADING
-      </div>
+      <Loading />
     )
   }
 
