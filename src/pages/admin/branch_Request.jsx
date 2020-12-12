@@ -55,27 +55,39 @@ const BranchRequest = () => {
 
     const onSettingClick=(prod_id,destination_id,req_qty,loc_name,loc_id,notif_id,notes)=>{
         console.log(loc_id)
-        fetchDetail(prod_id,loc_id)
-        if(detail.length){
-            MySwal.fire({
-                title: `Confirm request from ${loc_name} : ${req_qty} \n(stock : ${detail[0].stock}) ?`,
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Confirm'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    confirmRequest(notif_id,prod_id,loc_id,destination_id,req_qty,notes)
-                    MySwal.fire(
-                        'Confirm!',
-                        `sent ${req_qty} items to ${loc_name}`,
-                        'success'
-                    )
-                }
-            })
+        // fetchDetail(prod_id,loc_id)
+        let location = JSON.parse(localStorage.getItem('user'))
+        let obj = {
+            product_id : prod_id,
+            location_id : location.notes
         }
+        console.log(obj)
+        Axios.post(`${API_URL_SQL}/notification/requestNotificationDetail`,obj)
+        .then((res)=>{
+            setDetail(res.data)
+            console.log(res.data)
+            if(res.data.length){
+                MySwal.fire({
+                    title: `Confirm request from ${loc_name} : ${req_qty} \n(stock : ${res.data[0].stock}) ?`,
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Confirm'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        confirmRequest(notif_id,prod_id,loc_id,destination_id,req_qty,notes)
+                        MySwal.fire(
+                            'Confirm!',
+                            `sent ${req_qty} items to ${loc_name}`,
+                            'success'
+                        )
+                    }
+                })
+            }
+        }).catch((err)=>console.log(err))
+        
     }
 
     const fetchDetail=(prod_id,loc_id)=>{
