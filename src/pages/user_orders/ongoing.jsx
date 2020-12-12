@@ -12,8 +12,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import StarRatings from 'react-star-ratings';
 import Swal from 'sweetalert2'
-import Axios from 'axios'
 import withReactContent from 'sweetalert2-react-content'
+import Axios from 'axios'
 import { API_URL_SQL, priceFormatter } from '../../helpers';
 import { useHistory} from 'react-router-dom';
 
