@@ -14,7 +14,7 @@ import StarRatings from 'react-star-ratings';
 import Swal from 'sweetalert2'
 import Axios from 'axios'
 import withReactContent from 'sweetalert2-react-content'
-import { API_URL_SQL, priceFormatter } from '../../helpers';
+import { API_URL_SQL, priceFormatter, dateFormatter} from '../../helpers';
 import Avatar from '@material-ui/core/Avatar';
 import { Link , useHistory} from 'react-router-dom';
 
@@ -62,7 +62,8 @@ const Completed = (props) => {
     const [modal, setModal] = useState(false);
     const [rating, setRating] = useState(0)
     const [orderDatas, setOrderDatas] = useState([])
-    const [currentRating, setcurrentRating] = useState(0)
+    const [currentRating, setcurrentRating] = useState([])
+    const [ratingprod, setratingprod] = useState(0)
     const comment = useRef()
 
     useEffect(()=>{
@@ -89,6 +90,7 @@ const Completed = (props) => {
         Axios.get(`${API_URL_SQL}/orders/getRating/${props.user_id}/${idPr}`)
         .then((res)=>{
             setcurrentRating(res.data)
+            setratingprod(res.data[0].product_name)
             console.log(res.data)
             toggle()
         }).catch((err)=>console.log(err))
@@ -150,34 +152,41 @@ const Completed = (props) => {
         ))
     }
 
+    // console.log(currentRating[0].product_name)
+
     return ( 
         <div>
             <Modal isOpen={modal} toggle={toggle}>
-                <ModalHeader toggle={toggle}>{currentRating.product_name} Rating</ModalHeader>
+                <ModalHeader toggle={toggle}>{ratingprod} Rating</ModalHeader>
                 <ModalBody>
-                    <div>
-                        <div className='rating-bottom'>
-                            <Avatar className='mr-2' alt='AKEI' src={currentRating.photo} />
-                            <div>
+                    {
+                        currentRating.map((val, index)=>(
+                            <div className='rating-bottom mb-2'>
+                                <Avatar className='mr-2' alt='AKEI' src={val.photo} />
                                 <div>
-                                    {currentRating.username}
-                                </div>
-                                <div style={{marginTop:-10}}>
-                                    <StarRatings
-                                        rating={rating}
-                                        starEmptyColor="red"
-                                        numberOfStars={currentRating.rating}
-                                        name='rating'
-                                        starDimension='10px'
-                                        starSpacing='1px'
-                                    />
-                                </div>
-                                <div>
-                                    {currentRating.comment_content}
+                                    <div>
+                                        {val.username}
+                                    </div>
+                                    <div style={{marginTop:-10}}>
+                                        <StarRatings
+                                            rating={rating}
+                                            starEmptyColor="red"
+                                            numberOfStars={val.rating}
+                                            name='rating'
+                                            starDimension='10px'
+                                            starSpacing='1px'
+                                        />
+                                    </div>
+                                    <div>
+                                        {val.comment_content}
+                                    </div>
+                                    <div style={{fontSize:13, color:'gray'}}>
+                                        {dateFormatter(parseInt(val.date_in))}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        ))
+                    }
                 </ModalBody>
                 <ModalFooter>
                     <button className="cancel-button" onClick={toggle}>Cancel</button>
