@@ -66,6 +66,21 @@
     outline: none !important;
 }
 
+.arrow-move {
+    font-size: 80px;
+    color: #72ceb8;
+}
+
+.arrow-move:hover {
+    transform: scale(1.2);
+}
+
+.arrow-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 @media screen and (max-width: 768px) {
     .nav-category {
         text-align: center;

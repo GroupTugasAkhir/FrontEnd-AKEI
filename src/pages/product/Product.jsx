@@ -9,30 +9,36 @@ const Product=()=> {
     const [categories,setCategories]=useState(null)
     const [catalog,setCatalog]=useState(null)
     const [searchKey,setSearchKey]=useState(null)
+    const [page, setpage] = useState(1)
+    const [countAll, setcountAll] = useState(0)
 
     useEffect(()=>{
         Axios.get(`${API_URL_SQL}/admin/category`)
         .then((res)=>{
             setCategories(res.data)
         }).catch((err)=>console.log(err))
-        Axios.get(`${API_URL_SQL}/admin/getproductbypage/1`)
+        Axios.get(`${API_URL_SQL}/admin/getproductbypage/${page}`)
         .then((res)=>{
             setCatalog(res.data)
         }).catch((err)=>console.log(err))
-
+        Axios.get(`${API_URL_SQL}/admin/getAllProductCount`)
+        .then((res)=> {
+            setcountAll(res.data[0].countAllProd)
+        }).catch((err)=>console.log(err))
     },[])
 
     const productByCategory=(cat_id)=>{
         setCatalog(null)
         if(cat_id < 0) {
-            Axios.get(`${API_URL_SQL}/admin/getproductbypage/1`)
+            Axios.get(`${API_URL_SQL}/admin/getproductbypage/${page}`)
             .then((res)=>{
                 setCatalog(res.data)
             }).catch((err)=>console.log(err))
         } else {
-            Axios.get(`${API_URL_SQL}/admin/getproductbycategory/${cat_id}`)
+            Axios.get(`${API_URL_SQL}/admin/getproductbycategory?categId=${cat_id}&page=${page}`)
             .then((res)=>{
                 setCatalog(res.data)
+                console.log(res.data);
             }).catch((err)=>console.log(err))
         }
     }
@@ -40,7 +46,11 @@ const Product=()=> {
     const renderCategory=()=>{
         return categories.map((val,index)=>{
             return (
-                <li onClick={()=>productByCategory(val.category_id)}>{val.category_name}</li>
+                <li onClick={()=> {
+                    setpage(1)
+                    localStorage.setItem('catID', JSON.stringify(val.category_id))
+                    productByCategory(val.category_id)
+                }}>{val.category_name}</li>
             )
         })
     }
@@ -57,12 +67,38 @@ const Product=()=> {
 
     useEffect(()=>{
         console.log(searchKey)
-    })
+        let newCatid = localStorage.getItem('catID')
+        if(newCatid) {
+            Axios.get(`${API_URL_SQL}/admin/getproductbycategory?categId=${newCatid}&page=${page}`)
+            .then((res)=>{
+                setCatalog(res.data)
+                console.log(res.data);
+            }).catch((err)=>console.log(err))
+        } else {
+            Axios.get(`${API_URL_SQL}/admin/getproductbypage/${page}`)
+            .then((res)=>{
+                setCatalog(res.data)
+                console.log(res.data);
+            }).catch((err)=>console.log(err))
+        }
+    },[page])
 
     if(categories===null || catalog===null){
         return (
             <div>Loading</div>
         )
+    }
+
+    const nextProd = () => {
+        let newPage = page
+        newPage++
+        setpage(newPage)
+    }
+
+    const prevProd = () => {
+        let newPage = page
+        newPage--
+        setpage(newPage)
     }
 
     return (
@@ -74,7 +110,10 @@ const Product=()=> {
                 <div className="nav-category">
                     <ul>
                         <div>
-                            <li className='active' onClick={()=>productByCategory(-1)}>All</li>
+                            <li className='active' onClick={()=> {
+                                localStorage.removeItem('catID')
+                                productByCategory(-1)
+                            }}>All</li>
                             {renderCategory()}
                         </div>
                         <div>
@@ -87,8 +126,22 @@ const Product=()=> {
                     </ul>
                 </div>
             </div>
-            <div className="list-product mb-5">
-                <CardCustom catalog={catalog}/>
+            <div className='d-flex flex-row'>
+                {
+                    page > 1?
+                    <div onClick={prevProd} className='arrow-section'><i className="fas fa-chevron-left arrow-move"></i></div>
+                    :
+                    null
+                }
+                <div className="list-product mb-5">
+                    <CardCustom catalog={catalog}/>
+                </div>
+                {
+                    page >= (countAll/catalog.length) || page >= catalog.length?
+                    null
+                    :
+                    <div onClick={nextProd} className='arrow-section'><i className="fas fa-chevron-right arrow-move"></i></div>
+                }
             </div>
         </div>
     )
