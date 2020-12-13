@@ -56,7 +56,13 @@ const AntTab = withStyles((theme) => ({
       },
     },
     selected: {},
-}))((props) => <Tab disableRipple {...props} />);
+}))((props) =>{
+  console.log(props)
+  return(
+  <Tab disableRipple {...props} />
+
+  )
+});
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -79,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(1),
     },
 }));
-
+// console.log(props)
 const UserOrders = (props) => {
     const {match} = props
     let {address} = match.params
@@ -94,6 +100,23 @@ const UserOrders = (props) => {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    useEffect(()=>{
+      if(address == 'completed'){
+        history.push('/user/completed')
+        setValue(1)
+        // window.location.reload();
+      }
+      else if(address == 'ongoing'){
+        history.push('/user/ongoing')
+        setValue(0)
+        // window.location.reload();
+      }else if (address == 'notification'){
+        history.push('/user/notification')
+        setValue(2)
+      }
+      // window.location.reload();
+    },[])
 
 
     return ( 
