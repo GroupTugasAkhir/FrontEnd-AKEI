@@ -11,6 +11,7 @@ const Product=()=> {
     const [searchKey,setSearchKey]=useState(null)
     const [page, setpage] = useState(1)
     const [countAll, setcountAll] = useState(0)
+    const [countCateg, setcountCateg] = useState(100)
 
     useEffect(()=>{
         Axios.get(`${API_URL_SQL}/admin/category`)
@@ -20,10 +21,12 @@ const Product=()=> {
         Axios.get(`${API_URL_SQL}/admin/getproductbypage/${page}`)
         .then((res)=>{
             setCatalog(res.data)
+            console.log(res.data);
         }).catch((err)=>console.log(err))
         Axios.get(`${API_URL_SQL}/admin/getAllProductCount`)
         .then((res)=> {
             setcountAll(res.data[0].countAllProd)
+            console.log(res.data[0].countAllProd);
         }).catch((err)=>console.log(err))
     },[])
 
@@ -37,8 +40,11 @@ const Product=()=> {
         } else {
             Axios.get(`${API_URL_SQL}/admin/getproductbycategory?categId=${cat_id}&page=${page}`)
             .then((res)=>{
-                setCatalog(res.data)
-                console.log(res.data);
+                Axios.get(`${API_URL_SQL}/admin/getCategProductCount?categID=${cat_id}`)
+                .then((res2)=> {
+                    setCatalog(res.data)
+                    setcountCateg(res2.data[0].countbyCateg)
+                }).catch((err)=>console.log(err))
             }).catch((err)=>console.log(err))
         }
     }
@@ -71,8 +77,11 @@ const Product=()=> {
         if(newCatid) {
             Axios.get(`${API_URL_SQL}/admin/getproductbycategory?categId=${newCatid}&page=${page}`)
             .then((res)=>{
-                setCatalog(res.data)
-                console.log(res.data);
+                Axios.get(`${API_URL_SQL}/admin/getCategProductCount?categID=${newCatid}`)
+                .then((res2)=> {
+                    setCatalog(res.data)
+                    setcountCateg(res2.data[0].countbyCateg)
+                }).catch((err)=>console.log(err))
             }).catch((err)=>console.log(err))
         } else {
             Axios.get(`${API_URL_SQL}/admin/getproductbypage/${page}`)
@@ -101,6 +110,12 @@ const Product=()=> {
         setpage(newPage)
     }
 
+    console.log(page, 'page');
+    console.log(countAll, 'allprodcount');
+    console.log(countAll/6, 'count');
+    console.log(countCateg, 'categprodcount');
+    console.log(6/countCateg, 'countcateg');
+
     return (
         <div className="section-product" id="product">
             <div className="title-text center-text">
@@ -111,6 +126,7 @@ const Product=()=> {
                     <ul>
                         <div>
                             <li className='active' onClick={()=> {
+                                setcountCateg(100)
                                 localStorage.removeItem('catID')
                                 productByCategory(-1)
                             }}>All</li>
@@ -137,7 +153,7 @@ const Product=()=> {
                     <CardCustom catalog={catalog}/>
                 </div>
                 {
-                    page >= (countAll/catalog.length) || page >= catalog.length?
+                    page >= (countAll/6) || page <= (6/countCateg)?
                     null
                     :
                     <div onClick={nextProd} className='arrow-section'><i className="fas fa-chevron-right arrow-move"></i></div>
