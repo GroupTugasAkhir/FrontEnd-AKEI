@@ -99,6 +99,7 @@ const AntTab = withStyles((theme) => ({
       },
       '&:focus': {
         color: '#72ceb8',
+        outline : 'none'
       },
     },
     selected: {},
