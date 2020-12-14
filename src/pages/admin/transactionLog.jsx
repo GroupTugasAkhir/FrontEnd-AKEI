@@ -328,7 +328,7 @@ const TransactionLog = () => {
                             <TableCell>Order Qty</TableCell>
                             <TableCell>Stock Available</TableCell>
                             <TableCell>Status</TableCell>
-                            <TableCell>Action</TableCell>
+                            {/* <TableCell>Action</TableCell> */}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -345,9 +345,9 @@ const TransactionLog = () => {
                                     <TableCell>{val.quantity}</TableCell>
                                     <TableCell>{val.stock_warehouse ? val.stock_warehouse : 0}</TableCell>
                                     <TableCell>{val.quantity <= val.stock_warehouse ? 'ready' : 'insufficient'}</TableCell>
-                                    <TableCell className='to-hover' onClick={()=>onActionProcurement(val.transaction_detail_id, val.product_name)}>
+                                    {/* <TableCell className='to-hover' onClick={()=>onActionProcurement(val.transaction_detail_id, val.product_name)}>
                                         procurement detail...
-                                    </TableCell>
+                                    </TableCell> */}
                                 </TableRow>
                             ))
                         }

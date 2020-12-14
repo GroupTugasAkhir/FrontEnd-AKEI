@@ -205,7 +205,7 @@ const UserNotification = (props) => {
                                                 
                                             </Typography>
                                             <Typography className={classes.secondaryHeading}>
-                                                {dateFormatter(parseInt(val.date_in))}
+                                                {dateFormatter(parseInt(val.date_log))}
                                             </Typography>
                                         </TimelineContent>
                                     </TimelineItem>

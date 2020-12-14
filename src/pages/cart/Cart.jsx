@@ -245,7 +245,7 @@ const Cart = (props) => {
                 setDataNotif(res.data.dataNotif)
             }
         }).catch((err)=> {
-            console.log(err.response.data.message);
+            console.log(err);
         })
     }
 
