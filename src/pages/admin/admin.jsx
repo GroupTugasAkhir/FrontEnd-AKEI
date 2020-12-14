@@ -171,18 +171,18 @@ const Admin = (props) => {
       Axios.post(`${API_URL_SQL}/notification/createRequest`)
       .then(()=>{
         console.log('success update data')
-        Axios.get(`${API_URL_SQL}/admin/getProduct`)
-        .then((res)=>{
-          console.log(res.data)
-          setAllProduct(res.data.dataproduct)
-          setAllCategory(res.data.datacategory)
-          setAllRefProdCat(res.data.datarefcategory)
-          console.log(allProduct)
-          console.log(allCategory)
-        }).catch((err)=>{
-          console.log(err)
-        })
       }).catch((err)=>console.log(err))
+      Axios.get(`${API_URL_SQL}/admin/getProduct`)
+      .then((res)=>{
+        console.log(res.data)
+        setAllProduct(res.data.dataproduct)
+        setAllCategory(res.data.datacategory)
+        setAllRefProdCat(res.data.datarefcategory)
+        console.log(allProduct)
+        console.log(allCategory)
+      }).catch((err)=>{
+        console.log(err)
+      })
     },[])
 
     const toggle = () => setModal(!modal);
