@@ -44,6 +44,7 @@ const Cart = (props) => {
     const [choiceMethod, setchoiceMethod] = useState(0)
     const ccPay = useRef()
     const [invoicePhoto, setinvoicePhoto] = useState(null)
+    const [dataNotif, setDataNotif] = useState([])
 
     const [dataLocation, setdataLocation] = useState([])
     const [matchLoc, setmatchLoc] = useState({})
@@ -228,7 +229,7 @@ const Cart = (props) => {
         }))
         Axios.post(`${API_URL_SQL}/transaction/onpayinvoice`,formData,options)
         .then((res)=> {
-            if(res.data === 'succeed') {
+            if(res.data.cart === 'succeed') {
                 setdataCart([])
                 Swal.fire({
                     position: 'top',
@@ -241,9 +242,10 @@ const Cart = (props) => {
                 setcurloc(false)
                 setgetinputuser(false)
                 setpayModal(false)
+                setDataNotif(res.data.dataNotif)
             }
         }).catch((err)=> {
-            console.log(err.response.data.message);
+            console.log(err);
         })
     }
 
@@ -261,7 +263,7 @@ const Cart = (props) => {
             matchLoc: matchLoc,
             userCart: dataCart
         }).then((res)=> {
-            if(res.data === 'succeed') {
+            if(res.data.cart === 'succeed') {
                 setdataCart([])
                 Swal.fire({
                     position: 'top',
@@ -274,6 +276,7 @@ const Cart = (props) => {
                 setcurloc(false)
                 setgetinputuser(false)
                 setpayModal(false)
+                setDataNotif(res.data.dataNotif)
             }
         }).catch((err)=> {
             console.log(err.response.data.message);

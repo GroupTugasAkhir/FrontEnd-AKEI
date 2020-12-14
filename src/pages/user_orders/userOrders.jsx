@@ -56,7 +56,13 @@ const AntTab = withStyles((theme) => ({
       },
     },
     selected: {},
-}))((props) => <Tab disableRipple {...props} />);
+}))((props) =>{
+  // console.log(props)
+  return(
+  <Tab disableRipple {...props} />
+
+  )
+});
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -79,7 +85,7 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(1),
     },
 }));
-
+// console.log(props)
 const UserOrders = (props) => {
     const {match} = props
     let {address} = match.params
@@ -92,8 +98,39 @@ const UserOrders = (props) => {
     
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        // setValue(newValue);
+        if(newValue === 1){
+          history.push('/user/completed')
+          // setValue(1)
+          setValue(newValue)
+        }
+        else if(newValue === 0){
+          history.push('/user/ongoing')
+          // setValue(0)
+          setValue(newValue)
+        }else if (newValue === 2){
+          history.push('/user/notification')
+          // setValue(2)
+          setValue(newValue)
+        }
     };
+
+    useEffect(()=>{
+      if(address == 'completed'){
+        history.push('/user/completed')
+        setValue(1)
+        // window.location.reload();
+      }
+      else if(address == 'ongoing'){
+        history.push('/user/ongoing')
+        setValue(0)
+        // window.location.reload();
+      }else if (address == 'notification'){
+        history.push('/user/notification')
+        setValue(2)
+      }
+      // window.location.reload();
+    },[])
 
 
     return ( 
@@ -104,9 +141,9 @@ const UserOrders = (props) => {
                     <div className={classes.root} >
                     <div className={classes.demo1}>
                         <AntTabs value={value} onChange={handleChange} aria-label="ant example" >
-                          <AntTab label="On Going" onClick={()=>history.push('/user/ongoing')}/>
-                          <AntTab label="Completed" onClick={()=>history.push('/user/completed')}/>
-                          <AntTab label="Notification" onClick={()=>history.push('/user/notification')}/>
+                          <AntTab label="On Going" />
+                          <AntTab label="Completed" />
+                          <AntTab label="Notification" />
                         </AntTabs>
                         <Typography className={classes.padding} />
                     </div>

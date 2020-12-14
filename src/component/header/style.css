@@ -111,6 +111,39 @@ li {
     font-size: 10px;
 }
 
+.notif-content{
+    padding: 10px;
+    background-color: #fbeeea;
+}
+
+.notif-content:hover{
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+.notification{
+    border-bottom: 1px solid rgba(112, 107, 107, 0.253);
+    /* background-color:  #fbeeea; */
+    font-weight: 500;
+    font-size: 20px;
+    padding-left: 10px;
+}
+
+.see-all{
+    /* background-color:  #fbeeea; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+}
+
+.see-all:hover{
+    cursor: pointer;
+}
+
 @media screen and (max-width: 767px) {
     .navigation {
         position: fixed;

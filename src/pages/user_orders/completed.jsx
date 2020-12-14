@@ -64,6 +64,8 @@ const Completed = (props) => {
     const [orderDatas, setOrderDatas] = useState([])
     const [currentRating, setcurrentRating] = useState([])
     const [ratingprod, setratingprod] = useState(0)
+    const [filter, setFilter] = useState([])
+    const [switchRender, setSwitchRender] = useState(false)
     const comment = useRef()
 
     useEffect(()=>{
@@ -96,12 +98,33 @@ const Completed = (props) => {
         }).catch((err)=>console.log(err))
     }
 
-    const renderOrderCard=()=>{
-        return orderDatas.map((val, index)=>(
+    const filterSearch=(input)=>{
+        var filterdata = orderDatas.filter((val, index)=>{
+            return val.product_name.toLowerCase().includes(input.toLowerCase())|| val.date_in.includes(input)
+        })
+        setFilter(filterdata)
+    }
+
+    const onChangeSearch=(e)=>{
+        if(e.target.value){
+            setSwitchRender(true)
+            filterSearch(e.target.value)
+        }else{
+            setSwitchRender(false)
+        }
+    }
+
+    const renderOrderCard=(arr)=>{
+        return arr.map((val, index)=>(
             <div className='order-box' key={index}>
                 <div className='order-header'>
-                    <div style={{fontSize:22, fontWeight:500, color:' #72ceb8', textTransform:'capitalize'}}>
-                        {val.status_log}
+                    <div style={{display:'flex', flexDirection:'row', alignItems:'flex-end'}}>
+                        <div style={{fontSize:22, fontWeight:500, color:' #72ceb8', textTransform:'capitalize', paddingRight:10}}>
+                            {val.status}
+                        </div>
+                        <div style={{fontSize:15, paddingBottom:2}}>
+                            {dateFormatter(parseInt(val.date_log))}
+                        </div>
                     </div>
                     <div>
                         Transaction ID: {val.date_in}
@@ -192,7 +215,9 @@ const Completed = (props) => {
                     <button className="cancel-button" onClick={toggle}>Cancel</button>
                 </ModalFooter>
             </Modal>
-            {renderOrderCard()}
+            <input style={{borderRadius:10}} className='my-3 form-control' type="text" 
+            placeholder='Search by product name or transaction ID' onChange={onChangeSearch} />
+            { switchRender ? renderOrderCard(filter) : renderOrderCard(orderDatas)}
         </div>
      );
 }

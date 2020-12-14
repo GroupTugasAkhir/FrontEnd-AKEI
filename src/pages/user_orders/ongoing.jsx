@@ -12,9 +12,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import StarRatings from 'react-star-ratings';
 import Swal from 'sweetalert2'
-import Axios from 'axios'
 import withReactContent from 'sweetalert2-react-content'
-import { API_URL_SQL, priceFormatter } from '../../helpers';
+import Axios from 'axios'
+import { API_URL_SQL, priceFormatter, dateFormatter} from '../../helpers';
+import Avatar from '@material-ui/core/Avatar';
 import { useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -97,9 +98,14 @@ const OnGoing = (props) => {
     const history = useHistory()
     const [value, setValue] = React.useState(0);
     const [modal, setModal] = useState(false);
+    const [modalViewRating, setModalViewRating] = useState(false);
     const [rating, setRating] = useState(0)
+    const [ratingprod, setratingprod] = useState('')
     const [orderDatas, setOrderDatas] = useState([])
     const [currentOrder, setcurrentOrder] = useState(0)
+    const [currentRating, setcurrentRating] = useState([])
+    const [filter, setFilter] = useState([])
+    const [switchRender, setSwitchRender] = useState(false)
     const comment = useRef()
 
     useEffect(()=>{
@@ -111,6 +117,10 @@ const OnGoing = (props) => {
 
     const toggle = () =>{
         setModal(!modal)
+    }
+
+    const toggleViewRating = () =>{
+        setModalViewRating(!modalViewRating)
     }
 
     // const handleChange = (event, newValue) => {
@@ -155,22 +165,54 @@ const OnGoing = (props) => {
         }).catch((err)=>console.log(err))
     }
 
-    const renderOrderCard=()=>{
-        return orderDatas.map((val, index)=>(
+    const seeRating=(idPr)=>{
+        console.log(idPr, props.user_id)
+        Axios.get(`${API_URL_SQL}/orders/getRating/${props.user_id}/${idPr}`)
+        .then((res)=>{
+            setcurrentRating(res.data)
+            setratingprod(res.data[0].product_name)
+            console.log(res.data)
+            toggleViewRating()
+        }).catch((err)=>console.log(err))
+    }
+
+    const filterSearch=(input)=>{
+        var filterdata = orderDatas.filter((val, index)=>{
+            return val.product_name.toLowerCase().includes(input.toLowerCase())|| val.date_in.includes(input)
+        })
+        setFilter(filterdata)
+    }
+
+    const onChangeSearch=(e)=>{
+        if(e.target.value){
+            setSwitchRender(true)
+            filterSearch(e.target.value)
+        }else{
+            setSwitchRender(false)
+        }
+    }
+
+    const renderOrderCard=(arr)=>{
+        return arr.map((val, index)=>(
             <div className='order-box' key={index}>
                 <div className='order-header'>
-                    <div style={{fontSize:22, fontWeight:500, color:' #72ceb8'}}>
-                        {
-                            val.status == 'waitingAdminConfirmation' ? 
-                            'Confirming your payment'
-                            : val.status == 'paymentCompleted' ?
-                            'Payment confirmed'
-                            : val.status_log == 'completed' ?
-                            'Completed'
-                            : val.status == 'productOTW' ?
-                            'On your way'
-                            : 'Delivered'
-                        }
+                    <div style={{display:'flex', flexDirection:'row', alignItems:'flex-end'}}>
+                        <div style={{fontSize:22, fontWeight:500, color:' #72ceb8', paddingRight:10}}>
+                            {
+                                val.status == 'waitingAdminConfirmation' ? 
+                                'Confirming your payment'
+                                : val.status == 'paymentCompleted' ?
+                                'Payment confirmed'
+                                : val.status_log == 'completed' ?
+                                'Received'
+                                : val.status == 'productOTW' ?
+                                'On your way'
+                                : 'Delivered'
+                            }
+                        </div>
+                        <div style={{fontSize:15, paddingBottom:2}}>
+                            {dateFormatter(parseInt(val.date_log))}
+                        </div>
                     </div>
                     <div>
                         Transaction ID: {val.date_in}
@@ -195,11 +237,28 @@ const OnGoing = (props) => {
                     </div>
                 </div>
                 <div className='order-content-bottom-box' style={
-                        val.status !== 'sentToUser' ?
-                        {justifyContent:'flex-end'} : null
+                        // val.status !== 'sentToUser' && val.status_log !== 'completed' ?
+                        // {justifyContent:'flex-end'} 
+                        // : val.status !== 'sentToUser' ? 
+                        // null
+                        // : null
+                        val.status == 'sentToUser' && val.status_log == 'completed' ? 
+                        null
+                            : val.status == 'sentToUser' ? 
+                            null
+                            : {justifyContent:'flex-end'}
                     }>
                         {
-                            val.status == 'sentToUser' ?
+                            val.status == 'sentToUser' && val.status_log == 'completed' ? 
+                            <div>
+                                <div style={{fontSize:12, color:'black', marginTop:-5}}>
+                                    **please confirm receive other product to complete this transaction
+                                </div>
+                                <div className='order-bottom-txt' style={{marginTop:5}}>
+                                    <button className='see-rating-button' onClick={()=>seeRating(val.product_id)}>See Product Rating</button>
+                                </div>
+                            </div>
+                            : val.status == 'sentToUser' ? 
                             <div className='order-bottom-txt'>
                                 <button onClick={()=>onReceivedClick(val.transaction_detail_id)} className='complete-button'>Received</button>
                             </div>
@@ -222,6 +281,7 @@ const OnGoing = (props) => {
 
     return ( 
         <div>
+            {/* Modal saat klik receive, untuk rating barang*/}
             <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Rate {currentOrder.product_name}</ModalHeader>
                 <ModalBody>
@@ -243,7 +303,47 @@ const OnGoing = (props) => {
                     <button className="cancel-button" onClick={toggle}>Cancel</button>
                 </ModalFooter>
             </Modal>
-            {renderOrderCard()}
+
+            {/* Modal untuk lihat rating barang yang udah di receive */}
+            <Modal isOpen={modalViewRating} toggle={toggleViewRating}>
+                <ModalHeader toggle={toggleViewRating}>{ratingprod} Rating</ModalHeader>
+                <ModalBody>
+                    {
+                        currentRating.map((val, index)=>(
+                            <div className='rating-bottom mb-2'>
+                                <Avatar className='mr-2' alt='AKEI' src={val.photo} />
+                                <div>
+                                    <div>
+                                        {val.username}
+                                    </div>
+                                    <div style={{marginTop:-10}}>
+                                        <StarRatings
+                                            rating={rating}
+                                            starEmptyColor="red"
+                                            numberOfStars={val.rating}
+                                            name='rating'
+                                            starDimension='10px'
+                                            starSpacing='1px'
+                                        />
+                                    </div>
+                                    <div>
+                                        {val.comment_content}
+                                    </div>
+                                    <div style={{fontSize:13, color:'gray'}}>
+                                        {dateFormatter(parseInt(val.date_in))}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </ModalBody>
+                <ModalFooter>
+                    <button className="cancel-button" onClick={toggleViewRating}>Cancel</button>
+                </ModalFooter>
+            </Modal>
+            <input style={{borderRadius:10}} className='my-3 form-control' type="text" 
+            placeholder='Search by product name or transaction ID' onChange={onChangeSearch} />
+            { switchRender ? renderOrderCard(filter) : renderOrderCard(orderDatas)}
         </div>
      );
 }

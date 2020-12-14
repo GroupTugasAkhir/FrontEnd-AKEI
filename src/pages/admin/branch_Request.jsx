@@ -26,6 +26,7 @@ const BranchRequest = () => {
             location_id : getLocation.notes
         }).then((res)=>{
             setData(res.data)
+            console.log(res.data)
             Axios.post(`${API_URL_SQL}/notification/getWaiting`,{
                 location_id : getLocation.notes
             }).then((res)=>{
@@ -148,7 +149,7 @@ const BranchRequest = () => {
                         val.destination,
                         val.req_qty,
                         val.location_name,
-                        val.from,
+                        val.froms,
                         val.notification_id,
                         val.notes,
                         val.transaction_detail_id
