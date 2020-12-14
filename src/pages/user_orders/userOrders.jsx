@@ -57,7 +57,7 @@ const AntTab = withStyles((theme) => ({
     },
     selected: {},
 }))((props) =>{
-  console.log(props)
+  // console.log(props)
   return(
   <Tab disableRipple {...props} />
 
@@ -98,7 +98,21 @@ const UserOrders = (props) => {
     
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+        // setValue(newValue);
+        if(newValue === 1){
+          history.push('/user/completed')
+          // setValue(1)
+          setValue(newValue)
+        }
+        else if(newValue === 0){
+          history.push('/user/ongoing')
+          // setValue(0)
+          setValue(newValue)
+        }else if (newValue === 2){
+          history.push('/user/notification')
+          // setValue(2)
+          setValue(newValue)
+        }
     };
 
     useEffect(()=>{
@@ -127,9 +141,9 @@ const UserOrders = (props) => {
                     <div className={classes.root} >
                     <div className={classes.demo1}>
                         <AntTabs value={value} onChange={handleChange} aria-label="ant example" >
-                          <AntTab label="On Going" onClick={()=>history.push('/user/ongoing')}/>
-                          <AntTab label="Completed" onClick={()=>history.push('/user/completed')}/>
-                          <AntTab label="Notification" onClick={()=>history.push('/user/notification')}/>
+                          <AntTab label="On Going" />
+                          <AntTab label="Completed" />
+                          <AntTab label="Notification" />
                         </AntTabs>
                         <Typography className={classes.padding} />
                     </div>

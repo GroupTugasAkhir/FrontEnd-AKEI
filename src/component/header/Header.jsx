@@ -52,7 +52,7 @@ const Header=(props)=>{
             Axios.get(`${API_URL_SQL}/orders/getNotif/${props.Auth.user_id}`)
             .then((res2)=>{
                 setdataNotif(res2.data)
-                console.log(res2.data.length)
+                setNotifCount(res2.data.length)
                 console.log(res2.data)
                 
             }).catch((err)=>console.log(err))
@@ -133,10 +133,10 @@ const Header=(props)=>{
             console.log(res2.data)
             if(status == 'completed'){
                 history.push('/user/completed')
-                window.location.reload();
+                // window.location.reload();
             }
             history.push('/user/ongoing')
-            window.location.reload();
+            // window.location.reload();
             
         }).catch((err)=>console.log(err))
     }
@@ -191,9 +191,9 @@ const Header=(props)=>{
                                     <div>
                                         <Notifications onClick={handleClick}/> 
                                         {
-                                            dataNotif ?
+                                            notifCount ?
                                             <div className="badge-custom">
-                                                <span>{dataNotif.length}</span>
+                                                <span>{notifCount}</span>
                                             </div>
                                             :
                                             null
@@ -225,10 +225,12 @@ const Header=(props)=>{
                                                                     : val.status == 'paymentCompleted' ?
                                                                     'Payment confirmed'
                                                                     : val.status_log == 'completed' ?
-                                                                    'Completed'
+                                                                    'Received'
                                                                     : val.status == 'productOTW' ?
                                                                     'On your way'
-                                                                    : 'Delivered'
+                                                                    : val.status == 'sentToUser' ?
+                                                                    'Delivered'
+                                                                    : 'Whoa! Completed!'
                                                                 }
                                                             </div>
                                                             <div style={{fontSize:13, color:'gray'}}>Transaction ID: {val.trans_code}</div>
@@ -237,9 +239,9 @@ const Header=(props)=>{
                                                     ))
                                                     : 'loading'
                                                 }
-                                                <Link to='/user/notification'>
-                                                    <div className='see-all'>See All</div>
-                                                </Link>
+                                                {/* <Link to='/user/notification'> */}
+                                                    <div className='see-all' onClick={()=>history.push('/user/notification')}>See All</div>
+                                                {/* </Link> */}
                                             </div>
                                         </Popover>
                                     </div>

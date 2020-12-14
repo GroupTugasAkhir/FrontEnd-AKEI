@@ -136,6 +136,8 @@ li {
     align-items: center;
     font-size: 15px;
     padding: 10px;
+    text-decoration: none;
+    color: black;
 }
 
 .see-all:hover{

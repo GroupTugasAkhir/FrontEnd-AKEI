@@ -112,6 +112,8 @@ const UserNotification = (props) => {
         .then((res)=>{
             console.log(res.data)
             setdataNotif(res.data)
+            console.log('date in luar'+ res.data[0].date_in)
+            console.log(dateFormatter(parseInt( res.data[0].date_in)))
         }).catch((err)=>console.log(err))
     },[])
 
@@ -125,6 +127,7 @@ const UserNotification = (props) => {
         Axios.get(`${API_URL_SQL}/orders/getProgress/${idTrans}`)
         .then((res)=>{
             console.log(res.data)
+            console.log(res.data[0].date_in)
             setTimeLine(res.data)
             // setisLoading(!isLoading)
         }).catch((err)=>console.log(err))
@@ -145,12 +148,13 @@ const UserNotification = (props) => {
                                 'Completed'
                                 : val.status == 'productOTW' ?
                                 'On your way'
-                                : val.status == 'senToUser' ?
+                                : val.status == 'sentToUser' ?
                                 'Delivered'
                                 : 'Completed'
                             }
                         </Typography>
                         <Typography className={classes.secondaryHeading}>Transaction ID: {val.trans_code}</Typography>
+                        <Typography style={{fontSize:12}} className={classes.secondaryHeading}>{dateFormatter(parseInt(val.date_in))}</Typography>
                     </div>
                 </AccordionSummary>
                 <AccordionDetails >
@@ -179,7 +183,7 @@ const UserNotification = (props) => {
                                                     'Completed'
                                                     : val.status_log == 'productOTW' ?
                                                     'On your way'
-                                                    : val.status_log == 'senToUser' ?
+                                                    : val.status_log == 'sentToUser' ?
                                                     'Delivered'
                                                     : 'Completed'
                                                 }
@@ -194,7 +198,7 @@ const UserNotification = (props) => {
                                                     'Thank you for buying our furniture'
                                                     : val.status_log == 'productOTW' ?
                                                     'Our product is on your way'
-                                                    : val.status_log == 'senToUser' ?
+                                                    : val.status_log == 'sentToUser' ?
                                                     'Your order has arrived! Please complete the transaction in On Going Tab'
                                                     : 'Thank you for buying our furniture, have a great day!'
                                                 }
