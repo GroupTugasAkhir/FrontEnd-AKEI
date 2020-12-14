@@ -127,6 +127,7 @@ const BranchRequest = () => {
             notification_id : notif_id
         }).then(()=>{
             console.log('sukses oi')
+            fetchData()
         }).catch((err)=>console.log(err))
     }
 

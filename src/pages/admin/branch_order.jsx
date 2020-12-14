@@ -110,6 +110,10 @@ const TransactionLog = (props) => {
         setTrxId(trxid)
     }
 
+    useEffect(()=>{
+        checkSendButton(trxId)
+    },[trxData])
+
     const renderTable=()=>{
         return data.map((val, index)=>(
             <tr key={index} style={{textTransform:'capitalize'}}>
@@ -139,29 +143,37 @@ const TransactionLog = (props) => {
         }).catch((err)=>console.log(err))
     }
 
-    const confirmItem=(prod_id,qty,trx_detail)=>{
+    const confirmItem=(prod_id,qty,trx_detail,trx_id)=>{
         let getLocation = JSON.parse(localStorage.getItem('user'))
         Axios.post(`${API_URL_SQL}/notification/confirmUserRequest`,{
             product_id : prod_id,
             mod_qty : qty,
             trx_detail_id : trx_detail,
-            location_id : getLocation.notes
-        }).then(()=>{
-            console.log('sukses oi')
+            location_id : getLocation.notes,
+            transaction_id : trx_id
+        }).then((res)=>{
+            // console.log('sukses oi')
+            setTrxData(res.data[0])
+            setOnPackage(res.data[1])
+            setOnWaiting(res.data[2])
             let transacID = localStorage.getItem('trxID')
             props.ModalChange(transacID)
         }).catch((err)=>console.log(err))        
     }
 
-    const requestItem=(id,qty,trx_detail,location,notif_id)=>{
+    const requestItem=(id,qty,trx_detail,location,notif_id,trx_id)=>{
         Axios.post(`${API_URL_SQL}/notification/requestHandling`,{
             location_id : location,
             product_id : id,
             req_quantity : qty,
             transaction_detail_id : trx_detail,
-            notification_id : notif_id
-        }).then(()=>{
-            console.log('sukses oi')
+            notification_id : notif_id,
+            transaction_id : trx_id
+        }).then((res)=>{
+            // console.log('sukses oi')
+            setTrxData(res.data[0])
+            setOnPackage(res.data[1])
+            setOnWaiting(res.data[2])
             let transacID = localStorage.getItem('trxID')
             props.ModalChange(transacID)
         }).catch((err)=>console.log(err))
@@ -264,11 +276,11 @@ const TransactionLog = (props) => {
                 {
                     val.req_qty <= val.stock?
                     <TableCell className='to-hover'>
-                        <button className='btn btn-outline-info mr-3' onClick={()=>confirmItem(val.product_id, val.req_qty,val.transaction_detail_id)}>Confirm</button>
+                        <button className='btn btn-outline-info mr-3' onClick={()=>confirmItem(val.product_id, val.req_qty,val.transaction_detail_id,val.transaction_id)}>Confirm</button>
                     </TableCell>
                     :
                     <TableCell className='to-hover'>
-                        <button className='btn btn-outline-success mr-3' onClick={()=>requestItem(val.product_id, val.req_qty,val.transaction_detail_id,getLocation.notes,val.notification_id)}>Request</button>
+                        <button className='btn btn-outline-success mr-3' onClick={()=>requestItem(val.product_id, val.req_qty,val.transaction_detail_id,getLocation.notes,val.notification_id,val.transaction_id)}>Request</button>
                     </TableCell>
                 }
             </TableRow>
