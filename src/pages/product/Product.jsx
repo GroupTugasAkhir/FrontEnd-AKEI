@@ -153,7 +153,7 @@ const Product=()=> {
                     <CardCustom catalog={catalog}/>
                 </div>
                 {
-                    page >= (countAll/6) || page <= (6/countCateg)?
+                    page >= (Math.ceil(countAll/6)) || page <= (6/countCateg)?
                     null
                     :
                     <div onClick={nextProd} className='arrow-section'><i className="fas fa-chevron-right arrow-move"></i></div>
