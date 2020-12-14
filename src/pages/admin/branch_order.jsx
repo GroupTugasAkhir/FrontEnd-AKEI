@@ -73,10 +73,12 @@ const TransactionLog = (props) => {
     useEffect(()=>{
         if(props.Auth.isLogin){
             let getLocation = JSON.parse(localStorage.getItem('user'))
-            Axios.get(`${API_URL_SQL}/notification/gettransaction/${getLocation.notes}`)
-            .then((res)=>{
-                setData(res.data)
-            }).catch((err)=>console.log(err))
+            if(getLocation) {
+                Axios.get(`${API_URL_SQL}/notification/gettransaction/${getLocation.notes}`)
+                .then((res)=>{
+                    setData(res.data)
+                }).catch((err)=>console.log(err))
+            }
         }
     })
 
