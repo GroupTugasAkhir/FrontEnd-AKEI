@@ -12,6 +12,7 @@ const AdminDashboard = () => {
     const [product,setProduct] = useState(null)
     const [branch,setBranch] = useState(null)
     const [trx,setTrx] = useState(null)
+    const [trxPerBranch,setTrxPerBranch] = useState(null)
 
     useEffect(()=>{
         Axios.get(`${API_URL_SQL}/report/getuser`)
@@ -86,6 +87,14 @@ const AdminDashboard = () => {
             }
             setTrx({obj})
         })
+        Axios.get(`${API_URL_SQL}/report/gettrxbranch`)
+        .then((res)=>{
+            let result = ''
+            res.data.map((val)=>{
+                result += `location id = ${val.location_id}, total income =${val.total}`
+            })
+            setTrxPerBranch(result)
+        })
         
     },[])
 
@@ -94,7 +103,7 @@ const AdminDashboard = () => {
     const randomCssRgba = () => `rgba(${[randomByte(), randomByte(), randomByte(), 0.5].join(',')})`
     
 
-    if(user === null && product === null && branch === null && trx === null){
+    if(user === null && product === null && branch === null && trx === null && trxPerBranch === null){
         return <div>Loading</div>
     }
         
@@ -122,6 +131,7 @@ const AdminDashboard = () => {
                         : null
                     }
                 </div>
+                <div>{trxPerBranch}</div>
             </div>
             <div className='linechart-container mt-5'>
                 <div className="content-chart">
