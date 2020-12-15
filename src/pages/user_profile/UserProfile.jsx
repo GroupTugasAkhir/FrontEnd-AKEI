@@ -21,12 +21,13 @@ const UserProfile=(props)=>{
 
     const photoUser = () => {
         let strPhoto = props.Auth.photo
+        if(strPhoto) {
+            if(strPhoto.indexOf('https') > -1) {
+                return strPhoto
+            } 
 
-        if(strPhoto.indexOf('https') > -1) {
-            return strPhoto
-        } 
-
-        return imgPreview
+            return imgPreview
+        }
     }
 
     return (
@@ -41,7 +42,7 @@ const UserProfile=(props)=>{
                     <Form className='form-edit'>
                         <div className="form-left">
                             <FormGroup className='avatar-box'>
-                                <img src={photoUser()} alt=""/>
+                                <img src={photoUser} alt=""/>
                                 <Input type="file" name="file" onChange={changePicture}/>
                             </FormGroup>
                         </div>
