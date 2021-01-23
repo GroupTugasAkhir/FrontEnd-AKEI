@@ -12,6 +12,7 @@ const DetailProduct = (props) => {
     const {match} = props
     let {id} = match.params
     
+    const [prodbywh, setprodbywh] = useState([])
     const [qtyproduct, setqtyproduct] = useState(0)
     const [detailProd,setDetailProd] = useState(null)
     const plusBtn = () => {
@@ -29,7 +30,11 @@ const DetailProduct = (props) => {
     useEffect(()=>{
         Axios.get(`${API_URL_SQL}/admin/getproduct/${id}`)
         .then((res)=>{
-            setDetailProd(res.data[0])
+            Axios.get(`${API_URL_SQL}/admin/getProductbywh/${id}`)
+            .then((theres)=> {
+                setDetailProd(res.data[0])
+                setprodbywh(theres.data)
+            })
         }).catch((err)=>console.log(err))
     },[])
 
@@ -61,6 +66,14 @@ const DetailProduct = (props) => {
         }
     }
 
+
+    const renderstock = () => {
+        return prodbywh.map((val)=> {
+            return (
+                <div>{val.location_name}: {val.whstock}</div>
+            )
+        })
+    }
     
     if(detailProd===null){
         return (
@@ -116,6 +129,9 @@ const DetailProduct = (props) => {
                                 <div className='price-side'>
                                     {priceFormatter(detailProd.price)}
                                 </div>
+                            </div>
+                            <div>
+                                {renderstock()}
                             </div>
                             <button className='addcart-button' onClick={addToCart}>Add to Cart</button>
                         </div>
