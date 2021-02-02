@@ -67,13 +67,13 @@ const DetailProduct = (props) => {
     }
 
 
-    const renderstock = () => {
-        return prodbywh.map((val)=> {
-            return (
-                <div>{val.location_name}: {val.whstock}</div>
-            )
-        })
-    }
+    // const renderstock = () => {
+    //     return prodbywh.map((val)=> {
+    //         return (
+    //             <div>{val.location_name}: {val.whstock}</div>
+    //         )
+    //     })
+    // }
     
     if(detailProd===null){
         return (
@@ -130,9 +130,9 @@ const DetailProduct = (props) => {
                                     {priceFormatter(detailProd.price)}
                                 </div>
                             </div>
-                            <div>
+                            {/* <div>
                                 {renderstock()}
-                            </div>
+                            </div> */}
                             <button className='addcart-button' onClick={addToCart}>Add to Cart</button>
                         </div>
                     </div>
